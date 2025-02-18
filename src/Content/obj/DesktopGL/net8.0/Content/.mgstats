@@ -1,3 +1,0 @@
-Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"/home/andrius/Development/snakegame/src/Content/File.spritefont","/home/andrius/Development/snakegame/src/Content/bin/DesktopGL/Content/font1.xnb","FontDescriptionProcessor","SpriteFontContent",2013,21538,0.1902045
-"/home/andrius/Development/snakegame/src/Content/snake.png","/home/andrius/Development/snakegame/src/Content/bin/DesktopGL/Content/snake.xnb","TextureProcessor","Texture2DContent",493,16085,0.0135271

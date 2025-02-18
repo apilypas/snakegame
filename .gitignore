@@ -1,2 +1,4 @@
-*/bin/*
-*/obj/*
+src/bin/*
+src/obj/*
+src/Content/bin/*
+src/Content/obj/*
