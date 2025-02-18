@@ -1,11 +1,9 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.DesktopGL.Core.Entities;
 using SnakeGame.DesktopGL.Core.Renderers;
-using SnakeGame.DesktopGL.Core.Sprites;
 
 namespace SnakeGame.DesktopGL.Core;
 
@@ -13,14 +11,11 @@ public class PlayState
 {
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
+    private readonly BugRenderer _bugRenderer;
 
     private readonly GameWorld _gameWorld;
 
-    private Texture2D _texture;
-
     private SpriteBatch _spriteBatch;
-
-    private BugSprite _bugSprite;
 
     public PlayState()
     {
@@ -28,6 +23,7 @@ public class PlayState
 
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);
         _snakeRenderer = new SnakeRenderer(_gameWorld);
+        _bugRenderer = new BugRenderer(_gameWorld);
     }
 
     public void Initialize()
@@ -39,12 +35,9 @@ public class PlayState
     {
         _spriteBatch = new SpriteBatch(graphicsDevice);
 
-        _texture = content.Load<Texture2D>("snake");
-
-        _bugSprite = new BugSprite(_texture);
-
         _userInterfaceRenderer.LoadContent(content);
         _snakeRenderer.LoadContent(content);
+        _bugRenderer.LoadContent(content);
     }
 
     public void Update(GameTime gameTime)
@@ -83,16 +76,9 @@ public class PlayState
 
         _spriteBatch.Begin(transformMatrix: transformMatrix);
     
-        _userInterfaceRenderer.Render(_spriteBatch);
-        _snakeRenderer.Render(_spriteBatch);
-
-        _bugSprite.Rotation = (_bugSprite.Rotation + deltaTime * 10f) % (MathF.PI * 2f); // TODO: remove
-
-        foreach (var location in _gameWorld.BugSpawner.Locations)
-        {
-            _bugSprite.Location = location;
-            _bugSprite.Draw(_spriteBatch);
-        }
+        _userInterfaceRenderer.Render(_spriteBatch, deltaTime);
+        _snakeRenderer.Render(_spriteBatch, deltaTime);
+        _bugRenderer.Render(_spriteBatch, deltaTime);
     
         _spriteBatch.End();
 

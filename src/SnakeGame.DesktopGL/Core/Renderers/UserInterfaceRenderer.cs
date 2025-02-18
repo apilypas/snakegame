@@ -33,7 +33,7 @@ public class UserInterfaceRenderer : RendererBase
         _font = content.Load<SpriteFont>("font1");
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public override void Render(SpriteBatch spriteBatch, float deltaTime)
     {
         RenderGrid(spriteBatch);
         RenderScores(spriteBatch);

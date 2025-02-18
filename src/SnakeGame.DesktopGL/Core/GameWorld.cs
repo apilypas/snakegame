@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
 using SnakeGame.DesktopGL.Core.Entities;
 
 namespace SnakeGame.DesktopGL.Core;
@@ -7,18 +6,14 @@ namespace SnakeGame.DesktopGL.Core;
 public class GameWorld
 {
     public Snake Snake { get; set; }
+    public BugSpawner BugSpawner { get; set; }
     public int Score { get; set; }
     public bool IsPaused { get; set; }
     public bool IsEnded { get; set;}
-    public BugSpawner BugSpawner { get; set; }
-
-    private readonly Random _random;
-    private float _bugSpawnTimer = 0f;
 
     public GameWorld()
     {
-        _random = new Random();
-        BugSpawner = new BugSpawner();
+        BugSpawner = new BugSpawner(this);
         Snake = new Snake();
         IsPaused = false;
         Score = 0;
@@ -34,24 +29,9 @@ public class GameWorld
         if (!IsPaused && !IsEnded)
         {
             Snake.Move(deltaTime);
-        
-            if (!BugSpawner.Any())
-            {
-                AddRandomBug();
-            }
-
-            _bugSpawnTimer += deltaTime;
-            if (_bugSpawnTimer >= Constants.BugSpawnRate)
-            {
-                AddRandomBug();
-                _bugSpawnTimer -= Constants.BugSpawnRate;
-            }
-
-            if (BugSpawner.Kill(Snake.Head.Location))
-            {
-                Score++;
-                Snake.Grow();
-            }
+            
+            BugSpawner.UpdateLocations(deltaTime);
+            BugSpawner.KillBugs();
 
             if (Snake.IntersectsWithHead() || Snake.IsOutOfBounds())
             {
@@ -59,13 +39,5 @@ public class GameWorld
                 IsEnded = true;
             }
         }
-    }
-
-    private void AddRandomBug()
-    {
-        var x = _random.Next() % Constants.WallWidth;
-        var y = _random.Next() % Constants.WallHeight;
-        var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
-        BugSpawner.SpawnAt(location);
     }
 }

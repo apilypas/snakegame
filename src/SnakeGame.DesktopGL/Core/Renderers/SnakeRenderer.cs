@@ -31,7 +31,7 @@ public class SnakeRenderer : RendererBase
         _snakeFaceSprite = new SnakeFaceSprite(_texture);
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public override void Render(SpriteBatch spriteBatch, float deltaTime)
     {
         DrawSegment(spriteBatch, _gameWorld.Snake.Head);
         DrawSegment(spriteBatch, _gameWorld.Snake.Tail);

@@ -6,4 +6,5 @@ public class Constants
     public const int WallWidth = 32; // Segments
     public const int WallHeight = 32; // Segments
     public const float BugSpawnRate = 3f; // Seconds
+    public const int BugKillScore = 1; // Points
 }
