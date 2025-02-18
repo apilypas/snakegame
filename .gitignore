@@ -1,4 +1,4 @@
-src/bin/*
-src/obj/*
-src/Content/bin/*
-src/Content/obj/*
+src/SnakeGame.DesktopGL/bin/*
+src/SnakeGame.DesktopGL/obj/*
+src/SnakeGame.DesktopGL/Content/bin/*
+src/SnakeGame.DesktopGL/Content/obj/*
