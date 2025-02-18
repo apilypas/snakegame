@@ -3,8 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Renderers;
+using SnakeGame.DesktopGL.Core.Sprites;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core;
 
 public class PlayState
 {
@@ -79,7 +82,7 @@ public class PlayState
         var transformMatrix = Matrix.CreateTranslation(x, y, 0);
 
         _spriteBatch.Begin(transformMatrix: transformMatrix);
-        
+    
         _userInterfaceRenderer.Render(_spriteBatch);
         _snakeRenderer.Render(_spriteBatch);
 
@@ -90,13 +93,13 @@ public class PlayState
             _bugSprite.Location = location;
             _bugSprite.Draw(_spriteBatch);
         }
-        
+    
         _spriteBatch.End();
 
         _spriteBatch.Begin();
 
         _userInterfaceRenderer.RenderModals(_spriteBatch);
-        
+    
         _spriteBatch.End();
     }
 }

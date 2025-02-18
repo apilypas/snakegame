@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core.Entities;
 
 public class BugSpawner
 {

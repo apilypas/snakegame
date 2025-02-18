@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core.Entities;
 
 public class SnakeSegment
 {
@@ -50,11 +50,11 @@ public class Snake
 
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
-    
+
     public IList<SnakeSegment> Segments => _segments;
     public SnakeSegment Head => _head;
     public SnakeSegment Tail => _tail;
-    
+
     public void Initialize()
     {
         ResetSnake(5);
@@ -69,16 +69,16 @@ public class Snake
 
         if (head.Direction == SnakeDirection.Right && direction == SnakeDirection.Left)
             return;
-        
+    
         if (head.Direction == SnakeDirection.Left && direction == SnakeDirection.Right)
             return;
-        
+    
         if (head.Direction == SnakeDirection.Up && direction == SnakeDirection.Down)
             return;
-        
+    
         if (head.Direction == SnakeDirection.Down && direction == SnakeDirection.Up)
             return;
-        
+    
         _nextDirection = direction;
     }
 
@@ -96,7 +96,7 @@ public class Snake
 
         if (_head.GetRectangle().Intersects(head.GetRectangle()))
             return;
-        
+    
         var newLocation = MoveByDirection(head.Location, _direction, Constants.SegmentSize);
 
         var newHead = new SnakeSegment
@@ -123,7 +123,7 @@ public class Snake
         else
         {
             _segments.Remove(tail);
-            
+        
             _tail = new SnakeSegment
             {
                 Direction = _segments[^1].Direction,
@@ -159,10 +159,10 @@ public class Snake
 
         if (location.Y < 0f)
             return true;
-        
+    
         if (location.X + Constants.SegmentSize > Constants.WallWidth * Constants.SegmentSize)
             return true;
-        
+    
         if (location.Y + Constants.SegmentSize > Constants.WallHeight * Constants.SegmentSize)
             return true;
 

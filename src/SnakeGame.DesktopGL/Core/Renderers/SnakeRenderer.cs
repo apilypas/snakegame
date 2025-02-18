@@ -2,32 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Sprites;
 
-namespace SnakeGame;
-
-public class SnakeBorderSprite : Sprite
-{
-    public SnakeBorderSprite(Texture2D texture)
-        : base(texture, new Rectangle(0, 0, Constants.SegmentSize, Constants.SegmentSize))
-    {
-    }
-}
-
-public class SnakeColorSprite : Sprite
-{
-    public SnakeColorSprite(Texture2D texture)
-        : base(texture, new Rectangle(4 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize))
-    {
-    }
-}
-
-public class SnakeFaceSprite : Sprite
-{
-    public SnakeFaceSprite(Texture2D texture)
-        : base(texture, new Rectangle(Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize))
-    {
-    }
-}
+namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class SnakeRenderer : RendererBase
 {
@@ -38,12 +16,12 @@ public class SnakeRenderer : RendererBase
     private SnakeBorderSprite _snakeBorderSprite;
     private SnakeColorSprite _snakeColorSprite;
     private SnakeFaceSprite _snakeFaceSprite;
-    
+
     public SnakeRenderer(GameWorld gameWorld)
     {
         _gameWorld = gameWorld;
     }
-    
+
     public override void LoadContent(ContentManager content)
     {
         _texture = content.Load<Texture2D>("snake");

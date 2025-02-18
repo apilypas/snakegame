@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.DesktopGL.Core;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL;
 
 public class SnakeGame : Game
 {
     private GraphicsDeviceManager _graphics;
-    
+
     private PlayState _playState;
 
     public SnakeGame()
@@ -40,7 +41,7 @@ public class SnakeGame : Game
             Exit();
 
         _playState.Update(gameTime);
-        
+    
         base.Update(gameTime);
     }
 

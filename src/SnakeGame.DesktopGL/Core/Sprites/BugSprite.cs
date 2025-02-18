@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core.Sprites;
 
 public class BugSprite : Sprite
 {

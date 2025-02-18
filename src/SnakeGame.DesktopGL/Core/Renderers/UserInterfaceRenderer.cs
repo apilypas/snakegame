@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class UserInterfaceRenderer : RendererBase
 {
@@ -83,7 +83,7 @@ public class UserInterfaceRenderer : RendererBase
         for (var i = 0; i < Constants.WallHeight; i++)
         {
             var y = i * Constants.SegmentSize;
-            
+        
             for (var j = 0; j < Constants.WallWidth; j++)
             {
                 var x = j * Constants.SegmentSize;

@@ -1,4 +1,4 @@
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL;
 
 public class Constants
 {

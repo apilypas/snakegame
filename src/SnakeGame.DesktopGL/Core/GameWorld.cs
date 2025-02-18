@@ -1,7 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
+using SnakeGame.DesktopGL.Core.Entities;
 
-namespace SnakeGame;
+namespace SnakeGame.DesktopGL.Core;
 
 public class GameWorld
 {
@@ -33,7 +34,7 @@ public class GameWorld
         if (!IsPaused && !IsEnded)
         {
             Snake.Move(deltaTime);
-            
+        
             if (!BugSpawner.Any())
             {
                 AddRandomBug();
