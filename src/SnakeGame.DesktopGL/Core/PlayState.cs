@@ -8,7 +8,7 @@ using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core;
 
-public class PlayState
+public class PlayState : IState
 {
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
@@ -21,8 +21,12 @@ public class PlayState
 
     private KeyboardState _oldKeyboardState;
 
-    public PlayState()
+    private StateManager _stateManager;
+
+    public PlayState(StateManager stateManager)
     {
+        _stateManager = stateManager;
+        
         _gameWorld = new GameWorld();
 
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);

@@ -8,7 +8,7 @@ public class SnakeGame : Game
 {
     private GraphicsDeviceManager _graphics;
 
-    private PlayState _playState;
+    private StateManager _stateManager;
 
     public SnakeGame()
     {
@@ -19,20 +19,19 @@ public class SnakeGame : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         Window.IsBorderless = true;
-
-        _playState = new PlayState();
     }
 
     protected override void Initialize()
     {
-        _playState.Initialize();
+        _stateManager = new StateManager(GraphicsDevice, Content);
+        _stateManager.Initialize();
 
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        _playState.LoadContent(GraphicsDevice, Content);
+        _stateManager.GetCurrentState().LoadContent(GraphicsDevice, Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -40,14 +39,14 @@ public class SnakeGame : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        _playState.Update(gameTime);
+        _stateManager.GetCurrentState().Update(gameTime);
     
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        _playState.Draw(GraphicsDevice, gameTime);
+        _stateManager.GetCurrentState().Draw(GraphicsDevice, gameTime);
 
         base.Draw(gameTime);
     }
