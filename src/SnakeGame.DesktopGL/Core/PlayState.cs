@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,10 +13,13 @@ public class PlayState
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
     private readonly BugRenderer _bugRenderer;
+    private readonly PlayFieldRenderer _playFieldRenderer;
 
     private readonly GameWorld _gameWorld;
 
     private SpriteBatch _spriteBatch;
+
+    private KeyboardState _oldKeyboardState;
 
     public PlayState()
     {
@@ -24,6 +28,7 @@ public class PlayState
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);
         _snakeRenderer = new SnakeRenderer(_gameWorld);
         _bugRenderer = new BugRenderer(_gameWorld);
+        _playFieldRenderer = new PlayFieldRenderer(_gameWorld);
     }
 
     public void Initialize()
@@ -38,6 +43,7 @@ public class PlayState
         _userInterfaceRenderer.LoadContent(content);
         _snakeRenderer.LoadContent(content);
         _bugRenderer.LoadContent(content);
+        _playFieldRenderer.LoadContent(content);
     }
 
     public void Update(GameTime gameTime)
@@ -56,8 +62,13 @@ public class PlayState
         if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
             _gameWorld.Snake.ChangeDirection(SnakeDirection.Right);
 
-        if (keyboardState.IsKeyDown(Keys.Space))
-            _gameWorld.IsPaused = true;
+        if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
+            _gameWorld.Pause();
+        
+        if (keyboardState.IsKeyDown(Keys.G) && _oldKeyboardState.IsKeyUp(Keys.G))
+            _gameWorld.ShowGrid();
+
+        _oldKeyboardState = keyboardState;
 
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -68,7 +79,7 @@ public class PlayState
     {
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        graphicsDevice.Clear(Color.Black);
+        graphicsDevice.Clear(new Color(0x45, 0x45, 0x45));
 
         var x = (graphicsDevice.Viewport.Width - Constants.WallWidth * Constants.SegmentSize) / 2;
         var y = (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2;
@@ -77,6 +88,7 @@ public class PlayState
         _spriteBatch.Begin(transformMatrix: transformMatrix);
     
         _userInterfaceRenderer.Render(_spriteBatch, deltaTime);
+        _playFieldRenderer.Render(_spriteBatch, deltaTime);
         _snakeRenderer.Render(_spriteBatch, deltaTime);
         _bugRenderer.Render(_spriteBatch, deltaTime);
     

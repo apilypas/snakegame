@@ -8,14 +8,17 @@ public class GameWorld
     public Snake Snake { get; set; }
     public BugSpawner BugSpawner { get; set; }
     public int Score { get; set; }
-    public bool IsPaused { get; set; }
-    public bool IsEnded { get; set;}
+    public bool IsPaused { get; private set; }
+    public bool IsEnded { get; private set; }
+    public bool HasGrid { get; private set; }
 
     public GameWorld()
     {
         BugSpawner = new BugSpawner(this);
         Snake = new Snake();
         IsPaused = false;
+        IsEnded = false;
+        HasGrid = false;
         Score = 0;
     }
 
@@ -39,5 +42,15 @@ public class GameWorld
                 IsEnded = true;
             }
         }
+    }
+
+    public void Pause()
+    {
+        IsPaused = !IsPaused;
+    }
+
+    public void ShowGrid()
+    {
+        HasGrid = !HasGrid;
     }
 }
