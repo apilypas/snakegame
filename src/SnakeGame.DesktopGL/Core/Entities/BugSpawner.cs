@@ -47,10 +47,25 @@ public class BugSpawner
 
     private void AddRandomBug()
     {
-        var x = _random.Next() % Constants.WallWidth;
-        var y = _random.Next() % Constants.WallHeight;
-        var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
-        _locations.Add(location);
+        if (_locations.Count >= Constants.MaxBugLimit)
+            return;
+
+        var random = _random.Next() % (Constants.WallWidth * Constants.WallHeight);
+        
+        for (var i = 0; i < Constants.WallHeight * Constants.WallWidth; i++)
+        {
+            var x = i % Constants.WallWidth;
+            var y = i / Constants.WallHeight;
+            if (i >= random) // If index is our random number
+            {
+                var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
+                if (!_gameWorld.Snake.Intersects(location))
+                {
+                    _locations.Add(location);
+                    break;
+                }
+            }
+        }
     }
 
     private bool KillAt(Rectangle targetRectangle)

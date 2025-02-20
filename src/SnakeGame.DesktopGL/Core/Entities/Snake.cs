@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
@@ -144,6 +145,25 @@ public class Snake
         for (var i = 1; i < _segments.Count; i++)
         {
             if (_segments[i].GetRectangle().Intersects(headRectangle))
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool Intersects(Vector2 location)
+    {
+        var rectangle = new Rectangle((int)location.X, (int)location.Y, Constants.SegmentSize, Constants.SegmentSize);
+
+        if (_head.GetRectangle().Intersects(rectangle))
+            return true;
+
+        if (_tail.GetRectangle().Intersects(rectangle))
+            return true;
+
+        foreach (var segment in _segments)
+        {
+            if (segment.GetRectangle().Intersects(rectangle))
                 return true;
         }
 

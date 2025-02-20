@@ -90,18 +90,21 @@ public class PlayState : IState
         var transformMatrix = Matrix.CreateTranslation(x, y, 0);
 
         _spriteBatch.Begin(transformMatrix: transformMatrix);
-    
         _userInterfaceRenderer.Render(_spriteBatch, deltaTime);
         _playFieldRenderer.Render(_spriteBatch, deltaTime);
+        _spriteBatch.End();
+
+        // Remove all smoothing from snake
+        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: transformMatrix);
         _snakeRenderer.Render(_spriteBatch, deltaTime);
+        _spriteBatch.End();
+
+        _spriteBatch.Begin(transformMatrix: transformMatrix);
         _bugRenderer.Render(_spriteBatch, deltaTime);
-    
         _spriteBatch.End();
 
         _spriteBatch.Begin();
-
         _userInterfaceRenderer.RenderModals(_spriteBatch);
-    
         _spriteBatch.End();
     }
 }
