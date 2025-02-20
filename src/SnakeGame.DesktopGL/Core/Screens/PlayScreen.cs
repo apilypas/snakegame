@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,9 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using SnakeGame.DesktopGL.Core.Entities;
 using SnakeGame.DesktopGL.Core.Renderers;
 
-namespace SnakeGame.DesktopGL.Core;
+namespace SnakeGame.DesktopGL.Core.Screens;
 
-public class PlayState : IState
+public class PlayScreen : Screen
 {
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
@@ -17,13 +16,11 @@ public class PlayState : IState
 
     private readonly GameWorld _gameWorld;
 
-    private SpriteBatch _spriteBatch;
-
     private KeyboardState _oldKeyboardState;
 
-    private StateManager _stateManager;
+    private ScreenManager _stateManager;
 
-    public PlayState(StateManager stateManager)
+    public PlayScreen(ScreenManager stateManager)
     {
         _stateManager = stateManager;
         
@@ -35,22 +32,20 @@ public class PlayState : IState
         _playFieldRenderer = new PlayFieldRenderer(_gameWorld);
     }
 
-    public void Initialize()
+    public override void Initialize()
     {
         _gameWorld.Initialize();
     }
 
-    public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
+    public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _spriteBatch = new SpriteBatch(graphicsDevice);
-
         _userInterfaceRenderer.LoadContent(content);
         _snakeRenderer.LoadContent(content);
         _bugRenderer.LoadContent(content);
         _playFieldRenderer.LoadContent(content);
     }
 
-    public void Update(GameTime gameTime)
+    public override void Update(float deltaTime)
     {
         var keyboardState = Keyboard.GetState();
 
@@ -74,37 +69,32 @@ public class PlayState : IState
 
         _oldKeyboardState = keyboardState;
 
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         _gameWorld.Update(deltaTime);
     }
 
-    public void Draw(GraphicsDevice graphicsDevice, GameTime gameTime)
+    public override void Draw(GraphicsDevice graphicsDevice, float deltaTime, SpriteBatch spriteBatch)
     {
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        var offset = GetPlayScreenOffset(graphicsDevice);
 
-        graphicsDevice.Clear(new Color(0x45, 0x45, 0x45));
+        _userInterfaceRenderer.Offset = offset;
+        _userInterfaceRenderer.Render(spriteBatch, deltaTime);
 
-        var x = (graphicsDevice.Viewport.Width - Constants.WallWidth * Constants.SegmentSize) / 2;
-        var y = (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2;
-        var transformMatrix = Matrix.CreateTranslation(x, y, 0);
+        _playFieldRenderer.Offset = offset;
+        _playFieldRenderer.Render(spriteBatch, deltaTime);
 
-        _spriteBatch.Begin(transformMatrix: transformMatrix);
-        _userInterfaceRenderer.Render(_spriteBatch, deltaTime);
-        _playFieldRenderer.Render(_spriteBatch, deltaTime);
-        _spriteBatch.End();
+        _snakeRenderer.Offset = offset;
+        _snakeRenderer.Render(spriteBatch, deltaTime);
 
-        // Remove all smoothing from snake
-        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, transformMatrix: transformMatrix);
-        _snakeRenderer.Render(_spriteBatch, deltaTime);
-        _spriteBatch.End();
+        _bugRenderer.Offset = offset;
+        _bugRenderer.Render(spriteBatch, deltaTime);
 
-        _spriteBatch.Begin(transformMatrix: transformMatrix);
-        _bugRenderer.Render(_spriteBatch, deltaTime);
-        _spriteBatch.End();
+        _userInterfaceRenderer.RenderModals(spriteBatch);
+    }
 
-        _spriteBatch.Begin();
-        _userInterfaceRenderer.RenderModals(_spriteBatch);
-        _spriteBatch.End();
+    private Vector2 GetPlayScreenOffset(GraphicsDevice graphicsDevice)
+    {
+        return new Vector2(
+            (graphicsDevice.Viewport.Width - Constants.WallWidth * Constants.SegmentSize) / 2f,
+            (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2f);
     }
 }

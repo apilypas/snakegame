@@ -13,10 +13,12 @@ public class SnakeRenderer : RendererBase
 
     private GameWorld _gameWorld;
 
-    private Sprite _snakeBorderSprite;
-    private Sprite _snakeColorSprite;
-    private Sprite _snakeFaceSprite;
-    private Sprite _snakeCornerSprite;
+    private TextureSprite _snakeBorderSprite;
+    private TextureSprite _snakeColorSprite;
+    private TextureSprite _snakeFaceSprite;
+    private TextureSprite _snakeCornerSprite;
+
+    public Vector2 Offset { get; set; }
 
     public SnakeRenderer(GameWorld gameWorld)
     {
@@ -27,19 +29,19 @@ public class SnakeRenderer : RendererBase
     {
         _texture = content.Load<Texture2D>("snake");
 
-        _snakeBorderSprite = new Sprite(
+        _snakeBorderSprite = new TextureSprite(
             _texture,
             new Rectangle(0, 0, Constants.SegmentSize, Constants.SegmentSize));
 
-        _snakeColorSprite = new Sprite(
+        _snakeColorSprite = new TextureSprite(
             _texture,
             new Rectangle(4 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
         
-        _snakeFaceSprite = new Sprite(
+        _snakeFaceSprite = new TextureSprite(
             _texture,
             new Rectangle(Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
 
-        _snakeCornerSprite = new Sprite(
+        _snakeCornerSprite = new TextureSprite(
             _texture,
             new Rectangle(2 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
     }
@@ -64,11 +66,11 @@ public class SnakeRenderer : RendererBase
     {
         var rotation = segment.GetRotation();
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = rotation + MathF.PI / 2f;
         _snakeBorderSprite.Draw(spriteBatch);
 
-        _snakeFaceSprite.Location = segment.Location;
+        _snakeFaceSprite.Location = segment.Location + Offset;
         _snakeFaceSprite.Rotation = rotation;
         _snakeFaceSprite.Draw(spriteBatch);
     }
@@ -77,7 +79,7 @@ public class SnakeRenderer : RendererBase
     {
         var rotation = segment.GetRotation();
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = rotation - MathF.PI / 2f;
         _snakeBorderSprite.Draw(spriteBatch);
     }
@@ -94,14 +96,14 @@ public class SnakeRenderer : RendererBase
     {
         var rotation = segment.GetRotation();
 
-        _snakeColorSprite.Location = segment.Location;
+        _snakeColorSprite.Location = segment.Location + Offset;
         _snakeColorSprite.Draw(spriteBatch);
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = rotation;
         _snakeBorderSprite.Draw(spriteBatch);
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = rotation + MathF.PI;
         _snakeBorderSprite.Draw(spriteBatch);
     }
@@ -110,34 +112,34 @@ public class SnakeRenderer : RendererBase
     {
         // Draw segment color
 
-        _snakeColorSprite.Location = segment.Location;
+        _snakeColorSprite.Location = segment.Location + Offset;
         _snakeColorSprite.Draw(spriteBatch);
 
         // Draw corner lines
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = segment.GetRotation() - MathF.PI / 2f;
         _snakeBorderSprite.Draw(spriteBatch);
 
-        _snakeBorderSprite.Location = segment.Location;
+        _snakeBorderSprite.Location = segment.Location + Offset;
         _snakeBorderSprite.Rotation = next.GetRotation() + MathF.PI / 2f;
         _snakeBorderSprite.Draw(spriteBatch);
 
         // Draw corner dots
 
-        _snakeCornerSprite.Location = segment.Location;
+        _snakeCornerSprite.Location = segment.Location + Offset;
         _snakeCornerSprite.Rotation = 0f;
         _snakeCornerSprite.Draw(spriteBatch);
 
-        _snakeCornerSprite.Location = segment.Location;
+        _snakeCornerSprite.Location = segment.Location + Offset;
         _snakeCornerSprite.Rotation = MathF.PI / 2f;
         _snakeCornerSprite.Draw(spriteBatch);
 
-        _snakeCornerSprite.Location = segment.Location;
+        _snakeCornerSprite.Location = segment.Location + Offset;
         _snakeCornerSprite.Rotation = -MathF.PI / 2f;
         _snakeCornerSprite.Draw(spriteBatch);
 
-        _snakeCornerSprite.Location = segment.Location;
+        _snakeCornerSprite.Location = segment.Location + Offset;
         _snakeCornerSprite.Rotation = MathF.PI;
         _snakeCornerSprite.Draw(spriteBatch);
     }

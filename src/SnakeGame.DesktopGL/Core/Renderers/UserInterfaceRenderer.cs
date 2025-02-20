@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SnakeGame.DesktopGL.Core.Sprites;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
@@ -8,8 +9,11 @@ public class UserInterfaceRenderer : RendererBase
 {
     private Texture2D _texture;
     private SpriteFont _font;
+    private TextSprite _scoreSprite;
 
     private GameWorld _gameWorld;
+
+    public Vector2 Offset { get; set; }
 
     public UserInterfaceRenderer(GameWorld gameWorld)
     {
@@ -20,6 +24,7 @@ public class UserInterfaceRenderer : RendererBase
     {
         _texture = content.Load<Texture2D>("snake");
         _font = content.Load<SpriteFont>("font1");
+        _scoreSprite = new TextSprite(_font);
     }
 
     public override void Render(SpriteBatch spriteBatch, float deltaTime)
@@ -29,6 +34,7 @@ public class UserInterfaceRenderer : RendererBase
 
     public void RenderModals(SpriteBatch spriteBatch)
     {
+        // TODO: this should be implemented elsewhere
         if (_gameWorld.IsPaused)
         {
             spriteBatch.Draw(
@@ -54,16 +60,8 @@ public class UserInterfaceRenderer : RendererBase
 
     private void RenderScores(SpriteBatch spriteBatch)
     {
-        var scoreText = $"Score: {_gameWorld.Score}";
-        spriteBatch.DrawString(
-            _font,
-            scoreText,
-            new Vector2(Constants.WallWidth * Constants.SegmentSize + 60, 20),
-            Color.White,
-            0,
-            _font.MeasureString(scoreText) / 2,
-            1f,
-            SpriteEffects.None,
-            0f);
+        _scoreSprite.Location = new Vector2(Constants.WallWidth * Constants.SegmentSize + 60, 20) + Offset;
+        _scoreSprite.Text = $"Score: {_gameWorld.Score}";
+        _scoreSprite.Draw(spriteBatch);
     }
 }

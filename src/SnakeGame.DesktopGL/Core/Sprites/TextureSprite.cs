@@ -3,17 +3,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.DesktopGL.Core.Sprites;
 
-public class Sprite
+public class TextureSprite
 {
     protected readonly Texture2D _texture;
     protected readonly Rectangle? _sourceRectangle;
 
     public Vector2 Location { get; set; } = Vector2.Zero;
     public float Rotation { get; set; } = 0f;
+    
+    private TextureSprite() { }
 
-    private Sprite() { }
-
-    public Sprite(Texture2D texture, Rectangle? sourceRectangle = null)
+    public TextureSprite(Texture2D texture, Rectangle? sourceRectangle = null)
     {
         _texture = texture;
         _sourceRectangle = sourceRectangle;

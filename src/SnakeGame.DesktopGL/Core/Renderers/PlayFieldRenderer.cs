@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,144 +11,138 @@ public class PlayFieldRenderer : RendererBase
     private Texture2D _texture;
     private GameWorld _gameWorld;
 
-    private Random _random;
+    private TextureSprite _backgroundSprite1;
+    private TextureSprite _backgroundSprite2;
+    private TextureSprite _gridSprite;
+    private TextureSprite _frameSprite;
+    private bool[] _hasGrass;
 
-    private IList<Sprite> _backgroundSprites;
-    private IList<Sprite> _gridSprites;
-    private IList<Sprite> _gridFrameSprites;
+    public Vector2 Offset { get; set; }
 
     public PlayFieldRenderer(GameWorld gameWorld)
     {
         _gameWorld = gameWorld;
-        _random = new Random();
+        _hasGrass = new bool[Constants.WallWidth * Constants.WallHeight];
     }
 
     public override void LoadContent(ContentManager content)
     {
         _texture = content.Load<Texture2D>("snake");
 
-        LoadBackgroundSprites();
-        LoadGridSprites();
-        LoadGridFrameSprites();
+        LoadSprites();
+        RandomizeBackground();
     }
 
     public override void Render(SpriteBatch spriteBatch, float deltaTime)
     {
-        DrawBackground(spriteBatch);
-        DrawGrid(spriteBatch);
-        DrawFrame(spriteBatch);
+        RenderBacground(spriteBatch);
+        RenderGrid(spriteBatch);
+        RenderFrame(spriteBatch);
     }
 
-    private void DrawBackground(SpriteBatch spriteBatch)
+    private void RenderBacground(SpriteBatch spriteBatch)
     {
-        foreach (var sprite in _backgroundSprites)
-            sprite.Draw(spriteBatch);
+        for (var i = 0; i < Constants.WallHeight; i++)
+        {
+            var y = i * Constants.SegmentSize;
+            for (var j = 0; j < Constants.WallWidth; j++)
+            {
+                var x = j * Constants.SegmentSize;
+
+                var location = new Vector2(x, y) + Offset;
+
+                if (_hasGrass[i * j])
+                {
+                    _backgroundSprite1.Location = location;
+                    _backgroundSprite1.Draw(spriteBatch);
+                }
+                else
+                {
+                    _backgroundSprite2.Location = location;
+                    _backgroundSprite2.Draw(spriteBatch);
+                }
+            }
+        }
     }
 
-    private void DrawGrid(SpriteBatch spriteBatch)
+    private void RenderGrid(SpriteBatch spriteBatch)
     {
         if (!_gameWorld.HasGrid)
             return;
 
-        foreach (var sprite in _gridSprites)
-            sprite.Draw(spriteBatch);
-    }
-
-    private void DrawFrame(SpriteBatch spriteBatch)
-    {
-        foreach (var sprite in _gridFrameSprites)
-            sprite.Draw(spriteBatch);
-    }
-
-    private void LoadBackgroundSprites()
-    {
-        _backgroundSprites = [];
         for (var i = 0; i < Constants.WallHeight; i++)
         {
             var y = i * Constants.SegmentSize;
             for (var j = 0; j < Constants.WallWidth; j++)
             {
                 var x = j * Constants.SegmentSize;
-                if (_random.Next() % 20 != 0)
-                {
-                    var sprite = new Sprite(
-                        _texture,
-                        new Rectangle(Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize));
-                    sprite.Location = new Vector2(x, y);
-                    _backgroundSprites.Add(sprite);
-                }
-                else
-                {
-                    var sprite = new Sprite(
-                        _texture,
-                        new Rectangle(Constants.SegmentSize * 2, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize));
-                    sprite.Location = new Vector2(x, y);
-                    _backgroundSprites.Add(sprite);
-                }
+
+                var location = new Vector2(x, y) + Offset;
+
+                _gridSprite.Location = location;
+                _gridSprite.Draw(spriteBatch);
             }
         }
     }
 
-    private void LoadGridSprites()
+    private void RenderFrame(SpriteBatch spriteBatch)
     {
-        _gridSprites = [];
+        for (var i = 0; i < Constants.WallWidth; i++)
+        {
+            _frameSprite.Rotation = 0f;
+            _frameSprite.Location = new Vector2(i * Constants.SegmentSize, 0) + Offset;
+            _frameSprite.Draw(spriteBatch);
+
+            _frameSprite.Rotation = MathF.PI;
+            _frameSprite.Location = new Vector2(i * Constants.SegmentSize, (Constants.WallHeight - 1) * Constants.SegmentSize) + Offset;
+            _frameSprite.Draw(spriteBatch);
+        }
+
         for (var i = 0; i < Constants.WallHeight; i++)
         {
-            var y = i * Constants.SegmentSize;
+            _frameSprite.Rotation = -MathF.PI / 2f;
+            _frameSprite.Location = new Vector2(0, i * Constants.SegmentSize) + Offset;
+            _frameSprite.Draw(spriteBatch);
+
+            _frameSprite.Rotation = MathF.PI / 2f;
+            _frameSprite.Location = new Vector2((Constants.WallWidth - 1) * Constants.SegmentSize, i * Constants.SegmentSize) + Offset;
+            _frameSprite.Draw(spriteBatch);
+        }
+    }
+
+    private void RandomizeBackground()
+    {
+        var random = new Random();
+
+        for (var i = 0; i < Constants.WallHeight; i++)
+        {
             for (var j = 0; j < Constants.WallWidth; j++)
             {
-                var x = j * Constants.SegmentSize;
-                var sprite = new Sprite(
-                    _texture,
-                    new Rectangle(4 * Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize));
-                sprite.Location = new Vector2(x, y);
-                _gridSprites.Add(sprite);
+                _hasGrass[i * j] = random.Next() % 20 != 0;
             }
         }
     }
 
-    private void LoadGridFrameSprites()
+    private void LoadSprites()
     {
-        _gridFrameSprites = [];
+        _backgroundSprite1 = new TextureSprite(
+            _texture,
+            new Rectangle(Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize)
+            );
 
-        for (var i = 0; i < Constants.WallWidth; i++)
-        {
-            var sprite = new Sprite(
-                _texture,
-                new Rectangle(3 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
-            sprite.Rotation = 0f;
-            sprite.Location = new Vector2(i * Constants.SegmentSize, 0f);
-            _gridFrameSprites.Add(sprite);
-        }
-
-        for (var i = 0; i < Constants.WallWidth; i++)
-        {
-            var sprite = new Sprite(
-                _texture,
-                new Rectangle(3 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
-            sprite.Rotation = MathF.PI;
-            sprite.Location = new Vector2(i * Constants.SegmentSize, (Constants.WallHeight - 1) * Constants.SegmentSize);
-            _gridFrameSprites.Add(sprite);
-        }
-
-        for (var i = 0; i < Constants.WallWidth; i++)
-        {
-            var sprite = new Sprite(
-                _texture,
-                new Rectangle(3 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
-            sprite.Rotation = - MathF.PI / 2f;
-            sprite.Location = new Vector2(0f, i * Constants.SegmentSize);
-            _gridFrameSprites.Add(sprite);
-        }
-
-        for (var i = 0; i < Constants.WallWidth; i++)
-        {
-            var sprite = new Sprite(
-                _texture,
-                new Rectangle(3 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize));
-            sprite.Rotation = MathF.PI / 2f;
-            sprite.Location = new Vector2((Constants.WallWidth - 1) * Constants.SegmentSize, i * Constants.SegmentSize);
-            _gridFrameSprites.Add(sprite);
-        }
+        _backgroundSprite2 = new TextureSprite(
+            _texture,
+            new Rectangle(Constants.SegmentSize * 2, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize)
+            );
+        
+        _gridSprite = new TextureSprite(
+            _texture,
+            new Rectangle(4 * Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize, Constants.SegmentSize)
+            );
+        
+        _frameSprite = new TextureSprite(
+            _texture,
+            new Rectangle(3 * Constants.SegmentSize, 0, Constants.SegmentSize, Constants.SegmentSize)
+            );
     }
 }
