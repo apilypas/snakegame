@@ -23,7 +23,7 @@ public class TextSprite
             _spriteFont,
             Text,
             Location,
-            Color.White,
+            Colors.DefaultTextColor,
             0,
             _spriteFont.MeasureString(Text) / 2f,
             1f,

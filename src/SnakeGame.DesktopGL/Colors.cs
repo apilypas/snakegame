@@ -15,4 +15,5 @@ Color palette values
 public class Colors
 {
     public static Color DefaultBackgroundColor = new(0x45, 0x45, 0x45);
+    public static Color DefaultTextColor = new(0xAB, 0xEB, 0xD2);
 }

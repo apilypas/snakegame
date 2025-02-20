@@ -49,7 +49,7 @@ public class UserInterfaceRenderer : RendererBase
                 _font,
                 text,
                 new Vector2(200, 150),
-                Color.White,
+                Colors.DefaultTextColor,
                 0,
                 _font.MeasureString(text) / 2,
                 1f,
