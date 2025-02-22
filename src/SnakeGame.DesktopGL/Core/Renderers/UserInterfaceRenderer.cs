@@ -22,7 +22,8 @@ public class UserInterfaceRenderer : RendererBase
     {
         _texture = content.Load<Texture2D>("snake");
         _font = content.Load<SpriteFont>("font1");
-        _scoreSprite = new TextSprite(_font);
+        
+        _scoreSprite = new TextSprite().Load(content, "font1");
     }
 
     public override void Render(SpriteBatch spriteBatch, float deltaTime)
@@ -58,8 +59,10 @@ public class UserInterfaceRenderer : RendererBase
 
     private void RenderScores(SpriteBatch spriteBatch)
     {
-        _scoreSprite.Location = new Vector2(Constants.WallWidth * Constants.SegmentSize + 60, 20) + Offset;
-        _scoreSprite.Text = $"Score: {_gameWorld.Score}";
-        _scoreSprite.Draw(spriteBatch);
+        _scoreSprite.WithText($"Score: {_gameWorld.Score}");
+
+        Draw(spriteBatch,
+            new Vector2(Constants.WallWidth * Constants.SegmentSize + 60, 20),
+            _scoreSprite);
     }
 }

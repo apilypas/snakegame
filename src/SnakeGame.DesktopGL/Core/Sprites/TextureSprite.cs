@@ -7,7 +7,7 @@ namespace SnakeGame.DesktopGL.Core.Sprites;
 
 public class TextureSprite
 {
-    private bool isLoaded = false;
+    private bool _isLoaded = false;
 
     public Texture2D Texture { get; private set; }
     public Vector2 Location { get; private set; } = Vector2.Zero;
@@ -15,6 +15,8 @@ public class TextureSprite
     public Rectangle SourceRectangle { get; private set; } = Rectangle.Empty;
     public float Rotation { get; private set; } = 0f;
     public SpriteEffects Effects { get; private set; } = SpriteEffects.None;
+
+    private TextureSprite() {}
     
     public TextureSprite(Rectangle? sourceRectangle = null)
     {
@@ -46,14 +48,14 @@ public class TextureSprite
         if (Origin == Vector2.Zero)
             Origin = new Vector2(SourceRectangle.Width / 2, SourceRectangle.Height / 2);
 
-        isLoaded = true;
+        _isLoaded = true;
         
         return this;
     }
 
     private void ThrowIfLoaded()
     {
-        if (isLoaded)
+        if (_isLoaded)
             throw new Exception("Sprite is already loaded");
     }
 }

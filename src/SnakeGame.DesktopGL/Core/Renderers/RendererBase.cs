@@ -43,4 +43,18 @@ public abstract class RendererBase
             sprite.Effects,
             0f);
     }
+
+    protected void Draw(SpriteBatch spriteBatch, Vector2 location, TextSprite sprite)
+    {
+        spriteBatch.DrawString(
+            sprite.Font,
+            sprite.Text,
+            location + Offset,
+            Colors.DefaultTextColor,
+            0,
+            sprite.Font.MeasureString(sprite.Text) / 2f,
+            1f,
+            SpriteEffects.None,
+            0f);
+    }
 }
