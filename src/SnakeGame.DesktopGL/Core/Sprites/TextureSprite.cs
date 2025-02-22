@@ -1,58 +1,59 @@
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.DesktopGL.Core.Sprites;
 
 public class TextureSprite
 {
-    protected readonly Texture2D _texture;
-    protected readonly Rectangle? _sourceRectangle;
+    private bool isLoaded = false;
 
-    public Vector2 Location { get; set; } = Vector2.Zero;
-    public float Rotation { get; set; } = 0f;
+    public Texture2D Texture { get; private set; }
+    public Vector2 Location { get; private set; } = Vector2.Zero;
+    public Vector2 Origin { get; private set; } = Vector2.Zero;
+    public Rectangle SourceRectangle { get; private set; } = Rectangle.Empty;
+    public float Rotation { get; private set; } = 0f;
+    public SpriteEffects Effects { get; private set; } = SpriteEffects.None;
     
-    private TextureSprite() { }
-
-    public TextureSprite(Texture2D texture, Rectangle? sourceRectangle = null)
+    public TextureSprite(Rectangle? sourceRectangle = null)
     {
-        _texture = texture;
-        _sourceRectangle = sourceRectangle;
+        if (sourceRectangle != null)
+            SourceRectangle = sourceRectangle.Value;
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public TextureSprite WithEffects(SpriteEffects effects)
     {
-        if (Rotation == 0f)
-        {
-            spriteBatch.Draw(_texture, Location, GetSourceRectangle(), Color.White);
-        }
-        else
-        {
-            var sourceRectangle = GetSourceRectangle();
-            var width = (float)sourceRectangle.Width;
-            var height = (float)sourceRectangle.Height;
-
-            var originLocation = new Vector2(Location.X + width / 2f, Location.Y + height / 2f);
-
-            var origin = new Vector2(width / 2f, height / 2f);
-
-            spriteBatch.Draw(
-                _texture,
-                originLocation,
-                sourceRectangle,
-                Color.White,
-                Rotation,
-                origin,
-                1f,
-                SpriteEffects.None,
-                0f);
-        }
+        ThrowIfLoaded();
+        Effects = effects;
+        return this;
     }
 
-    protected virtual Rectangle GetSourceRectangle()
+    public TextureSprite WithRotation(float rotation)
     {
-        if (_sourceRectangle == null)
-            return new Rectangle(0, 0, _texture.Width, _texture.Height);
+        ThrowIfLoaded();
+        Rotation = rotation;
+        return this;
+    }
 
-        return _sourceRectangle.Value;
+    public TextureSprite Load(ContentManager content, string assetName)
+    {
+        Texture = content.Load<Texture2D>(assetName);
+        
+        if (SourceRectangle.IsEmpty)
+            SourceRectangle = new Rectangle(0, 0, Texture.Width, Texture.Height);
+        
+        if (Origin == Vector2.Zero)
+            Origin = new Vector2(SourceRectangle.Width / 2, SourceRectangle.Height / 2);
+
+        isLoaded = true;
+        
+        return this;
+    }
+
+    private void ThrowIfLoaded()
+    {
+        if (isLoaded)
+            throw new Exception("Sprite is already loaded");
     }
 }

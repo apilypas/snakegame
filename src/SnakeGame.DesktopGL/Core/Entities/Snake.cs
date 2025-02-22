@@ -1,44 +1,39 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
-public class SnakeSegment
+public class SnakeSegment : EntityBase
 {
-    public Vector2 Location { get; set; }
     public SnakeDirection Direction { get; set; }
+    public bool IsCorner { get; set; }
+    public bool IsClockwise { get; set; }
 
     public Rectangle GetRectangle()
     {
         return new Rectangle((int)Location.X, (int)Location.Y, Constants.SegmentSize, Constants.SegmentSize);
     }
 
-    public float GetRotation()
+    public SnakeSegment Clone()
     {
-        if (Direction == SnakeDirection.Right)
-            return 0f;
-
-        if (Direction == SnakeDirection.Left)
-            return MathF.PI;
-
-        if (Direction == SnakeDirection.Down)
-            return MathF.PI / 2f;
-
-        if (Direction == SnakeDirection.Up)
-            return -MathF.PI / 2f;
-
-        return 0f;
+        return new SnakeSegment
+        {
+            Location = Location,
+            Rotation = Rotation,
+            Direction = Direction,
+            IsCorner = IsCorner,
+            IsClockwise = IsClockwise
+        };
     }
 }
 
 public enum SnakeDirection
 {
-    Up,
+    Right,
     Down,
     Left,
-    Right
+    Up
 }
 
 public class Snake
@@ -103,18 +98,16 @@ public class Snake
         var newHead = new SnakeSegment
         {
             Location = newLocation,
-            Direction = _nextDirection
+            Direction = _nextDirection,
+            Rotation = GetRotation(_nextDirection),
+            IsCorner = _nextDirection != head.Direction,
+            IsClockwise = IsClockwise(_nextDirection, head.Direction)
         };
 
         _direction = _nextDirection;
 
         _segments.Insert(0, newHead);
-
-        _head = new SnakeSegment
-        {
-            Direction = newHead.Direction,
-            Location = newHead.Location
-        };
+        _head = newHead.Clone();
 
         if (_segmentsToGrow > 0)
         {
@@ -124,12 +117,7 @@ public class Snake
         else
         {
             _segments.Remove(tail);
-        
-            _tail = new SnakeSegment
-            {
-                Direction = _segments[^1].Direction,
-                Location = _segments[^1].Location
-            };
+            _tail = _segments[^1].Clone();
         }
     }
 
@@ -203,7 +191,8 @@ public class Snake
             var segment = new SnakeSegment
             {
                 Location = position,
-                Direction = SnakeDirection.Right
+                Direction = SnakeDirection.Right,
+                Rotation = 0f
             };
 
             _segments.Add(segment);
@@ -214,17 +203,8 @@ public class Snake
         _direction = SnakeDirection.Right;
         _nextDirection = SnakeDirection.Right;
 
-        _head = new SnakeSegment
-        {
-            Direction = _segments[0].Direction,
-            Location = _segments[0].Location
-        };
-
-        _tail = new SnakeSegment
-        {
-            Direction = _segments[^1].Direction,
-            Location = _segments[^1].Location
-        };
+        _head = _segments[0].Clone();
+        _tail = _segments[^1].Clone();
     }
 
     private Vector2 MoveByDirection(Vector2 location, SnakeDirection direction, float size)
@@ -250,5 +230,42 @@ public class Snake
         }
 
         return location;
+    }
+
+    private float GetRotation(SnakeDirection direction)
+    {
+        if (direction == SnakeDirection.Right)
+            return 0f;
+
+        if (direction == SnakeDirection.Left)
+            return MathF.PI;
+
+        if (direction == SnakeDirection.Down)
+            return MathF.PI / 2f;
+
+        if (direction == SnakeDirection.Up)
+            return -MathF.PI / 2f;
+
+        return 0f;
+    }
+
+    private bool IsClockwise(SnakeDirection newDirection, SnakeDirection oldDirection)
+    {
+        if (newDirection == oldDirection)
+            return false;
+        
+        if (newDirection == SnakeDirection.Down && oldDirection == SnakeDirection.Right)
+            return true;
+        
+        if (newDirection == SnakeDirection.Left && oldDirection == SnakeDirection.Down)
+            return true;
+        
+        if (newDirection == SnakeDirection.Up && oldDirection == SnakeDirection.Left)
+            return true;
+        
+        if (newDirection == SnakeDirection.Right && oldDirection == SnakeDirection.Up)
+            return true;
+
+        return false;
     }
 }

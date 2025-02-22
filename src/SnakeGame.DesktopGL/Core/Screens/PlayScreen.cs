@@ -27,7 +27,7 @@ public class PlayScreen : Screen
         _gameWorld = new GameWorld();
 
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);
-        _snakeRenderer = new SnakeRenderer(_gameWorld);
+        _snakeRenderer = new SnakeRenderer(_gameWorld.Snake);
         _bugRenderer = new BugRenderer(_gameWorld);
         _playFieldRenderer = new PlayFieldRenderer(_gameWorld);
     }

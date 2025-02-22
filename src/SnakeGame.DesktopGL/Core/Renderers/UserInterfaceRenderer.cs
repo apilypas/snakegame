@@ -13,8 +13,6 @@ public class UserInterfaceRenderer : RendererBase
 
     private GameWorld _gameWorld;
 
-    public Vector2 Offset { get; set; }
-
     public UserInterfaceRenderer(GameWorld gameWorld)
     {
         _gameWorld = gameWorld;

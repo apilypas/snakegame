@@ -4,6 +4,10 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
+public class Bug : EntityBase
+{
+}
+
 public class BugSpawner
 {
     private GameWorld _gameWorld;
@@ -11,9 +15,9 @@ public class BugSpawner
     private readonly Random _random;
     private float _bugSpawnTimer = 0f;
 
-    public IList<Vector2> _locations = [];
+    public IList<Bug> _bugs = [];
 
-    public IList<Vector2> Locations => _locations;
+    public IList<Bug> Bugs => _bugs;
 
     public BugSpawner(GameWorld gameWorld)
     {
@@ -23,7 +27,7 @@ public class BugSpawner
 
     public void UpdateLocations(float deltaTime)
     {
-        if (_locations.Count == 0)
+        if (_bugs.Count == 0)
         {
             AddRandomBug();
         }
@@ -47,7 +51,7 @@ public class BugSpawner
 
     private void AddRandomBug()
     {
-        if (_locations.Count >= Constants.MaxBugLimit)
+        if (_bugs.Count >= Constants.MaxBugLimit)
             return;
 
         var random = _random.Next() % (Constants.WallWidth * Constants.WallHeight);
@@ -61,7 +65,9 @@ public class BugSpawner
                 var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
                 if (!_gameWorld.Snake.Intersects(location))
                 {
-                    _locations.Add(location);
+                    var bug = new Bug();
+                    bug.Location = location;
+                    _bugs.Add(bug);
                     break;
                 }
             }
@@ -72,13 +78,13 @@ public class BugSpawner
     {
         var at = -1;
 
-        for (var i = 0; i < _locations.Count; i++)
+        for (var i = 0; i < _bugs.Count; i++)
         {
-            var bug = _locations[i];
+            var bug = _bugs[i];
 
             var rectangle = new Rectangle(
-                (int)bug.X,
-                (int)bug.Y,
+                (int)bug.Location.X,
+                (int)bug.Location.Y,
                 Constants.SegmentSize,
                 Constants.SegmentSize);
 
@@ -91,7 +97,7 @@ public class BugSpawner
 
         if (at >= 0)
         {
-            _locations.RemoveAt(at);
+            _bugs.RemoveAt(at);
             return true;
         }
 
