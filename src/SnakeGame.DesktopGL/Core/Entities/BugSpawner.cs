@@ -4,10 +4,6 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
-public class Bug : EntityBase
-{
-}
-
 public class BugSpawner
 {
     private GameWorld _gameWorld;
