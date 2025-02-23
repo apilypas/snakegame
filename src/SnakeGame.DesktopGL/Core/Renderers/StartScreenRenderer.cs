@@ -14,8 +14,7 @@ public class StartScreenRenderer : RendererBase
 
     public override void LoadContent(ContentManager content)
     {
-        _textSprite = new TextSprite()
-            .WithText("Click anywhere to start")
+        _textSprite = TextSprite.Create("Click anywhere to start")
             .Load(content, "font1");
     }
 

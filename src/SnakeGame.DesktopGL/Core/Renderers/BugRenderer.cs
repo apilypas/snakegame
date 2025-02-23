@@ -18,7 +18,8 @@ public class BugRenderer : RendererBase
 
     public override void LoadContent(ContentManager content)
     {
-        _bugSprite = new TextureSprite(new Rectangle(0, 20, 20, 20))
+        _bugSprite = TextureSprite
+            .Create(new Rectangle(0, 20, 20, 20))
             .Load(content, "snake");
     }
 

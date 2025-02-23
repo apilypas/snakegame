@@ -13,8 +13,18 @@ public class TextSprite
     public Vector2 Location { get; private set; } = Vector2.Zero;
     public string Text { get; private set; } = string.Empty;
 
-    public TextSprite()
+    private TextSprite()
     {
+    }
+
+    public static TextSprite Create()
+    {
+        return new TextSprite();
+    }
+
+    public static TextSprite Create(string text)
+    {
+        return new TextSprite().WithText(text);
     }
 
     public TextSprite WithText(string text)

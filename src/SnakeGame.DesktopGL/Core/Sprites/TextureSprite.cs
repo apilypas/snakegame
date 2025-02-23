@@ -17,13 +17,18 @@ public class TextureSprite
     public SpriteEffects Effects { get; private set; } = SpriteEffects.None;
 
     private TextureSprite() {}
-    
-    public TextureSprite(Rectangle? sourceRectangle = null)
+
+    public static TextureSprite Create()
     {
-        if (sourceRectangle != null)
-            SourceRectangle = sourceRectangle.Value;
+        return new TextureSprite();
     }
 
+    public static TextureSprite Create(Rectangle sourceRectangle)
+    {
+        return new TextureSprite()
+            .WithSourceRectangle(sourceRectangle);
+    }
+    
     public TextureSprite WithEffects(SpriteEffects effects)
     {
         ThrowIfLoaded();
@@ -35,6 +40,13 @@ public class TextureSprite
     {
         ThrowIfLoaded();
         Rotation = rotation;
+        return this;
+    }
+
+    public TextureSprite WithSourceRectangle(Rectangle sourceRectangle)
+    {
+        ThrowIfLoaded();
+        SourceRectangle = sourceRectangle;
         return this;
     }
 

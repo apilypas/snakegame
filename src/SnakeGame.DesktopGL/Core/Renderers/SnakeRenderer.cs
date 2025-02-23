@@ -23,22 +23,27 @@ public class SnakeRenderer : RendererBase
     public override void LoadContent(ContentManager content)
     {
         // Segment
-        _snakeSegmentSprite = new TextureSprite(new Rectangle(20, 40, 20, 20))
+        _snakeSegmentSprite = TextureSprite
+            .Create(new Rectangle(20, 40, 20, 20))
             .Load(content, "snake");
 
         // Corner
-        _snakeCornerSprites[0] = new TextureSprite(new Rectangle(0, 40, 20, 20))
+        _snakeCornerSprites[0] = TextureSprite
+            .Create(new Rectangle(0, 40, 20, 20))
             .Load(content, "snake");
-        _snakeCornerSprites[1] = new TextureSprite(new Rectangle(0, 40, 20, 20))
+        _snakeCornerSprites[1] = TextureSprite
+            .Create(new Rectangle(0, 40, 20, 20))
             .WithEffects(SpriteEffects.FlipVertically)
             .Load(content, "snake");
 
         // Head
-        _snakeHeadSprite = new TextureSprite(new Rectangle(40, 40, 20, 20))
+        _snakeHeadSprite = TextureSprite
+            .Create(new Rectangle(40, 40, 20, 20))
             .Load(content, "snake");
 
         // Tail
-        _snakeTailSprite = new TextureSprite(new Rectangle(60, 40, 20, 20))
+        _snakeTailSprite = TextureSprite
+            .Create(new Rectangle(60, 40, 20, 20))
             .Load(content, "snake");
     }
 
