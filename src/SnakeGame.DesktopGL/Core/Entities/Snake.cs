@@ -36,24 +36,34 @@ public enum SnakeDirection
     Up
 }
 
+public enum SnakeState
+{
+    Alive,
+    Dead
+}
+
 public class Snake
 {
     private List<SnakeSegment> _segments;
     private SnakeSegment _head;
     private SnakeSegment _tail;
+    private SnakeState _state = SnakeState.Alive;
 
     private int _segmentsToGrow = 0;
 
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
 
+    private float _deathAnimationTimer = 0f;
+
     public IList<SnakeSegment> Segments => _segments;
     public SnakeSegment Head => _head;
     public SnakeSegment Tail => _tail;
+    public SnakeState State => _state;
 
     public void Initialize()
     {
-        ResetSnake(5);
+        Reset();
     }
 
     public void ChangeDirection(SnakeDirection direction)
@@ -78,7 +88,7 @@ public class Snake
         _nextDirection = direction;
     }
 
-    public void Move(float deltaTime)
+    public void Update(float deltaTime)
     {
         var movementSize = deltaTime * 100f;
 
@@ -177,7 +187,42 @@ public class Snake
         return false;
     }
 
-    private void ResetSnake(int length)
+    public void Die()
+    {
+        _state = SnakeState.Dead;
+    }
+
+    public bool Reduce(float deltaTime)
+    {
+        const float reduceByMs = .06f;
+        bool reduced = false;
+
+        if (_segments.Count > 0)
+        {
+            _deathAnimationTimer += deltaTime;
+            
+            if (_deathAnimationTimer >= reduceByMs)
+            {
+                _segments.RemoveAt(0);
+                reduced = true;
+
+                if (_segments.Count > 0)
+                {
+                    _head = _segments[0].Clone();
+                    _deathAnimationTimer -= reduceByMs;
+                }
+                else
+                {
+                    _head = null;
+                    _tail = null;
+                }
+            }
+        }
+
+        return reduced;
+    }
+
+    public void Reset(int length = Constants.InitialSnakeSize)
     {
         _segments = [];
 
@@ -205,6 +250,8 @@ public class Snake
 
         _head = _segments[0].Clone();
         _tail = _segments[^1].Clone();
+
+        _state = SnakeState.Alive;
     }
 
     private Vector2 MoveByDirection(Vector2 location, SnakeDirection direction, float size)

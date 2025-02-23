@@ -1,4 +1,3 @@
-using System;
 using SnakeGame.DesktopGL.Core.Entities;
 
 namespace SnakeGame.DesktopGL.Core;
@@ -6,18 +5,16 @@ namespace SnakeGame.DesktopGL.Core;
 public class GameWorld
 {
     public Snake Snake { get; set; }
-    public BugSpawner BugSpawner { get; set; }
+    public EntitySpawner EntitySpawner { get; set; }
     public int Score { get; set; }
     public bool IsPaused { get; private set; }
-    public bool IsEnded { get; private set; }
     public bool HasGrid { get; private set; }
 
     public GameWorld()
     {
-        BugSpawner = new BugSpawner(this);
+        EntitySpawner = new EntitySpawner(this);
         Snake = new Snake();
         IsPaused = false;
-        IsEnded = false;
         HasGrid = false;
         Score = 0;
     }
@@ -29,19 +26,41 @@ public class GameWorld
 
     public void Update(float deltaTime)
     {
-        if (!IsPaused && !IsEnded)
-        {
-            Snake.Move(deltaTime);
-            
-            BugSpawner.UpdateLocations(deltaTime);
-            BugSpawner.KillBugs();
+        if (IsPaused)
+            return;
 
+        if (Snake.State == SnakeState.Alive)
+        {
+            Snake.Update(deltaTime);
+
+            if (EntitySpawner.KillAt(Snake.Head.GetRectangle()))
+            {
+                Score += Constants.BugKillScore;
+                Snake.Grow();
+            }
+            
             if (Snake.IntersectsWithHead() || Snake.IsOutOfBounds())
             {
-                Console.WriteLine("Game Ended");
-                IsEnded = true;
+                Snake.Die();
             }
         }
+
+        if (Snake.State == SnakeState.Dead)
+        {
+            // TODO: should we use observer pattern here?
+            if (Snake.Reduce(deltaTime))
+            {
+                if (Snake.Segments.Count > 0)
+                    EntitySpawner.SpawnSnakePart(Snake.Segments[0].Location);
+            }
+
+            if (Snake.Segments.Count == 0)
+            {
+                Snake.Reset();
+            }
+        }
+
+        EntitySpawner.UpdateLocations(deltaTime);
     }
 
     public void Pause()

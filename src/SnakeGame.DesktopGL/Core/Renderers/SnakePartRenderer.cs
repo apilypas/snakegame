@@ -5,27 +5,27 @@ using SnakeGame.DesktopGL.Core.Sprites;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
-public class BugRenderer : RendererBase
+public class SnakePartRenderer : RendererBase
 {
     private GameWorld _gameWorld;
 
-    private TextureSprite _bugSprite;
+    private TextureSprite _snakePartSprite;
 
-    public BugRenderer(GameWorld gameWorld)
+    public SnakePartRenderer(GameWorld gameWorld)
     {
         _gameWorld = gameWorld;
     }
 
     public override void LoadContent(ContentManager content)
     {
-        _bugSprite = TextureSprite
-            .Create(new Rectangle(0, 20, 20, 20))
+        _snakePartSprite = TextureSprite
+            .Create(new Rectangle(80, 40, 20, 20))
             .Load(content, "snake");
     }
 
     public override void Render(SpriteBatch spriteBatch, float deltaTime)
     {
-        foreach (var bug in _gameWorld.EntitySpawner.Bugs)
-            Draw(spriteBatch, bug, _bugSprite);
+        foreach (var snakePart in _gameWorld.EntitySpawner.SnakeParts)
+            Draw(spriteBatch, snakePart, _snakePartSprite);
     }
 }

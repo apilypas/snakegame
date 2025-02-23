@@ -12,6 +12,7 @@ public class SnakeRenderer : RendererBase
 
     private TextureSprite _snakeSegmentSprite;
     private TextureSprite[] _snakeCornerSprites = new TextureSprite[2];
+    private TextureSprite _snakeFaceSprite;
     private TextureSprite _snakeHeadSprite;
     private TextureSprite _snakeTailSprite;
 
@@ -37,8 +38,12 @@ public class SnakeRenderer : RendererBase
             .Load(content, "snake");
 
         // Head
-        _snakeHeadSprite = TextureSprite
+        _snakeFaceSprite = TextureSprite
             .Create(new Rectangle(40, 40, 20, 20))
+            .Load(content, "snake");
+        _snakeHeadSprite = TextureSprite
+            .Create(new Rectangle(60, 40, 20, 20))
+            .WithEffects(SpriteEffects.FlipHorizontally)
             .Load(content, "snake");
 
         // Tail
@@ -49,19 +54,46 @@ public class SnakeRenderer : RendererBase
 
     public override void Render(SpriteBatch spriteBatch, float deltaTime)
     {
+        if (_snake.Segments.Count == 0)
+            return;
+    
         DrawSegment(spriteBatch, _snake.Head);
-        DrawSegment(spriteBatch, _snake.Tail);
 
+        if (_snake.Segments.Count > 1)
+        {
+            // Head & face drawing logic will cover this when length is equal to 1
+            DrawSegment(spriteBatch, _snake.Tail);
+        }
+        
         for (var i = 0; i < _snake.Segments.Count - 1; i++)
+        {
             DrawBody(spriteBatch, _snake.Segments[i]);
+        }
         
         DrawHead(spriteBatch, _snake.Head);
-        DrawTail(spriteBatch, _snake.Tail);
+
+        if (_snake.Segments.Count > 1)
+        {
+            // Head & face drawing logic will cover this when length is equal to 1
+            DrawTail(spriteBatch, _snake.Tail);
+        }
     }
 
     private void DrawHead(SpriteBatch spriteBatch, SnakeSegment segment)
     {
+        if (_snake.State == SnakeState.Alive)
+        {
+            // If snake is alive - draw face, otherwise face should not be shown
+            Draw(spriteBatch, segment, _snakeFaceSprite);
+        }
+        
         Draw(spriteBatch, segment, _snakeHeadSprite);
+
+        if (_snake.Segments.Count == 1)
+        {
+            // If snake size is equal to 1 - draw tail line on same segment too
+            Draw(spriteBatch, segment, _snakeTailSprite);
+        }
     }
 
     private void DrawTail(SpriteBatch spriteBatch, SnakeSegment segment)

@@ -8,4 +8,5 @@ public class Constants
     public const float BugSpawnRate = 3f; // Seconds
     public const int MaxBugLimit = 5;
     public const int BugKillScore = 1; // Points
+    public const int InitialSnakeSize = 3; // Segments
 }
