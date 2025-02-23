@@ -194,7 +194,7 @@ public class Snake
 
     public bool Reduce(float deltaTime)
     {
-        const float reduceByMs = .06f;
+        const float reduceByMs = .03f;
         bool reduced = false;
 
         if (_segments.Count > 0)

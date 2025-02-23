@@ -4,9 +4,9 @@ namespace SnakeGame.DesktopGL.Core;
 
 public class GameWorld
 {
-    public Snake Snake { get; set; }
-    public EntitySpawner EntitySpawner { get; set; }
-    public int Score { get; set; }
+    public Snake Snake { get; private set; }
+    public EntitySpawner EntitySpawner { get; private set; }
+    public int Score { get; private set; }
     public bool IsPaused { get; private set; }
     public bool HasGrid { get; private set; }
 
