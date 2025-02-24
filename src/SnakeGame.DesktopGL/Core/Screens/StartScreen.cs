@@ -34,8 +34,9 @@ public class StartScreen : ScreenBase
     public override void Update(float deltaTime)
     {
         var mouseState = Mouse.GetState();
+        var keyboardState = Keyboard.GetState();
 
-        if (mouseState.LeftButton == ButtonState.Pressed)
+        if (mouseState.LeftButton == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Space))
         {
             _stateManager.SwitchToPlayScreen();
         }
