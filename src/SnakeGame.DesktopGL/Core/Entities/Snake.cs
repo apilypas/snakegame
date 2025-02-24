@@ -4,44 +4,6 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
-public class SnakeSegment : EntityBase
-{
-    public SnakeDirection Direction { get; set; }
-    public bool IsCorner { get; set; }
-    public bool IsClockwise { get; set; }
-
-    public Rectangle GetRectangle()
-    {
-        return new Rectangle((int)Location.X, (int)Location.Y, Constants.SegmentSize, Constants.SegmentSize);
-    }
-
-    public SnakeSegment Clone()
-    {
-        return new SnakeSegment
-        {
-            Location = Location,
-            Rotation = Rotation,
-            Direction = Direction,
-            IsCorner = IsCorner,
-            IsClockwise = IsClockwise
-        };
-    }
-}
-
-public enum SnakeDirection
-{
-    Right,
-    Down,
-    Left,
-    Up
-}
-
-public enum SnakeState
-{
-    Alive,
-    Dead
-}
-
 public class Snake
 {
     private List<SnakeSegment> _segments;
@@ -55,6 +17,8 @@ public class Snake
     private SnakeDirection _nextDirection;
 
     private float _deathAnimationTimer = 0f;
+    private bool _hasSpeed = false;
+    private float _speedTimer = 0f;
 
     public IList<SnakeSegment> Segments => _segments;
     public SnakeSegment Head => _head;
@@ -90,7 +54,12 @@ public class Snake
 
     public void Update(float deltaTime)
     {
-        var movementSize = deltaTime * 100f;
+        var speed = (_hasSpeed || _speedTimer > 0f) ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
+
+        if (_speedTimer > 0f)
+            _speedTimer -= deltaTime;
+
+        var movementSize = deltaTime * speed;
 
         var head = _segments[0];
         var tail = _segments[^1];
@@ -252,6 +221,23 @@ public class Snake
         _tail = _segments[^1].Clone();
 
         _state = SnakeState.Alive;
+        _speedTimer = 0f;
+        _hasSpeed = false;
+    }
+
+    public void SpeedUp()
+    {
+        _hasSpeed = true;
+    }
+
+    public void SpeedDown()
+    {
+        _hasSpeed = false;
+    }
+
+    public void ResetSpeedUpTimer()
+    {
+        _speedTimer = Constants.SpeedUpRate;
     }
 
     private Vector2 MoveByDirection(Vector2 location, SnakeDirection direction, float size)

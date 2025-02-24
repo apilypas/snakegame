@@ -12,6 +12,7 @@ public class PlayScreen : Screen
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
     private readonly BugRenderer _bugRenderer;
+    private readonly SpeedBugRenderer _speedBugRenderer;
     private readonly SnakePartRenderer _snakePartRenderer;
     private readonly PlayFieldRenderer _playFieldRenderer;
 
@@ -30,6 +31,7 @@ public class PlayScreen : Screen
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);
         _snakeRenderer = new SnakeRenderer(_gameWorld.Snake);
         _bugRenderer = new BugRenderer(_gameWorld);
+        _speedBugRenderer = new SpeedBugRenderer(_gameWorld);
         _snakePartRenderer = new SnakePartRenderer(_gameWorld);
         _playFieldRenderer = new PlayFieldRenderer(_gameWorld);
     }
@@ -44,6 +46,7 @@ public class PlayScreen : Screen
         _userInterfaceRenderer.LoadContent(content);
         _snakeRenderer.LoadContent(content);
         _bugRenderer.LoadContent(content);
+        _speedBugRenderer.LoadContent(content);
         _snakePartRenderer.LoadContent(content);
         _playFieldRenderer.LoadContent(content);
     }
@@ -64,11 +67,17 @@ public class PlayScreen : Screen
         if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
             _gameWorld.Snake.ChangeDirection(SnakeDirection.Right);
 
-        if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
+        if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
             _gameWorld.Pause();
         
         if (keyboardState.IsKeyDown(Keys.G) && _oldKeyboardState.IsKeyUp(Keys.G))
             _gameWorld.ShowGrid();
+        
+        if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
+            _gameWorld.SpeedUp();
+        
+        if (keyboardState.IsKeyUp(Keys.Space) && _oldKeyboardState.IsKeyDown(Keys.Space))
+            _gameWorld.SpeedDown();
 
         _oldKeyboardState = keyboardState;
 
@@ -90,6 +99,9 @@ public class PlayScreen : Screen
 
         _bugRenderer.Offset = offset;
         _bugRenderer.Render(spriteBatch, deltaTime);
+
+        _speedBugRenderer.Offset = offset;
+        _speedBugRenderer.Render(spriteBatch, deltaTime);
 
         _snakePartRenderer.Offset = offset;
         _snakePartRenderer.Render(spriteBatch, deltaTime);

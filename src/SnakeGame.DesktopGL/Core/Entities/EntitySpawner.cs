@@ -11,12 +11,15 @@ public class EntitySpawner
     private readonly Random _random;
 
     private float _bugSpawnTimer = 0f;
+    private float _speedBugSpawnTimer = 0f;
 
-    public IList<Bug> _bugs = [];
-    public IList<SnakePart> _snakeParts = [];
+    private IList<Bug> _bugs = [];
+    private IList<SnakePart> _snakeParts = [];
+    private IList<SpeedBug> _speedBugs = []; 
 
     public IList<Bug> Bugs => _bugs;
     public IList<SnakePart> SnakeParts => _snakeParts;
+    public IList<SpeedBug> SpeedBugs => _speedBugs;
 
     public EntitySpawner(GameWorld gameWorld)
     {
@@ -37,9 +40,27 @@ public class EntitySpawner
             SpawnRandomBug();
             _bugSpawnTimer -= Constants.BugSpawnRate;
         }
+
+        _speedBugSpawnTimer += deltaTime;
+        if (_speedBugSpawnTimer >= Constants.SpeedBugSpawnRate)
+        {
+            SpawnRandomSpeedBug();
+            _speedBugSpawnTimer -= Constants.SpeedBugSpawnRate;
+        }
     }
 
-    public bool KillAt(Rectangle targetRectangle)
+    public void SpawnSnakePart(Vector2 location)
+    {
+        var shouldSpawn = _random.Next() % 3 == 0;
+        if (shouldSpawn)
+        {
+            var snakePart = new SnakePart();
+            snakePart.Location = location;
+            _snakeParts.Add(snakePart);
+        }
+    }
+
+    public bool KillBugAt(Rectangle targetRectangle)
     {
         var at = -1;
 
@@ -65,6 +86,13 @@ public class EntitySpawner
             _bugs.RemoveAt(at);
             return true;
         }
+
+        return false;
+    }
+
+    public bool KillSnakePartAt(Rectangle targetRectangle)
+    {
+        var at = -1;
 
         for (var i = 0; i < _snakeParts.Count; i++)
         {
@@ -92,39 +120,86 @@ public class EntitySpawner
         return false;
     }
 
+    public bool KillSpeedBugAt(Rectangle targetRectangle)
+    {
+        var at = -1;
+
+        for (var i = 0; i < _speedBugs.Count; i++)
+        {
+            var speedBug = _speedBugs[i];
+
+            var rectangle = new Rectangle(
+                (int)speedBug.Location.X,
+                (int)speedBug.Location.Y,
+                Constants.SegmentSize,
+                Constants.SegmentSize);
+
+            if (rectangle.Intersects(targetRectangle))
+            {
+                at = i;
+                break;
+            }
+        }
+
+        if (at >= 0)
+        {
+            _speedBugs.RemoveAt(at);
+            return true;
+        }
+
+        return false;
+    }
+
     private void SpawnRandomBug()
     {
         if (_bugs.Count >= Constants.MaxBugLimit)
             return;
 
-        var random = _random.Next() % (Constants.WallWidth * Constants.WallHeight);
-        
-        for (var i = 0; i < Constants.WallHeight * Constants.WallWidth; i++)
+        var bugLocation = GetRandomFreeLocation();
+
+        if (bugLocation != null)
         {
-            var x = i % Constants.WallWidth;
-            var y = i / Constants.WallHeight;
-            if (i >= random) // If index is our random number
+            _bugs.Add(new Bug
             {
-                var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
-                if (!_gameWorld.Snake.Intersects(location))
-                {
-                    var bug = new Bug();
-                    bug.Location = location;
-                    _bugs.Add(bug);
-                    break;
-                }
-            }
+                Location = bugLocation.Value
+            });
         }
     }
 
-    public void SpawnSnakePart(Vector2 location)
+    public void SpawnRandomSpeedBug()
     {
-        var shouldSpawn = _random.Next() % 3 == 0;
-        if (shouldSpawn)
+        if (_speedBugs.Count >= Constants.MaxSpeedBugLimit)
+            return;
+
+        var speedBugLocation = GetRandomFreeLocation();
+
+        if (speedBugLocation != null)
         {
-            var snakePart = new SnakePart();
-            snakePart.Location = location;
-            _snakeParts.Add(snakePart);
+            _speedBugs.Add(new SpeedBug
+            {
+                Location = speedBugLocation.Value
+            });
         }
+    }
+
+    private Vector2? GetRandomFreeLocation()
+    {
+        var random = _random.Next() % (Constants.WallWidth * Constants.WallHeight);
+
+        for (var i = 0; i < Constants.WallHeight * Constants.WallWidth; i++)
+        {
+            if (i >= random) // If index is our random number
+            {
+                var x = i % Constants.WallWidth;
+                var y = i / Constants.WallHeight;
+                var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
+                if (!_gameWorld.Snake.Intersects(location))
+                {
+                    return location;
+                }
+            }
+        }
+
+        return null;
     }
 }

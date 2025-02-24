@@ -39,7 +39,7 @@ public class SnakeGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+        if (Keyboard.GetState().IsKeyDown(Keys.Q))
             Exit();
         
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

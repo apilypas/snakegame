@@ -33,10 +33,23 @@ public class GameWorld
         {
             Snake.Update(deltaTime);
 
-            if (EntitySpawner.KillAt(Snake.Head.GetRectangle()))
+            if (EntitySpawner.KillBugAt(Snake.Head.GetRectangle()))
             {
                 Score += Constants.BugKillScore;
                 Snake.Grow();
+            }
+
+            if (EntitySpawner.KillSnakePartAt(Snake.Head.GetRectangle()))
+            {
+                Score += Constants.SnakePartKillScore;
+                Snake.Grow();
+            }
+
+            if (EntitySpawner.KillSpeedBugAt(Snake.Head.GetRectangle()))
+            {
+                Score += Constants.SpeedBugKillScore;
+                Snake.Grow();
+                Snake.ResetSpeedUpTimer();
             }
             
             if (Snake.IntersectsWithHead() || Snake.IsOutOfBounds())
@@ -71,5 +84,15 @@ public class GameWorld
     public void ShowGrid()
     {
         HasGrid = !HasGrid;
+    }
+
+    public void SpeedUp()
+    {
+        Snake.SpeedUp();
+    }
+
+    public void SpeedDown()
+    {
+        Snake.SpeedDown();
     }
 }
