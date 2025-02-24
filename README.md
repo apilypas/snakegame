@@ -5,3 +5,4 @@ Features:
 * Fluent snake movements
 * Collectables
 * Scores
+* Speed ups
