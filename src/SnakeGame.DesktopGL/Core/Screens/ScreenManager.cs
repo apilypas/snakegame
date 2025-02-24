@@ -5,7 +5,7 @@ namespace SnakeGame.DesktopGL.Core.Screens;
 
 public class ScreenManager
 {
-    private Screen _currentScreen;
+    private ScreenBase _currentScreen;
 
     private ContentManager _content;
     private GraphicsDevice _graphics;
@@ -16,7 +16,7 @@ public class ScreenManager
         _content = content;
     }
 
-    public Screen GetCurrentScreen()
+    public ScreenBase GetCurrentScreen()
     {
         return _currentScreen;
     }

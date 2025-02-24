@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
-public class StartScreen : Screen
+public class StartScreen : ScreenBase
 {
     private StartScreenRenderer _startScreenRenderer;
 

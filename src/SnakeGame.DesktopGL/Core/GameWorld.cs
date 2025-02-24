@@ -76,12 +76,12 @@ public class GameWorld
         EntitySpawner.UpdateLocations(deltaTime);
     }
 
-    public void Pause()
+    public void TogglePause()
     {
         IsPaused = !IsPaused;
     }
 
-    public void ShowGrid()
+    public void ToggleGrid()
     {
         HasGrid = !HasGrid;
     }

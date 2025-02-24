@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
-public abstract class Screen
+public abstract class ScreenBase
 {
     public abstract void Initialize();
     public abstract void LoadContent(GraphicsDevice graphicsDevice, ContentManager content);

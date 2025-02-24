@@ -7,7 +7,7 @@ using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
-public class PlayScreen : Screen
+public class PlayScreen : ScreenBase
 {
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
     private readonly SnakeRenderer _snakeRenderer;
@@ -68,10 +68,10 @@ public class PlayScreen : Screen
             _gameWorld.Snake.ChangeDirection(SnakeDirection.Right);
 
         if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
-            _gameWorld.Pause();
+            _gameWorld.TogglePause();
         
         if (keyboardState.IsKeyDown(Keys.G) && _oldKeyboardState.IsKeyUp(Keys.G))
-            _gameWorld.ShowGrid();
+            _gameWorld.ToggleGrid();
         
         if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
             _gameWorld.SpeedUp();
