@@ -39,7 +39,7 @@ public class UserInterfaceRenderer : RendererBase
             spriteBatch.Draw(
                 _texture,
                 new Rectangle(100, 100, 300, 150),
-                new Rectangle(Constants.SegmentSize * 3, Constants.SegmentSize, 20, 20),
+                new Rectangle(20, 40, 20, 20),
                 Color.White
             );
 
@@ -60,7 +60,7 @@ public class UserInterfaceRenderer : RendererBase
     private void RenderScores(SpriteBatch spriteBatch)
     {
         Draw(spriteBatch,
-            new Vector2(Constants.WallWidth * Constants.SegmentSize + 60, 20),
+            new Vector2(_gameWorld.GetRectangle().Width + 60f, 20f),
             _scoreSprite.WithText($"Score: {_gameWorld.Score}"));
     }
 }

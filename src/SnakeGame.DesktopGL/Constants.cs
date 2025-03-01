@@ -1,6 +1,6 @@
 namespace SnakeGame.DesktopGL;
 
-public class Constants
+public static class Constants
 {
     public const int SegmentSize = 20; // Pixels
     public const int WallWidth = 32; // Segments

@@ -10,6 +10,7 @@ public class Snake
     private SnakeSegment _head;
     private SnakeSegment _tail;
     private SnakeState _state = SnakeState.Alive;
+    private Vector2 _initialLocation = Vector2.Zero;
 
     private int _segmentsToGrow = 0;
 
@@ -24,6 +25,12 @@ public class Snake
     public SnakeSegment Head => _head;
     public SnakeSegment Tail => _tail;
     public SnakeState State => _state;
+    private Snake() { }
+
+    protected Snake(Vector2 initialLocation)
+    {
+        _initialLocation = initialLocation;
+    }
 
     public void Initialize()
     {
@@ -52,7 +59,7 @@ public class Snake
         _nextDirection = direction;
     }
 
-    public void Update(float deltaTime)
+    public virtual void Update(float deltaTime)
     {
         var speed = (_hasSpeed || _speedTimer > 0f) ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
 
@@ -80,7 +87,7 @@ public class Snake
             Direction = _nextDirection,
             Rotation = GetRotation(_nextDirection),
             IsCorner = _nextDirection != head.Direction,
-            IsClockwise = IsClockwise(_nextDirection, head.Direction)
+            IsClockwise = head.Direction.IsClockwise(_nextDirection)
         };
 
         _direction = _nextDirection;
@@ -118,10 +125,8 @@ public class Snake
         return false;
     }
 
-    public bool Intersects(Vector2 location)
+    public bool Intersects(Rectangle rectangle)
     {
-        var rectangle = new Rectangle((int)location.X, (int)location.Y, Constants.SegmentSize, Constants.SegmentSize);
-
         if (_head.GetRectangle().Intersects(rectangle))
             return true;
 
@@ -133,25 +138,6 @@ public class Snake
             if (segment.GetRectangle().Intersects(rectangle))
                 return true;
         }
-
-        return false;
-    }
-
-    public bool IsOutOfBounds()
-    {
-        var location = _head.Location;
-
-        if (location.X < 0f)
-            return true;
-
-        if (location.Y < 0f)
-            return true;
-    
-        if (location.X + Constants.SegmentSize > Constants.WallWidth * Constants.SegmentSize)
-            return true;
-    
-        if (location.Y + Constants.SegmentSize > Constants.WallHeight * Constants.SegmentSize)
-            return true;
 
         return false;
     }
@@ -195,10 +181,7 @@ public class Snake
     {
         _segments = [];
 
-        var position = new Vector2(
-            Constants.WallWidth / 2f * Constants.SegmentSize,
-            Constants.WallHeight / 2f * Constants.SegmentSize
-        );
+        var position = _initialLocation;
 
         for (var i = 0; i < length; i++)
         {
@@ -280,25 +263,5 @@ public class Snake
             return -MathF.PI / 2f;
 
         return 0f;
-    }
-
-    private bool IsClockwise(SnakeDirection newDirection, SnakeDirection oldDirection)
-    {
-        if (newDirection == oldDirection)
-            return false;
-        
-        if (newDirection == SnakeDirection.Down && oldDirection == SnakeDirection.Right)
-            return true;
-        
-        if (newDirection == SnakeDirection.Left && oldDirection == SnakeDirection.Down)
-            return true;
-        
-        if (newDirection == SnakeDirection.Up && oldDirection == SnakeDirection.Left)
-            return true;
-        
-        if (newDirection == SnakeDirection.Right && oldDirection == SnakeDirection.Up)
-            return true;
-
-        return false;
     }
 }

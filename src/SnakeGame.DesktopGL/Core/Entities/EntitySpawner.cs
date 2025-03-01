@@ -27,7 +27,7 @@ public class EntitySpawner
         _gameWorld = gameWorld;
     }
 
-    public void UpdateLocations(float deltaTime)
+    public void Update(float deltaTime)
     {
         if (_bugs.Count == 0)
         {
@@ -190,12 +190,19 @@ public class EntitySpawner
         {
             if (i >= random) // If index is our random number
             {
-                var x = i % Constants.WallWidth;
-                var y = i / Constants.WallHeight;
-                var location = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
-                if (!_gameWorld.Snake.Intersects(location))
+                var x = i % Constants.WallWidth * Constants.SegmentSize;
+                var y = i / Constants.WallHeight * Constants.SegmentSize;
+
+                var rectangle = new Rectangle(
+                    x,
+                    y,
+                    Constants.SegmentSize,
+                    Constants.SegmentSize);
+                
+                if (!_gameWorld.PlayerSnake.Intersects(rectangle)
+                    && !_gameWorld.EnemySnake.Intersects(rectangle))
                 {
-                    return location;
+                    return new Vector2(x, y);
                 }
             }
         }

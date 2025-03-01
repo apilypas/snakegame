@@ -19,7 +19,7 @@ public class SnakePartRenderer : RendererBase
     public override void LoadContent(ContentManager content)
     {
         _snakePartSprite = TextureSprite
-            .Create(new Rectangle(80, 40, 20, 20))
+            .Create(new Rectangle(20, 60, 20, 20))
             .Load(content, "snake");
     }
 

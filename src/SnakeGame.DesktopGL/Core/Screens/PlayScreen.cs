@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +11,8 @@ namespace SnakeGame.DesktopGL.Core.Screens;
 public class PlayScreen : ScreenBase
 {
     private readonly UserInterfaceRenderer _userInterfaceRenderer;
-    private readonly SnakeRenderer _snakeRenderer;
+    private readonly SnakeRenderer _playerSnakeRenderer;
+    private readonly SnakeRenderer _enemySnakeRenderer;
     private readonly BugRenderer _bugRenderer;
     private readonly SpeedBugRenderer _speedBugRenderer;
     private readonly SnakePartRenderer _snakePartRenderer;
@@ -29,7 +31,8 @@ public class PlayScreen : ScreenBase
         _gameWorld = new GameWorld();
 
         _userInterfaceRenderer = new UserInterfaceRenderer(_gameWorld);
-        _snakeRenderer = new SnakeRenderer(_gameWorld.Snake);
+        _playerSnakeRenderer = new SnakeRenderer(_gameWorld.PlayerSnake);
+        _enemySnakeRenderer = new SnakeRenderer(_gameWorld.EnemySnake);
         _bugRenderer = new BugRenderer(_gameWorld);
         _speedBugRenderer = new SpeedBugRenderer(_gameWorld);
         _snakePartRenderer = new SnakePartRenderer(_gameWorld);
@@ -44,7 +47,8 @@ public class PlayScreen : ScreenBase
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _userInterfaceRenderer.LoadContent(content);
-        _snakeRenderer.LoadContent(content);
+        _playerSnakeRenderer.LoadContent(content);
+        _enemySnakeRenderer.LoadContent(content);
         _bugRenderer.LoadContent(content);
         _speedBugRenderer.LoadContent(content);
         _snakePartRenderer.LoadContent(content);
@@ -56,16 +60,16 @@ public class PlayScreen : ScreenBase
         var keyboardState = Keyboard.GetState();
 
         if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            _gameWorld.Snake.ChangeDirection(SnakeDirection.Up);
+            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Up);
 
         if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
-            _gameWorld.Snake.ChangeDirection(SnakeDirection.Down);
+            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Down);
 
         if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-            _gameWorld.Snake.ChangeDirection(SnakeDirection.Left);
+            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Left);
 
         if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-            _gameWorld.Snake.ChangeDirection(SnakeDirection.Right);
+            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Right);
 
         if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
             _gameWorld.TogglePause();
@@ -94,8 +98,11 @@ public class PlayScreen : ScreenBase
         _playFieldRenderer.Offset = offset;
         _playFieldRenderer.Render(spriteBatch, deltaTime);
 
-        _snakeRenderer.Offset = offset;
-        _snakeRenderer.Render(spriteBatch, deltaTime);
+        _playerSnakeRenderer.Offset = offset;
+        _playerSnakeRenderer.Render(spriteBatch, deltaTime);
+
+        _enemySnakeRenderer.Offset = offset;
+        _enemySnakeRenderer.Render(spriteBatch, deltaTime);
 
         _bugRenderer.Offset = offset;
         _bugRenderer.Render(spriteBatch, deltaTime);
@@ -111,8 +118,10 @@ public class PlayScreen : ScreenBase
 
     private Vector2 GetPlayScreenOffset(GraphicsDevice graphicsDevice)
     {
+        var gameWorldRectangle = _gameWorld.GetRectangle();
+        
         return new Vector2(
-            (graphicsDevice.Viewport.Width - Constants.WallWidth * Constants.SegmentSize) / 2f,
-            (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2f);
+            (graphicsDevice.Viewport.Width - gameWorldRectangle.Width) / 2f,
+            (graphicsDevice.Viewport.Height - gameWorldRectangle.Height) / 2f);
     }
 }

@@ -23,32 +23,37 @@ public class SnakeRenderer : RendererBase
 
     public override void LoadContent(ContentManager content)
     {
+        var textureOffsetY = 0;
+
+        if (_snake is EnemySnake)
+            textureOffsetY = 20;
+
         // Segment
         _snakeSegmentSprite = TextureSprite
-            .Create(new Rectangle(20, 40, 20, 20))
+            .Create(new Rectangle(20, textureOffsetY, 20, 20))
             .Load(content, "snake");
 
         // Corner
         _snakeCornerSprites[0] = TextureSprite
-            .Create(new Rectangle(0, 40, 20, 20))
+            .Create(new Rectangle(0, textureOffsetY, 20, 20))
             .Load(content, "snake");
         _snakeCornerSprites[1] = TextureSprite
-            .Create(new Rectangle(0, 40, 20, 20))
+            .Create(new Rectangle(0, textureOffsetY, 20, 20))
             .WithEffects(SpriteEffects.FlipVertically)
             .Load(content, "snake");
 
         // Head
         _snakeFaceSprite = TextureSprite
-            .Create(new Rectangle(40, 40, 20, 20))
+            .Create(new Rectangle(40, textureOffsetY, 20, 20))
             .Load(content, "snake");
         _snakeHeadSprite = TextureSprite
-            .Create(new Rectangle(60, 40, 20, 20))
+            .Create(new Rectangle(60, textureOffsetY, 20, 20))
             .WithEffects(SpriteEffects.FlipHorizontally)
             .Load(content, "snake");
 
         // Tail
         _snakeTailSprite = TextureSprite
-            .Create(new Rectangle(60, 40, 20, 20))
+            .Create(new Rectangle(60, textureOffsetY, 20, 20))
             .Load(content, "snake");
     }
 
