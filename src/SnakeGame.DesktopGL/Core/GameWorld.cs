@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -7,8 +8,7 @@ namespace SnakeGame.DesktopGL.Core;
 
 public class GameWorld
 {
-    public PlayerSnake PlayerSnake { get; private set; }
-    public IList<EnemySnake> EnemySnakes { get; private set; } = [];
+    public IList<Snake> Snakes { get; private set; } = [];
     public EntitySpawner EntitySpawner { get; private set; }
     public int Score { get; private set; }
     public bool IsPaused { get; private set; }
@@ -17,12 +17,12 @@ public class GameWorld
     public GameWorld()
     {
         EntitySpawner = new EntitySpawner(this);
-        PlayerSnake = new PlayerSnake();
-        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
-        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 60f)));
-        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
-        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
-        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
+        Snakes.Add(new PlayerSnake());
+        Snakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
+        Snakes.Add(new EnemySnake(this, new Vector2(100f, 60f)));
+        Snakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
+        Snakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
+        Snakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
         IsPaused = false;
         HasGrid = false;
         Score = 0;
@@ -30,11 +30,9 @@ public class GameWorld
 
     public void Initialize()
     {
-        PlayerSnake.Initialize();
-
-        foreach (var enemySnake in EnemySnakes)
+        foreach (var snake in Snakes)
         {
-            enemySnake.Initialize();
+            snake.Initialize();
         }
     }
 
@@ -43,102 +41,59 @@ public class GameWorld
         if (IsPaused)
             return;
 
-        if (PlayerSnake.State == SnakeState.Alive)
+        foreach (var snake in Snakes)
         {
-            PlayerSnake.Update(deltaTime);
-
-            var headRectangle = PlayerSnake.Head.GetRectangle();
-
-            if (EntitySpawner.KillBugAt(headRectangle))
+            if (snake.State == SnakeState.Alive)
             {
-                Score += Constants.BugKillScore;
-                PlayerSnake.Grow();
-            }
+                snake.Update(deltaTime);
 
-            if (EntitySpawner.KillSnakePartAt(headRectangle))
-            {
-                Score += Constants.SnakePartKillScore;
-                PlayerSnake.Grow();
-            }
-
-            if (EntitySpawner.KillSpeedBugAt(headRectangle))
-            {
-                Score += Constants.SpeedBugKillScore;
-                PlayerSnake.Grow();
-                PlayerSnake.ResetSpeedUpTimer();
-            }
-
-            if (PlayerSnake.IntersectsWithHead()
-                || !GetRectangle().Contains(headRectangle)
-                || EnemySnakes.Any(x => x.Intersects(headRectangle)))
-            {
-                PlayerSnake.Die();
-            }
-        }
-
-        foreach (var enemySnake in EnemySnakes)
-        {
-            if (enemySnake.State == SnakeState.Alive)
-            {
-                enemySnake.Update(deltaTime);
-
-                var headRectangle = enemySnake.Head.GetRectangle();
+                var headRectangle = snake.Head.GetRectangle();
 
                 if (EntitySpawner.KillBugAt(headRectangle))
                 {
-                    enemySnake.Grow();
+                    if (snake is PlayerSnake)
+                        Score += Constants.BugKillScore;
+                    snake.Grow();
                 }
 
                 if (EntitySpawner.KillSnakePartAt(headRectangle))
                 {
-                    enemySnake.Grow();
+                    if (snake is PlayerSnake)
+                        Score += Constants.SnakePartKillScore;
+                    snake.Grow();
                 }
 
                 if (EntitySpawner.KillSpeedBugAt(headRectangle))
                 {
-                    enemySnake.Grow();
-                    enemySnake.ResetSpeedUpTimer();
+                    if (snake is PlayerSnake)
+                        Score += Constants.SpeedBugKillScore;
+                    snake.Grow();
+                    snake.ResetSpeedUpTimer();
                 }
 
-                if (enemySnake.IntersectsWithHead()
+                if (snake.IntersectsWithHead()
                     || !GetRectangle().Contains(headRectangle)
-                    || PlayerSnake.Intersects(headRectangle)
-                    || EnemySnakes.Any(x => x != enemySnake && x.Intersects(headRectangle)))
+                    || Snakes.Any(x => x != snake && x.Intersects(headRectangle)))
                 {
-                    enemySnake.Die();
+                    snake.Die();
                 }
             }
         }
 
-        if (PlayerSnake.State == SnakeState.Dead)
+        foreach (var snake in Snakes)
         {
-            // TODO: should we use observer pattern here?
-            if (PlayerSnake.Reduce(deltaTime))
-            {
-                if (PlayerSnake.Segments.Count > 0)
-                    EntitySpawner.SpawnSnakePart(PlayerSnake.Segments[0].Location);
-            }
-
-            if (PlayerSnake.Segments.Count == 0)
-            {
-                PlayerSnake.Reset();
-            }
-        }
-
-        foreach (var enemySnake in EnemySnakes)
-        {
-            if (enemySnake.State == SnakeState.Dead)
+            if (snake.State == SnakeState.Dead)
             {
                 // TODO: should we use observer pattern here?
-                if (enemySnake.Reduce(deltaTime))
+                if (snake.Reduce(deltaTime))
                 {
-                    if (enemySnake.Segments.Count > 0)
-                        EntitySpawner.SpawnSnakePart(enemySnake.Segments[0].Location);
+                    if (snake.Segments.Count > 0)
+                        EntitySpawner.SpawnSnakePart(snake.Segments[0].Location);
                 }
 
-                if (enemySnake.Segments.Count == 0)
+                if (snake.Segments.Count == 0)
                 {
-                    enemySnake.Reset();
+                    snake.Reset();
                 }
             }
         }
@@ -158,15 +113,15 @@ public class GameWorld
 
     public void SpeedUp()
     {
-        PlayerSnake.SpeedUp();
+        Snakes[0].SpeedUp();
     }
 
     public void SpeedDown()
     {
-        PlayerSnake.SpeedDown();
+        Snakes[0].SpeedDown();
     }
 
-    public Rectangle GetRectangle()
+    public static Rectangle GetRectangle()
     {
         return new Rectangle(
             0,
@@ -174,5 +129,10 @@ public class GameWorld
             Constants.WallWidth * Constants.SegmentSize,
             Constants.WallHeight * Constants.SegmentSize
             );
+    }
+
+    public void ChangeDirection(SnakeDirection direction)
+    {
+        Snakes[0].ChangeDirection(direction);
     }
 }

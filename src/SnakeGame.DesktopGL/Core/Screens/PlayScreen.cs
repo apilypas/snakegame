@@ -19,8 +19,7 @@ public class PlayScreen : ScreenBase
         _gameWorld = new GameWorld();
 
         AddRenderer(new PlayFieldRenderer(_gameWorld));
-        AddRenderer(new SnakeRenderer<PlayerSnake>(_gameWorld.PlayerSnake));
-        AddRenderer(new SnakeRenderer<EnemySnake>(_gameWorld.EnemySnakes));
+        AddRenderer(new SnakeRenderer(_gameWorld.Snakes));
         AddRenderer(new BugRenderer(_gameWorld));
         AddRenderer(new SpeedBugRenderer(_gameWorld));
         AddRenderer(new SnakePartRenderer(_gameWorld));
@@ -37,16 +36,16 @@ public class PlayScreen : ScreenBase
         var keyboardState = Keyboard.GetState();
 
         if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Up);
+            _gameWorld.ChangeDirection(SnakeDirection.Up);
 
         if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
-            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Down);
+            _gameWorld.ChangeDirection(SnakeDirection.Down);
 
         if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Left);
+            _gameWorld.ChangeDirection(SnakeDirection.Left);
 
         if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-            _gameWorld.PlayerSnake.ChangeDirection(SnakeDirection.Right);
+            _gameWorld.ChangeDirection(SnakeDirection.Right);
 
         if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
             _gameWorld.TogglePause();

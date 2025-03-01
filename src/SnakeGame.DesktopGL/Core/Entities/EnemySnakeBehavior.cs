@@ -98,19 +98,13 @@ public class EnemySnakeBehavior
             Constants.SegmentSize);
         
         // Wall
-        if (!_gameWorld.GetRectangle().Contains(headRectangle))
+        if (!GameWorld.GetRectangle().Contains(headRectangle))
         {
             return ObjectType.Unavoidable;
         }
 
-        // Player snake
-        if (_gameWorld.PlayerSnake.Intersects(headRectangle))
-        {
-            return ObjectType.Unavoidable;
-        }
-
-        // Enemy snake
-        if (_gameWorld.EnemySnakes.Any(x => x.Intersects(headRectangle)))
+        // Other snake
+        if (_gameWorld.Snakes.Any(x => x.Intersects(headRectangle)))
         {
             return ObjectType.Unavoidable;
         }

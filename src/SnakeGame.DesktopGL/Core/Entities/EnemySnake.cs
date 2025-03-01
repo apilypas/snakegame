@@ -17,6 +17,7 @@ public class EnemySnake : Snake
     public override void Update(float deltaTime)
     {
         var direction = _behavior.GetDirection();
+        
         ChangeDirection(direction);
 
         base.Update(deltaTime);

@@ -38,28 +38,34 @@ public class PlayFieldRenderer : RendererBase
         _backgroundSprite1 = TextureSprite
             .Create(new Rectangle(40, 40, 20, 20))
             .Load(content, "snake");
+
         _backgroundSprite2 = TextureSprite
             .Create(new Rectangle(60, 40, 20, 20))
             .Load(content, "snake");
+
         _gridSprite = TextureSprite
             .Create(new Rectangle(80, 40, 20, 20))
             .Load(content, "snake");
+
         _frameSprite1 = TextureSprite
             .Create(new Rectangle(0, 40, 20, 20))
-            .WithRotation(0f)
             .Load(content, "snake");
+        _frameSprite1.Rotation = 0f;
+
         _frameSprite2 = TextureSprite
             .Create(new Rectangle(0, 40, 20, 20))
-            .WithRotation(MathF.PI / 2f)
             .Load(content, "snake");
+        _frameSprite2.Rotation = MathF.PI / 2f;
+
         _frameSprite3 = TextureSprite
             .Create(new Rectangle(0, 40, 20, 20))
-            .WithRotation(MathF.PI)
             .Load(content, "snake");
+        _frameSprite3.Rotation = MathF.PI;
+
         _frameSprite4 = TextureSprite
             .Create(new Rectangle(0, 40, 20, 20))
-            .WithRotation(-MathF.PI / 2f)
             .Load(content, "snake");
+        _frameSprite4.Rotation = -MathF.PI / 2f;
 
         InitializeBackground();
     }

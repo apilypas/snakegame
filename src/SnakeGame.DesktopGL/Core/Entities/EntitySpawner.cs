@@ -200,8 +200,7 @@ public class EntitySpawner
                     Constants.SegmentSize,
                     Constants.SegmentSize);
                 
-                if (!_gameWorld.PlayerSnake.Intersects(rectangle)
-                    && !_gameWorld.EnemySnakes.Any(x => x.Intersects(rectangle)))
+                if (!_gameWorld.Snakes.Any(x => x.Intersects(rectangle)))
                 {
                     return new Vector2(x, y);
                 }

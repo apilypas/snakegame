@@ -22,12 +22,12 @@ public abstract class RendererBase
             sprite.Texture,
             location + sprite.Origin,
             sprite.SourceRectangle,
-            Color.White,
+            sprite.Color,
             rotation,
             sprite.Origin,
-            1f,
+            sprite.Scale,
             sprite.Effects,
-            0f);
+            sprite.LayerDepth);
     }
 
     protected void Draw(SpriteBatch spriteBatch, Vector2 location, TextureSprite sprite)
@@ -36,12 +36,12 @@ public abstract class RendererBase
             sprite.Texture,
             location + Offset + sprite.Origin,
             sprite.SourceRectangle,
-            Color.White,
+            sprite.Color,
             sprite.Rotation,
             sprite.Origin,
-            1f,
+            sprite.Scale,
             sprite.Effects,
-            0f);
+            sprite.LayerDepth);
     }
 
     protected void Draw(SpriteBatch spriteBatch, Vector2 location, TextSprite sprite)
@@ -50,11 +50,11 @@ public abstract class RendererBase
             sprite.Font,
             sprite.Text,
             location + Offset,
-            Colors.DefaultTextColor,
-            0,
+            sprite.Color,
+            sprite.Rotation,
             sprite.Font.MeasureString(sprite.Text) / 2f,
-            1f,
+            sprite.Scale,
             SpriteEffects.None,
-            0f);
+            sprite.LayerDepth);
     }
 }

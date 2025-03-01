@@ -14,8 +14,8 @@ public class StartScreenRenderer : RendererBase
 
     public override void LoadContent(ContentManager content)
     {
-        _textSprite = TextSprite.Create("Click anywhere to start")
-            .Load(content, "font1");
+        _textSprite = TextSprite.Create().Load(content, "font1");
+        _textSprite.Text = "Click anywhere to start";
     }
 
     public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)

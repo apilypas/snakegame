@@ -25,6 +25,7 @@ public class Snake
     public SnakeSegment Head => _head;
     public SnakeSegment Tail => _tail;
     public SnakeState State => _state;
+
     private Snake() { }
 
     protected Snake(Vector2 initialLocation)

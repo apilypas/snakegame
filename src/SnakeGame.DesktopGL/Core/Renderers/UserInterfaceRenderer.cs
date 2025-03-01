@@ -62,8 +62,10 @@ public class UserInterfaceRenderer : RendererBase
 
     private void RenderScores(SpriteBatch spriteBatch)
     {
+        _scoreSprite.Text =  $"Score: {_gameWorld.Score}";
+
         Draw(spriteBatch,
-            new Vector2(_gameWorld.GetRectangle().Width + 60f, 20f),
-            _scoreSprite.WithText($"Score: {_gameWorld.Score}"));
+            new Vector2(GameWorld.GetRectangle().Width + 60f, 20f),
+            _scoreSprite);
     }
 }
