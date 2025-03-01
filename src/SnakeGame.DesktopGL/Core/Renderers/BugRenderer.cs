@@ -23,8 +23,10 @@ public class BugRenderer : RendererBase
             .Load(content, "snake");
     }
 
-    public override void Render(SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
     {
+        Offset = PlayFieldRenderer.GetPlayFieldOffset(graphicsDevice);
+
         foreach (var bug in _gameWorld.EntitySpawner.Bugs)
             Draw(spriteBatch, bug, _bugSprite);
     }

@@ -26,9 +26,12 @@ public class UserInterfaceRenderer : RendererBase
         _scoreSprite = TextSprite.Create().Load(content, "font1");
     }
 
-    public override void Render(SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
     {
+        Offset = PlayFieldRenderer.GetPlayFieldOffset(graphicsDevice);
+
         RenderScores(spriteBatch);
+        RenderModals(spriteBatch);
     }
 
     public void RenderModals(SpriteBatch spriteBatch)

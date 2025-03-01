@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
@@ -109,7 +110,7 @@ public class EnemySnakeBehavior
         }
 
         // Enemy snake
-        if (_gameWorld.EnemySnake.Intersects(headRectangle))
+        if (_gameWorld.EnemySnakes.Any(x => x.Intersects(headRectangle)))
         {
             return ObjectType.Unavoidable;
         }

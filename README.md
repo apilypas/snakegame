@@ -6,4 +6,4 @@ Features:
 * Collectables
 * Scores
 * Speed ups
-* Enemy with simple AI
+* Multiple enemy with simple AI

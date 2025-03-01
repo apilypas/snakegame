@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using SnakeGame.DesktopGL.Core.Entities;
@@ -8,7 +8,7 @@ namespace SnakeGame.DesktopGL.Core;
 public class GameWorld
 {
     public PlayerSnake PlayerSnake { get; private set; }
-    public EnemySnake EnemySnake { get; private set; }
+    public IList<EnemySnake> EnemySnakes { get; private set; } = [];
     public EntitySpawner EntitySpawner { get; private set; }
     public int Score { get; private set; }
     public bool IsPaused { get; private set; }
@@ -18,7 +18,11 @@ public class GameWorld
     {
         EntitySpawner = new EntitySpawner(this);
         PlayerSnake = new PlayerSnake();
-        EnemySnake = new EnemySnake(this);
+        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
+        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 60f)));
+        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
+        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
+        EnemySnakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
         IsPaused = false;
         HasGrid = false;
         Score = 0;
@@ -27,7 +31,11 @@ public class GameWorld
     public void Initialize()
     {
         PlayerSnake.Initialize();
-        EnemySnake.Initialize();
+
+        foreach (var enemySnake in EnemySnakes)
+        {
+            enemySnake.Initialize();
+        }
     }
 
     public void Update(float deltaTime)
@@ -60,37 +68,41 @@ public class GameWorld
 
             if (PlayerSnake.IntersectsWithHead()
                 || !GetRectangle().Contains(PlayerSnake.Head.GetRectangle())
-                || EnemySnake.Intersects(PlayerSnake.Head.GetRectangle()))
+                || EnemySnakes.Any(x => x.Intersects(PlayerSnake.Head.GetRectangle())))
             {
                 PlayerSnake.Die();
             }
         }
 
-        if (EnemySnake.State == SnakeState.Alive)
+        foreach (var enemySnake in EnemySnakes)
         {
-            EnemySnake.Update(deltaTime);
-
-            if (EntitySpawner.KillBugAt(EnemySnake.Head.GetRectangle()))
+            if (enemySnake.State == SnakeState.Alive)
             {
-                EnemySnake.Grow();
-            }
+                enemySnake.Update(deltaTime);
 
-            if (EntitySpawner.KillSnakePartAt(EnemySnake.Head.GetRectangle()))
-            {
-                EnemySnake.Grow();
-            }
+                if (EntitySpawner.KillBugAt(enemySnake.Head.GetRectangle()))
+                {
+                    enemySnake.Grow();
+                }
 
-            if (EntitySpawner.KillSpeedBugAt(EnemySnake.Head.GetRectangle()))
-            {
-                EnemySnake.Grow();
-                EnemySnake.ResetSpeedUpTimer();
-            }
+                if (EntitySpawner.KillSnakePartAt(enemySnake.Head.GetRectangle()))
+                {
+                    enemySnake.Grow();
+                }
 
-            if (EnemySnake.IntersectsWithHead()
-                || !GetRectangle().Contains(EnemySnake.Head.GetRectangle())
-                || PlayerSnake.Intersects(EnemySnake.Head.GetRectangle()))
-            {
-                EnemySnake.Die();
+                if (EntitySpawner.KillSpeedBugAt(enemySnake.Head.GetRectangle()))
+                {
+                    enemySnake.Grow();
+                    enemySnake.ResetSpeedUpTimer();
+                }
+
+                if (enemySnake.IntersectsWithHead()
+                    || !GetRectangle().Contains(enemySnake.Head.GetRectangle())
+                    || PlayerSnake.Intersects(enemySnake.Head.GetRectangle())
+                    || EnemySnakes.Any(x => x != enemySnake && x.Intersects(enemySnake.Head.GetRectangle())))
+                {
+                    enemySnake.Die();
+                }
             }
         }
 
@@ -109,18 +121,21 @@ public class GameWorld
             }
         }
 
-        if (EnemySnake.State == SnakeState.Dead)
+        foreach (var enemySnake in EnemySnakes)
         {
-            // TODO: should we use observer pattern here?
-            if (EnemySnake.Reduce(deltaTime))
+            if (enemySnake.State == SnakeState.Dead)
             {
-                if (EnemySnake.Segments.Count > 0)
-                    EntitySpawner.SpawnSnakePart(EnemySnake.Segments[0].Location);
-            }
+                // TODO: should we use observer pattern here?
+                if (enemySnake.Reduce(deltaTime))
+                {
+                    if (enemySnake.Segments.Count > 0)
+                        EntitySpawner.SpawnSnakePart(enemySnake.Segments[0].Location);
+                }
 
-            if (EnemySnake.Segments.Count == 0)
-            {
-                EnemySnake.Reset();
+                if (enemySnake.Segments.Count == 0)
+                {
+                    enemySnake.Reset();
+                }
             }
         }
 

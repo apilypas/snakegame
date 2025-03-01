@@ -18,9 +18,9 @@ public class StartScreenRenderer : RendererBase
             .Load(content, "font1");
     }
 
-    public override void Render(SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
     {
-        Draw(spriteBatch, GetCenter(spriteBatch.GraphicsDevice), _textSprite);
+        Draw(spriteBatch, GetCenter(graphicsDevice), _textSprite);
     }
 
     private Vector2 GetCenter(GraphicsDevice graphicsDevice)

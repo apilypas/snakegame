@@ -64,11 +64,20 @@ public class PlayFieldRenderer : RendererBase
         InitializeBackground();
     }
 
-    public override void Render(SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
     {
+        Offset = GetPlayFieldOffset(graphicsDevice);
+        
         DrawBacground(spriteBatch);
         DrawGrid(spriteBatch);
         DrawFrame(spriteBatch);
+    }
+
+    public static Vector2 GetPlayFieldOffset(GraphicsDevice graphicsDevice)
+    {
+        return new Vector2(
+            (graphicsDevice.Viewport.Width - Constants.WallWidth * Constants.SegmentSize) / 2f,
+            (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2f);
     }
 
     private void DrawBacground(SpriteBatch spriteBatch)

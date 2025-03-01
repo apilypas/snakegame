@@ -11,7 +11,7 @@ public abstract class RendererBase
     public Vector2 Offset { get; set; }
 
     public abstract void LoadContent(ContentManager content);
-    public abstract void Render(SpriteBatch spriteBatch, float deltaTime);
+    public abstract void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime);
 
     protected void Draw(SpriteBatch spriteBatch, EntityBase entity, TextureSprite sprite)
     {

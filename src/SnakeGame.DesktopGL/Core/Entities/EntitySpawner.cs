@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
@@ -200,7 +201,7 @@ public class EntitySpawner
                     Constants.SegmentSize);
                 
                 if (!_gameWorld.PlayerSnake.Intersects(rectangle)
-                    && !_gameWorld.EnemySnake.Intersects(rectangle))
+                    && !_gameWorld.EnemySnakes.Any(x => x.Intersects(rectangle)))
                 {
                     return new Vector2(x, y);
                 }

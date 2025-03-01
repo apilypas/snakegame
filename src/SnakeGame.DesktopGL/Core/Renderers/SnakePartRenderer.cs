@@ -23,8 +23,10 @@ public class SnakePartRenderer : RendererBase
             .Load(content, "snake");
     }
 
-    public override void Render(SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
     {
+        Offset = PlayFieldRenderer.GetPlayFieldOffset(graphicsDevice);
+
         foreach (var snakePart in _gameWorld.EntitySpawner.SnakeParts)
             Draw(spriteBatch, snakePart, _snakePartSprite);
     }
