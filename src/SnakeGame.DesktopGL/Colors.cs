@@ -3,17 +3,17 @@ using Microsoft.Xna.Framework;
 namespace SnakeGame.DesktopGL;
 
 /*
-https://coolors.co/454545-6d5959-9dcbba-abebd2-04f06a
+https://coolors.co/palette/8ecae6-219ebc-023047-ffb703-fb8500
 Color palette values
-#454545
-#6D5959
-#9DCBBA
-#ABEBD2
-#04F06A
+#8ECAE6
+#219EBC
+#023047
+#FFB703
+#FB8500
 */
 
-public class Colors
+public static class Colors
 {
-    public static Color DefaultBackgroundColor = new(0x45, 0x45, 0x45);
-    public static Color DefaultTextColor = new(0xAB, 0xEB, 0xD2);
+    public static Color DefaultBackgroundColor = Color.FromNonPremultiplied(0x02, 0x30, 0x47, 255);
+    public static Color DefaultTextColor = Color.White;
 }
