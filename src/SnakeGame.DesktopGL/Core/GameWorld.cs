@@ -47,19 +47,21 @@ public class GameWorld
         {
             PlayerSnake.Update(deltaTime);
 
-            if (EntitySpawner.KillBugAt(PlayerSnake.Head.GetRectangle()))
+            var headRectangle = PlayerSnake.Head.GetRectangle();
+
+            if (EntitySpawner.KillBugAt(headRectangle))
             {
                 Score += Constants.BugKillScore;
                 PlayerSnake.Grow();
             }
 
-            if (EntitySpawner.KillSnakePartAt(PlayerSnake.Head.GetRectangle()))
+            if (EntitySpawner.KillSnakePartAt(headRectangle))
             {
                 Score += Constants.SnakePartKillScore;
                 PlayerSnake.Grow();
             }
 
-            if (EntitySpawner.KillSpeedBugAt(PlayerSnake.Head.GetRectangle()))
+            if (EntitySpawner.KillSpeedBugAt(headRectangle))
             {
                 Score += Constants.SpeedBugKillScore;
                 PlayerSnake.Grow();
@@ -67,8 +69,8 @@ public class GameWorld
             }
 
             if (PlayerSnake.IntersectsWithHead()
-                || !GetRectangle().Contains(PlayerSnake.Head.GetRectangle())
-                || EnemySnakes.Any(x => x.Intersects(PlayerSnake.Head.GetRectangle())))
+                || !GetRectangle().Contains(headRectangle)
+                || EnemySnakes.Any(x => x.Intersects(headRectangle)))
             {
                 PlayerSnake.Die();
             }
@@ -80,26 +82,28 @@ public class GameWorld
             {
                 enemySnake.Update(deltaTime);
 
-                if (EntitySpawner.KillBugAt(enemySnake.Head.GetRectangle()))
+                var headRectangle = enemySnake.Head.GetRectangle();
+
+                if (EntitySpawner.KillBugAt(headRectangle))
                 {
                     enemySnake.Grow();
                 }
 
-                if (EntitySpawner.KillSnakePartAt(enemySnake.Head.GetRectangle()))
+                if (EntitySpawner.KillSnakePartAt(headRectangle))
                 {
                     enemySnake.Grow();
                 }
 
-                if (EntitySpawner.KillSpeedBugAt(enemySnake.Head.GetRectangle()))
+                if (EntitySpawner.KillSpeedBugAt(headRectangle))
                 {
                     enemySnake.Grow();
                     enemySnake.ResetSpeedUpTimer();
                 }
 
                 if (enemySnake.IntersectsWithHead()
-                    || !GetRectangle().Contains(enemySnake.Head.GetRectangle())
-                    || PlayerSnake.Intersects(enemySnake.Head.GetRectangle())
-                    || EnemySnakes.Any(x => x != enemySnake && x.Intersects(enemySnake.Head.GetRectangle())))
+                    || !GetRectangle().Contains(headRectangle)
+                    || PlayerSnake.Intersects(headRectangle)
+                    || EnemySnakes.Any(x => x != enemySnake && x.Intersects(headRectangle)))
                 {
                     enemySnake.Die();
                 }
