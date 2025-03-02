@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
-public class Snake
+public class Snake : EntityBase
 {
     private List<SnakeSegment> _segments;
     private SnakeSegment _head;

@@ -13,7 +13,6 @@ public class PlayFieldRenderer : RendererBase
 
     private TextureSprite _backgroundSprite1;
     private TextureSprite _backgroundSprite2;
-    private TextureSprite _gridSprite;
     private TextureSprite _frameSprite1;
     private TextureSprite _frameSprite2;
     private TextureSprite _frameSprite3;
@@ -21,7 +20,6 @@ public class PlayFieldRenderer : RendererBase
     
     private IList<Vector2> _backgroundTiles;
     private IList<Vector2> _backgroundGrassTiles;
-    private IList<Vector2> _gridTiles;
     private IList<Vector2> _frameTiles;
 
     public PlayFieldRenderer(GameWorld gameWorld)
@@ -29,7 +27,6 @@ public class PlayFieldRenderer : RendererBase
         _gameWorld = gameWorld;
         _backgroundTiles = [];
         _backgroundGrassTiles = [];
-        _gridTiles = [];
         _frameTiles = [];
     }
 
@@ -41,10 +38,6 @@ public class PlayFieldRenderer : RendererBase
 
         _backgroundSprite2 = TextureSprite
             .Create(new Rectangle(60, 40, 20, 20))
-            .Load(content, "snake");
-
-        _gridSprite = TextureSprite
-            .Create(new Rectangle(80, 40, 20, 20))
             .Load(content, "snake");
 
         _frameSprite1 = TextureSprite
@@ -75,7 +68,6 @@ public class PlayFieldRenderer : RendererBase
         Offset = GetPlayFieldOffset(graphicsDevice);
         
         DrawBacground(spriteBatch);
-        DrawGrid(spriteBatch);
         DrawFrame(spriteBatch);
     }
 
@@ -93,15 +85,6 @@ public class PlayFieldRenderer : RendererBase
 
         foreach (var location in _backgroundGrassTiles)
             Draw(spriteBatch, location, _backgroundSprite2);
-    }
-
-    private void DrawGrid(SpriteBatch spriteBatch)
-    {
-        if (!_gameWorld.HasGrid)
-            return;
-
-        foreach (var location in _gridTiles)
-            Draw(spriteBatch, location, _gridSprite);
     }
 
     private void DrawFrame(SpriteBatch spriteBatch)
@@ -138,7 +121,6 @@ public class PlayFieldRenderer : RendererBase
                     _backgroundGrassTiles.Add(location);
                 else
                     _backgroundTiles.Add(location);
-                _gridTiles.Add(location);
                 if (i == 0 || i == (Constants.WallHeight - 1) || j == 0 || j == (Constants.WallWidth - 1))
                     _frameTiles.Add(location);
             }

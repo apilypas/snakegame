@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Events;
 
 namespace SnakeGame.DesktopGL.Core;
 
@@ -10,22 +10,22 @@ public class GameWorld
 {
     public IList<Snake> Snakes { get; private set; } = [];
     public EntitySpawner EntitySpawner { get; private set; }
-    public int Score { get; private set; }
     public bool IsPaused { get; private set; }
-    public bool HasGrid { get; private set; }
 
+    public EventManager EventManager { get; } = new EventManager();
+    
     public GameWorld()
     {
         EntitySpawner = new EntitySpawner(this);
+
         Snakes.Add(new PlayerSnake());
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 60f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
+
         IsPaused = false;
-        HasGrid = false;
-        Score = 0;
     }
 
     public void Initialize()
@@ -49,26 +49,25 @@ public class GameWorld
 
                 var headRectangle = snake.Head.GetRectangle();
 
-                if (EntitySpawner.KillBugAt(headRectangle))
-                {
-                    if (snake is PlayerSnake)
-                        Score += Constants.BugKillScore;
-                    snake.Grow();
-                }
+                var collectable = EntitySpawner.RemoveCollectable(snake);
 
-                if (EntitySpawner.KillSnakePartAt(headRectangle))
+                if (collectable != null)
                 {
-                    if (snake is PlayerSnake)
-                        Score += Constants.SnakePartKillScore;
-                    snake.Grow();
-                }
+                    if (collectable.Type == CollectableType.Diamond)
+                    {
+                        snake.Grow();
+                    }
 
-                if (EntitySpawner.KillSpeedBugAt(headRectangle))
-                {
-                    if (snake is PlayerSnake)
-                        Score += Constants.SpeedBugKillScore;
-                    snake.Grow();
-                    snake.ResetSpeedUpTimer();
+                    if (collectable.Type == CollectableType.SnakePart)
+                    {
+                        snake.Grow();
+                    }
+
+                    if (collectable.Type == CollectableType.SpeedBoost)
+                    {
+                        snake.Grow();
+                        snake.ResetSpeedUpTimer();
+                    }
                 }
 
                 if (snake.IntersectsWithHead()
@@ -84,17 +83,11 @@ public class GameWorld
         {
             if (snake.State == SnakeState.Dead)
             {
-                // TODO: should we use observer pattern here?
-                if (snake.Reduce(deltaTime))
-                {
-                    if (snake.Segments.Count > 0)
-                        EntitySpawner.SpawnSnakePart(snake.Segments[0].Location);
-                }
+                if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
+                    EntitySpawner.SpawnSnakePart(snake.Segments[0].Location);
 
                 if (snake.Segments.Count == 0)
-                {
                     snake.Reset();
-                }
             }
         }
 
@@ -104,11 +97,6 @@ public class GameWorld
     public void TogglePause()
     {
         IsPaused = !IsPaused;
-    }
-
-    public void ToggleGrid()
-    {
-        HasGrid = !HasGrid;
     }
 
     public void SpeedUp()

@@ -109,24 +109,10 @@ public class EnemySnakeBehavior
             return ObjectType.Unavoidable;
         }
 
-        // Bug
-        foreach (var bug in _gameWorld.EntitySpawner.Bugs)
+        // Collectables
+        foreach (var collectable in _gameWorld.EntitySpawner.Collectables)
         {
-            if (headRectangle.Contains(bug.Location))
-                return ObjectType.Collectable;
-        }
-
-        // Snake pars
-        foreach (var snakePart in _gameWorld.EntitySpawner.SnakeParts)
-        {
-            if (headRectangle.Contains(snakePart.Location))
-                return ObjectType.Collectable;
-        }
-
-        // Speed bug
-        foreach (var speedBug in _gameWorld.EntitySpawner.SpeedBugs)
-        {
-            if (headRectangle.Contains(speedBug.Location))
+            if (headRectangle.Contains(collectable.Location))
                 return ObjectType.Collectable;
         }
 

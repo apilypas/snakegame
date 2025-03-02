@@ -12,10 +12,12 @@ public class UserInterfaceRenderer : RendererBase
     private TextSprite _scoreSprite;
 
     private GameWorld _gameWorld;
+    private ScoreBoard _scoreBoard;
 
-    public UserInterfaceRenderer(GameWorld gameWorld)
+    public UserInterfaceRenderer(GameWorld gameWorld, ScoreBoard scoreBoard)
     {
         _gameWorld = gameWorld;
+        _scoreBoard = scoreBoard;
     }
 
     public override void LoadContent(ContentManager content)
@@ -62,7 +64,7 @@ public class UserInterfaceRenderer : RendererBase
 
     private void RenderScores(SpriteBatch spriteBatch)
     {
-        _scoreSprite.Text =  $"Score: {_gameWorld.Score}";
+        _scoreSprite.Text = _scoreBoard.ScoreText;
 
         Draw(spriteBatch,
             new Vector2(GameWorld.GetRectangle().Width + 60f, 20f),
