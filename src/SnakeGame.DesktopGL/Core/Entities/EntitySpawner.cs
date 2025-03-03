@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using SnakeGame.DesktopGL.Core.Events;
@@ -14,8 +13,6 @@ public class EntitySpawner
     private float _diamondSpawnTimer = 0f;
     private float _speedBoostSpawnTimer = 0f;
 
-    public IList<Collectable> Collectables { get; } = [];
-
     public EntitySpawner(GameWorld gameWorld)
     {
         _random = new Random();
@@ -24,7 +21,7 @@ public class EntitySpawner
 
     public void Update(float deltaTime)
     {
-        if (Collectables.Count == 0)
+        if (_gameWorld.Collectables.Count == 0)
         {
             SpawnRandomDiamond();
         }
@@ -54,7 +51,7 @@ public class EntitySpawner
                 Type = CollectableType.SnakePart,
                 Location = location
             };
-            Collectables.Add(snakePart);
+            _gameWorld.Collectables.Add(snakePart);
         }
     }
 
@@ -63,9 +60,9 @@ public class EntitySpawner
         var targetRectangle = snake.Head.GetRectangle();
         var at = -1;
         
-        for (var i = 0; i < Collectables.Count; i++)
+        for (var i = 0; i < _gameWorld.Collectables.Count; i++)
         {
-            var collectable = Collectables[i];
+            var collectable = _gameWorld.Collectables[i];
 
             var rectangle = new Rectangle(
                 (int)collectable.Location.X,
@@ -82,11 +79,9 @@ public class EntitySpawner
 
         if (at >= 0)
         {
-            var collectable = Collectables[at];
-            Collectables.RemoveAt(at);
-
+            var collectable = _gameWorld.Collectables[at];
+            _gameWorld.Collectables.RemoveAt(at);
             _gameWorld.EventManager.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
-
             return collectable;
         }
 
@@ -95,14 +90,14 @@ public class EntitySpawner
 
     private void SpawnRandomDiamond()
     {
-        if (Collectables.Count(x => x.Type == CollectableType.Diamond) >= Constants.MaxDiamondLimit)
+        if (_gameWorld.Collectables.Count(x => x.Type == CollectableType.Diamond) >= Constants.MaxDiamondLimit)
             return;
 
         var location = FindFreeLocation();
 
         if (location != null)
         {
-            Collectables.Add(new Collectable
+            _gameWorld.Collectables.Add(new Collectable
             {
                 Type = CollectableType.Diamond,
                 Location = location.Value
@@ -110,16 +105,16 @@ public class EntitySpawner
         }
     }
 
-    public void SpawnRandomSpeedBoost()
+    private void SpawnRandomSpeedBoost()
     {
-        if (Collectables.Count(x => x.Type == CollectableType.SpeedBoost) >= Constants.MaxSpeedBoostLimit)
+        if (_gameWorld.Collectables.Count(x => x.Type == CollectableType.SpeedBoost) >= Constants.MaxSpeedBoostLimit)
             return;
 
         var location = FindFreeLocation();
 
         if (location != null)
         {
-            Collectables.Add(new Collectable
+            _gameWorld.Collectables.Add(new Collectable
             {
                 Type = CollectableType.SpeedBoost,
                 Location = location.Value
@@ -170,7 +165,7 @@ public class EntitySpawner
         if (_gameWorld.Snakes.Any(x => x.Intersects(rectangle)))
             return false;
         
-        if (Collectables.Any(x => x.Location == location))
+        if (_gameWorld.Collectables.Any(x => x.Location == location))
             return false;
         
         return true;

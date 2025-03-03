@@ -38,7 +38,7 @@ public class CollectableRenderer : RendererBase
     {
         Offset = PlayFieldRenderer.GetPlayFieldOffset(graphicsDevice);
 
-        foreach (var collectable in _gameWorld.EntitySpawner.Collectables)
+        foreach (var collectable in _gameWorld.Collectables)
         {
             if (collectable.Type == CollectableType.Diamond)
                 Draw(spriteBatch, collectable, _diamondSprite);

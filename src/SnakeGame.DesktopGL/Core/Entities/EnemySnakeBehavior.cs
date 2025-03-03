@@ -110,7 +110,7 @@ public class EnemySnakeBehavior
         }
 
         // Collectables
-        foreach (var collectable in _gameWorld.EntitySpawner.Collectables)
+        foreach (var collectable in _gameWorld.Collectables)
         {
             if (headRectangle.Contains(collectable.Location))
                 return ObjectType.Collectable;

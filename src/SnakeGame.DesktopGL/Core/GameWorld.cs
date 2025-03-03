@@ -8,14 +8,16 @@ namespace SnakeGame.DesktopGL.Core;
 
 public class GameWorld
 {
-    public IList<Snake> Snakes { get; private set; } = [];
-    public EntitySpawner EntitySpawner { get; private set; }
+    private readonly EntitySpawner _entitySpawner;
+
+    public IList<Snake> Snakes { get; } = [];
+    public IList<Collectable> Collectables { get; } = [];
     
-    public EventManager EventManager { get; } = new EventManager();
+    public EventManager EventManager { get; } = new();
     
     public GameWorld()
     {
-        EntitySpawner = new EntitySpawner(this);
+        _entitySpawner = new EntitySpawner(this);
 
         Snakes.Add(new PlayerSnake());
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
@@ -43,7 +45,7 @@ public class GameWorld
 
                 var headRectangle = snake.Head.GetRectangle();
 
-                var collectable = EntitySpawner.RemoveCollectable(snake);
+                var collectable = _entitySpawner.RemoveCollectable(snake);
 
                 if (collectable != null)
                 {
@@ -78,14 +80,14 @@ public class GameWorld
             if (snake.State == SnakeState.Dead)
             {
                 if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
-                    EntitySpawner.SpawnSnakePart(snake.Segments[0].Location);
+                    _entitySpawner.SpawnSnakePart(snake.Segments[0].Location);
 
                 if (snake.Segments.Count == 0)
                     snake.Reset();
             }
         }
 
-        EntitySpawner.Update(deltaTime);
+        _entitySpawner.Update(deltaTime);
     }
 
     public void SpeedUp()
