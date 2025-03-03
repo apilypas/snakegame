@@ -10,8 +10,7 @@ public class GameWorld
 {
     public IList<Snake> Snakes { get; private set; } = [];
     public EntitySpawner EntitySpawner { get; private set; }
-    public bool IsPaused { get; private set; }
-
+    
     public EventManager EventManager { get; } = new EventManager();
     
     public GameWorld()
@@ -24,8 +23,6 @@ public class GameWorld
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
         Snakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
-
-        IsPaused = false;
     }
 
     public void Initialize()
@@ -38,9 +35,6 @@ public class GameWorld
 
     public void Update(float deltaTime)
     {
-        if (IsPaused)
-            return;
-
         foreach (var snake in Snakes)
         {
             if (snake.State == SnakeState.Alive)
@@ -92,11 +86,6 @@ public class GameWorld
         }
 
         EntitySpawner.Update(deltaTime);
-    }
-
-    public void TogglePause()
-    {
-        IsPaused = !IsPaused;
     }
 
     public void SpeedUp()

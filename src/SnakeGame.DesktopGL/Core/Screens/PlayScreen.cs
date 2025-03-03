@@ -8,24 +8,27 @@ public class PlayScreen : ScreenBase
 {
     private readonly GameWorld _gameWorld;
     private readonly ScoreBoard _scoreBoard;
+    private readonly ModalState _modalState;
 
     private KeyboardState _oldKeyboardState;
 
-    private ScreenManager _stateManager;
+    private ScreenManager _screenManager;
 
-    public PlayScreen(ScreenManager stateManager)
+    public PlayScreen(ScreenManager screenManager)
     {
-        _stateManager = stateManager;
+        _screenManager = screenManager;
         
         _gameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
+        _modalState = new ModalState();
 
         _gameWorld.EventManager.AddObserver(_scoreBoard);
 
         AddRenderer(new PlayFieldRenderer(_gameWorld));
         AddRenderer(new SnakeRenderer(_gameWorld.Snakes));
         AddRenderer(new CollectableRenderer(_gameWorld));
-        AddRenderer(new UserInterfaceRenderer(_gameWorld, _scoreBoard));
+        AddRenderer(new ScoreBoardRenderer(_scoreBoard));
+        AddRenderer(new ModalsRenderer(_modalState));
     }
 
     public override void Initialize()
@@ -50,7 +53,7 @@ public class PlayScreen : ScreenBase
             _gameWorld.ChangeDirection(SnakeDirection.Right);
 
         if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
-            _gameWorld.TogglePause();
+            _modalState.TogglePausedModal();
         
         if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
             _gameWorld.SpeedUp();
@@ -60,6 +63,7 @@ public class PlayScreen : ScreenBase
 
         _oldKeyboardState = keyboardState;
 
-        _gameWorld.Update(deltaTime);
+        if (_modalState.Type == ModalState.ModalStateType.None)
+            _gameWorld.Update(deltaTime);
     }
 }
