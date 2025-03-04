@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Input;
-using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Commands;
+using SnakeGame.DesktopGL.Core.Events;
 using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
@@ -10,17 +11,20 @@ public class PlayScreen : ScreenBase
     private readonly ScoreBoard _scoreBoard;
     private readonly ModalState _modalState;
 
-    private KeyboardState _oldKeyboardState;
-
-    private ScreenManager _screenManager;
+    private readonly InputManager _inputManager;
+    private readonly GlobalCommands _globalCommands;
+    private readonly PlayScreenCommands _playScreenCommands;
 
     public PlayScreen(ScreenManager screenManager)
     {
-        _screenManager = screenManager;
+        _inputManager = new InputManager();
         
         _gameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
         _modalState = new ModalState();
+
+        _globalCommands = new GlobalCommands(screenManager);
+        _playScreenCommands = new PlayScreenCommands(_gameWorld, _modalState);
 
         _gameWorld.EventManager.AddObserver(_scoreBoard);
 
@@ -34,36 +38,28 @@ public class PlayScreen : ScreenBase
     public override void Initialize()
     {
         _gameWorld.Initialize();
+        
+        _inputManager.BindKeyDown(Keys.Up, _playScreenCommands.MoveUp);
+        _inputManager.BindKeyDown(Keys.Left, _playScreenCommands.MoveLeft);
+        _inputManager.BindKeyDown(Keys.Right, _playScreenCommands.MoveRight);
+        _inputManager.BindKeyDown(Keys.Down, _playScreenCommands.MoveDown);
+        _inputManager.BindKeyDown(Keys.W, _playScreenCommands.MoveUp);
+        _inputManager.BindKeyDown(Keys.A, _playScreenCommands.MoveLeft);
+        _inputManager.BindKeyDown(Keys.D, _playScreenCommands.MoveRight);
+        _inputManager.BindKeyDown(Keys.S, _playScreenCommands.MoveDown);
+        _inputManager.BindKeyPressed(Keys.Space, _playScreenCommands.SpeedUp);
+        _inputManager.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
+        _inputManager.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
+        _inputManager.BindKeyPressed(Keys.Q, _globalCommands.Quit);
     }
 
     public override void Update(float deltaTime)
     {
-        var keyboardState = Keyboard.GetState();
+        _inputManager.Update();
 
-        if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            _gameWorld.ChangeDirection(SnakeDirection.Up);
-
-        if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
-            _gameWorld.ChangeDirection(SnakeDirection.Down);
-
-        if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-            _gameWorld.ChangeDirection(SnakeDirection.Left);
-
-        if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-            _gameWorld.ChangeDirection(SnakeDirection.Right);
-
-        if (keyboardState.IsKeyDown(Keys.Escape) && _oldKeyboardState.IsKeyUp(Keys.Escape))
-            _modalState.TogglePausedModal();
+        if (_modalState.Type == ModalState.ModalStateType.Paused)
+            return;
         
-        if (keyboardState.IsKeyDown(Keys.Space) && _oldKeyboardState.IsKeyUp(Keys.Space))
-            _gameWorld.SpeedUp();
-        
-        if (keyboardState.IsKeyUp(Keys.Space) && _oldKeyboardState.IsKeyDown(Keys.Space))
-            _gameWorld.SpeedDown();
-
-        _oldKeyboardState = keyboardState;
-
-        if (_modalState.Type == ModalState.ModalStateType.None)
-            _gameWorld.Update(deltaTime);
+        _gameWorld.Update(deltaTime);
     }
 }

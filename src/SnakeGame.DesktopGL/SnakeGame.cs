@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using SnakeGame.DesktopGL.Core.Screens;
 
 namespace SnakeGame.DesktopGL;
@@ -10,7 +9,7 @@ public class SnakeGame : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    private ScreenManager _stateManager;
+    private ScreenManager _screenManager;
 
     public SnakeGame()
     {
@@ -24,8 +23,8 @@ public class SnakeGame : Game
 
     protected override void Initialize()
     {
-        _stateManager = new ScreenManager(GraphicsDevice, Content);
-        _stateManager.Initialize();
+        _screenManager = new ScreenManager(this);
+        _screenManager.Initialize();
 
         base.Initialize();
     }
@@ -34,17 +33,14 @@ public class SnakeGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _stateManager.GetCurrentScreen().LoadContent(GraphicsDevice, Content);
+        _screenManager.GetCurrentScreen().LoadContent(GraphicsDevice, Content);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Q))
-            Exit();
-        
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        _stateManager.GetCurrentScreen().Update(deltaTime);
+        _screenManager.GetCurrentScreen().Update(deltaTime);
     
         base.Update(gameTime);
     }
@@ -52,7 +48,7 @@ public class SnakeGame : Game
     protected override void Draw(GameTime gameTime)
     {
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        var screen = _stateManager.GetCurrentScreen();
+        var screen = _screenManager.GetCurrentScreen();
 
         GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
 

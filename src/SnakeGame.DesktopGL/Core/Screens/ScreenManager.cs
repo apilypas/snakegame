@@ -1,5 +1,4 @@
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
@@ -7,13 +6,11 @@ public class ScreenManager
 {
     private ScreenBase _currentScreen;
 
-    private readonly ContentManager _content;
-    private readonly GraphicsDevice _graphics;
-
-    public ScreenManager(GraphicsDevice graphics, ContentManager content)
+    private readonly Game _game;
+    
+    public ScreenManager(Game game)
     {
-        _graphics = graphics;
-        _content = content;
+        _game = game;
     }
 
     public ScreenBase GetCurrentScreen()
@@ -21,18 +18,23 @@ public class ScreenManager
         return _currentScreen;
     }
 
-    public void SwitchToPlayScreen()
+    public void OpenPlayScreen()
     {
-        _content.Unload();
+        _game.Content.Unload();
         
         _currentScreen = new PlayScreen(this);
         _currentScreen.Initialize();
-        _currentScreen.LoadContent(_graphics, _content);
+        _currentScreen.LoadContent(_game.GraphicsDevice, _game.Content);
     }
 
     public void Initialize()
     {
         _currentScreen = new StartScreen(this);
         _currentScreen.Initialize();
+    }
+
+    public void ExitGame()
+    {
+        _game.Exit();
     }
 }

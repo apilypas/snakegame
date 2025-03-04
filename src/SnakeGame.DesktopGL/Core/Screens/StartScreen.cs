@@ -1,31 +1,32 @@
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.DesktopGL.Core.Commands;
+using SnakeGame.DesktopGL.Core.Events;
 using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
 public class StartScreen : ScreenBase
 {
-    private readonly ScreenManager _stateManager;
+    private readonly InputManager _inputManager;
+    private readonly GlobalCommands _globalCommands;
 
-    public StartScreen(ScreenManager stateManager)
+    public StartScreen(ScreenManager screenManager)
     {
-        _stateManager = stateManager;
+        _inputManager = new InputManager();
+        _globalCommands = new GlobalCommands(screenManager);
         
         AddRenderer(new StartScreenRenderer());
     }
 
     public override void Initialize()
     {
+        _inputManager.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputManager.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
+        _inputManager.BindLeftClick(_globalCommands.OpenPlayScreen);
     }
 
     public override void Update(float deltaTime)
     {
-        var mouseState = Mouse.GetState();
-        var keyboardState = Keyboard.GetState();
-
-        if (mouseState.LeftButton == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Space))
-        {
-            _stateManager.SwitchToPlayScreen();
-        }
+        _inputManager.Update();
     }
 }
