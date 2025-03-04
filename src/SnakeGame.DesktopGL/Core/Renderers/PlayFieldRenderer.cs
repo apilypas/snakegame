@@ -18,9 +18,9 @@ public class PlayFieldRenderer : RendererBase
     private TextureSprite _frameSprite3;
     private TextureSprite _frameSprite4;
     
-    private IList<Vector2> _backgroundTiles;
-    private IList<Vector2> _backgroundGrassTiles;
-    private IList<Vector2> _frameTiles;
+    private readonly IList<Vector2> _backgroundTiles;
+    private readonly IList<Vector2> _backgroundGrassTiles;
+    private readonly IList<Vector2> _frameTiles;
 
     public PlayFieldRenderer(GameWorld gameWorld)
     {
@@ -67,7 +67,7 @@ public class PlayFieldRenderer : RendererBase
     {
         Offset = GetPlayFieldOffset(graphicsDevice);
         
-        DrawBacground(spriteBatch);
+        DrawBackground(spriteBatch);
         DrawFrame(spriteBatch);
     }
 
@@ -78,7 +78,7 @@ public class PlayFieldRenderer : RendererBase
             (graphicsDevice.Viewport.Height - Constants.WallHeight * Constants.SegmentSize) / 2f);
     }
 
-    private void DrawBacground(SpriteBatch spriteBatch)
+    private void DrawBackground(SpriteBatch spriteBatch)
     {
         foreach (var location in _backgroundTiles)
             Draw(spriteBatch, location, _backgroundSprite1);
@@ -89,18 +89,20 @@ public class PlayFieldRenderer : RendererBase
 
     private void DrawFrame(SpriteBatch spriteBatch)
     {
+        const float tolerance = 0.001f;
+        
         foreach (var location in _frameTiles)
         {
             if (location.Y == 0f)
                 Draw(spriteBatch, location, _frameSprite1);
             
-            if (location.Y == (Constants.WallHeight - 1) * Constants.SegmentSize)
+            if (Math.Abs(location.Y - (Constants.WallHeight - 1) * Constants.SegmentSize) < tolerance)
                 Draw(spriteBatch, location, _frameSprite3);
             
             if (location.X == 0f)
                 Draw(spriteBatch, location, _frameSprite4);
             
-            if (location.X == (Constants.WallWidth - 1) * Constants.SegmentSize)
+            if (Math.Abs(location.X - (Constants.WallWidth - 1) * Constants.SegmentSize) < tolerance)
                 Draw(spriteBatch, location, _frameSprite2);
         }
     }

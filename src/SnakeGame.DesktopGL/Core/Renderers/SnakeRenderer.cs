@@ -11,18 +11,13 @@ public class SnakeRenderer : RendererBase
 {
     private readonly IList<Snake> _snakes;
 
-    private struct SnakeSprites
+    private struct SnakeSprites()
     {
         public TextureSprite Segment { get; set; }
-        public TextureSprite[] Corners { get; set; }
+        public TextureSprite[] Corners { get; } = new TextureSprite[2];
         public TextureSprite Face { get; set; }
         public TextureSprite Head { get; set; }
         public TextureSprite Tail { get; set; }
-
-        public SnakeSprites()
-        {
-            Corners = new TextureSprite[2];
-        }
     }
 
     private SnakeSprites _playerSnakeSprites;

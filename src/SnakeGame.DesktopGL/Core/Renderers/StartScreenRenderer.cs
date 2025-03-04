@@ -1,17 +1,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.DesktopGL.Core.Renderers;
 using SnakeGame.DesktopGL.Core.Sprites;
+
+namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class StartScreenRenderer : RendererBase
 {
     private TextSprite _textSprite;
     
-    public StartScreenRenderer()
-    {
-    }
-
     public override void LoadContent(ContentManager content)
     {
         _textSprite = TextSprite.Create().Load(content, "font1");
@@ -23,7 +20,7 @@ public class StartScreenRenderer : RendererBase
         Draw(spriteBatch, GetCenter(graphicsDevice), _textSprite);
     }
 
-    private Vector2 GetCenter(GraphicsDevice graphicsDevice)
+    private static Vector2 GetCenter(GraphicsDevice graphicsDevice)
     {
         return new Vector2(graphicsDevice.Viewport.Width / 2f, graphicsDevice.Viewport.Height / 2f);
     }

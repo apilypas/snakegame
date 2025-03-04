@@ -1,6 +1,7 @@
-using SnakeGame.DesktopGL;
 using SnakeGame.DesktopGL.Core.Entities;
 using SnakeGame.DesktopGL.Core.Events;
+
+namespace SnakeGame.DesktopGL.Core;
 
 public class ScoreBoard : IObserver
 {

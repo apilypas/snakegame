@@ -8,7 +8,7 @@ namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class CollectableRenderer : RendererBase
 {
-    private GameWorld _gameWorld;
+    private readonly GameWorld _gameWorld;
 
     private TextureSprite _diamondSprite;
     private TextureSprite _snakePartSprite;

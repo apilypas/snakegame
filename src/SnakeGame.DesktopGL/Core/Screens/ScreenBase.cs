@@ -12,7 +12,7 @@ public abstract class ScreenBase
     public abstract void Initialize();
     public abstract void Update(float deltaTime);
 
-    public virtual void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
+    public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         foreach (var renderer in _renderers)
         {
@@ -20,7 +20,7 @@ public abstract class ScreenBase
         }
     }
 
-    public virtual void Draw(GraphicsDevice graphicsDevice, float deltaTime, SpriteBatch spriteBatch)
+    public void Draw(GraphicsDevice graphicsDevice, float deltaTime, SpriteBatch spriteBatch)
     {
         foreach (var renderer in _renderers)
         {

@@ -1,10 +1,11 @@
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
 public class StartScreen : ScreenBase
 {
-    public ScreenManager _stateManager;
+    private readonly ScreenManager _stateManager;
 
     public StartScreen(ScreenManager stateManager)
     {

@@ -8,7 +8,7 @@ namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public abstract class RendererBase
 {
-    public Vector2 Offset { get; set; }
+    protected Vector2 Offset { get; set; }
 
     public abstract void LoadContent(ContentManager content);
     public abstract void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime);

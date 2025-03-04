@@ -1,3 +1,5 @@
+namespace SnakeGame.DesktopGL.Core;
+
 public class ModalState
 {
     public enum ModalStateType

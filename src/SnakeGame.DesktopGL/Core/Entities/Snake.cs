@@ -151,7 +151,7 @@ public class Snake : EntityBase
     public bool Reduce(float deltaTime)
     {
         const float reduceByMs = .03f;
-        bool reduced = false;
+        var reduced = false;
 
         if (_segments.Count > 0)
         {

@@ -12,7 +12,7 @@ public class TextSprite
     public string Text { get; set; } = string.Empty;
     public float Scale { get; set; } = 1f;
     public float LayerDepth { get; set; } = 0f;
-    public Color Color { get; set; } = Color.White;
+    public Color Color { get; set; } = Colors.DefaultTextColor;
     public float Rotation { get; set; } = 0f;
 
     private TextSprite()

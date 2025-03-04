@@ -7,8 +7,8 @@ public class ScreenManager
 {
     private ScreenBase _currentScreen;
 
-    private ContentManager _content;
-    private GraphicsDevice _graphics;
+    private readonly ContentManager _content;
+    private readonly GraphicsDevice _graphics;
 
     public ScreenManager(GraphicsDevice graphics, ContentManager content)
     {

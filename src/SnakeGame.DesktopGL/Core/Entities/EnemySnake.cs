@@ -4,14 +4,12 @@ namespace SnakeGame.DesktopGL.Core.Entities;
 
 public class EnemySnake : Snake
 {
-    private readonly GameWorld _gameWorld;
     private readonly EnemySnakeBehavior _behavior;
     
     public EnemySnake(GameWorld gameWorld, Vector2 location)
         : base(location)
     {
-        _gameWorld = gameWorld;
-        _behavior = new EnemySnakeBehavior(_gameWorld, this);
+        _behavior = new EnemySnakeBehavior(gameWorld, this);
     }
 
     public override void Update(float deltaTime)

@@ -9,7 +9,7 @@ public class ScoreBoardRenderer : RendererBase
 {
     private TextSprite _scoreSprite;
 
-    private ScoreBoard _scoreBoard;
+    private readonly ScoreBoard _scoreBoard;
 
     public ScoreBoardRenderer(ScoreBoard scoreBoard)
     {

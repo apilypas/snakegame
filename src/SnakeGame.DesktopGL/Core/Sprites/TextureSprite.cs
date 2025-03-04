@@ -41,7 +41,7 @@ public class TextureSprite
             SourceRectangle = new Rectangle(0, 0, Texture.Width, Texture.Height);
         
         if (Origin == Vector2.Zero)
-            Origin = new Vector2(SourceRectangle.Width / 2, SourceRectangle.Height / 2);
+            Origin = new Vector2(SourceRectangle.Width / 2f, SourceRectangle.Height / 2f);
 
         return this;
     }

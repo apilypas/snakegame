@@ -1,15 +1,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.DesktopGL.Core.Renderers;
 using SnakeGame.DesktopGL.Core.Sprites;
+
+namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class ModalsRenderer : RendererBase
 {
     private TextSprite _textSprite;
-    private TextureSprite _bacgroundSprite;
+    private TextureSprite _backgroundSprite;
 
-    private ModalState _gameState;
+    private readonly ModalState _gameState;
 
     public ModalsRenderer(ModalState gameState)
     {
@@ -21,7 +22,7 @@ public class ModalsRenderer : RendererBase
         _textSprite = TextSprite.Create().Load(content, "font1");
         _textSprite.Text = "Game is paused";
 
-        _bacgroundSprite = TextureSprite.Create(new Rectangle(20, 40, 20, 20)).Load(content, "snake");
+        _backgroundSprite = TextureSprite.Create(new Rectangle(20, 40, 20, 20)).Load(content, "snake");
     }
 
     public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
@@ -29,7 +30,7 @@ public class ModalsRenderer : RendererBase
         RenderModals(spriteBatch);
     }
 
-    public void RenderModals(SpriteBatch spriteBatch)
+    private void RenderModals(SpriteBatch spriteBatch)
     {
         if (_gameState.Type == ModalState.ModalStateType.Paused)
             DrawPausedModal(spriteBatch);
@@ -37,11 +38,11 @@ public class ModalsRenderer : RendererBase
 
     private void DrawPausedModal(SpriteBatch spriteBatch)
     {
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
-            for (int j = 0; j < 20; j++)
+            for (var j = 0; j < 20; j++)
             {
-                Draw(spriteBatch, new Vector2(100 + j * 20, 100 + i * 20), _bacgroundSprite);
+                Draw(spriteBatch, new Vector2(100 + j * 20, 100 + i * 20), _backgroundSprite);
             }
         }
         
