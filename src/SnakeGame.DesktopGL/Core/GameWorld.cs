@@ -35,8 +35,10 @@ public class GameWorld
         }
     }
 
-    public void Update(float deltaTime)
+    public void Update(GameTime gameTime)
     {
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
         foreach (var snake in Snakes)
         {
             if (snake.State == SnakeState.Alive)

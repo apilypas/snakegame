@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Screens;
 using SnakeGame.DesktopGL.Core.Screens;
 
 namespace SnakeGame.DesktopGL;
@@ -7,8 +7,7 @@ namespace SnakeGame.DesktopGL;
 public class SnakeGame : Game
 {
     private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-
+    
     private ScreenManager _screenManager;
 
     public SnakeGame()
@@ -23,45 +22,18 @@ public class SnakeGame : Game
 
     protected override void Initialize()
     {
-        _screenManager = new ScreenManager(this);
+        _screenManager = new ScreenManager();
         _screenManager.Initialize();
+        
+        Components.Add(_screenManager);
 
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        _screenManager.GetCurrentScreen().LoadContent(GraphicsDevice, Content);
-    }
-
-    protected override void Update(GameTime gameTime)
-    {
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        _screenManager.GetCurrentScreen().Update(deltaTime);
-    
-        base.Update(gameTime);
-    }
-
-    protected override void Draw(GameTime gameTime)
-    {
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        var screen = _screenManager.GetCurrentScreen();
-
-        GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
-
-        _spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp
-            );
-
-        screen.Draw(GraphicsDevice, deltaTime, _spriteBatch);
-
-        _spriteBatch.End();
-
-        base.Draw(gameTime);
+        _screenManager.LoadScreen(new StartScreen(this));
+        
+        base.LoadContent();
     }
 }

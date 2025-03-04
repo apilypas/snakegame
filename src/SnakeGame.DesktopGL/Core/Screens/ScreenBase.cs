@@ -1,30 +1,50 @@
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Screens;
 using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
-public abstract class ScreenBase
+public abstract class ScreenBase(Game game) : GameScreen(game)
 {
+    private readonly Game _game = game;
     private readonly IList<RendererBase> _renderers = [];
+    private SpriteBatch _spriteBatch;
 
-    public abstract void Initialize();
-    public abstract void Update(float deltaTime);
-
-    public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
+    public override void LoadContent()
     {
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        
         foreach (var renderer in _renderers)
         {
-            renderer.LoadContent(content);
+            renderer.LoadContent(_game.GraphicsDevice, _game.Content);
         }
     }
 
-    public void Draw(GraphicsDevice graphicsDevice, float deltaTime, SpriteBatch spriteBatch)
+    public override void Draw(GameTime gameTime)
+    {
+        GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
+
+        _spriteBatch.Begin(
+            SpriteSortMode.Deferred,
+            BlendState.AlphaBlend,
+            SamplerState.PointClamp
+            );
+        
+        foreach (var renderer in _renderers)
+        {
+            renderer.Render(_spriteBatch, gameTime);
+        }
+        
+        _spriteBatch.End();
+    }
+
+    public override void Update(GameTime gameTime)
     {
         foreach (var renderer in _renderers)
         {
-            renderer.Render(graphicsDevice, spriteBatch, deltaTime);
+            renderer.Update(gameTime);
         }
     }
 

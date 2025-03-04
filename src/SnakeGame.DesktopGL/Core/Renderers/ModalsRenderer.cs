@@ -1,38 +1,35 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.DesktopGL.Core.Sprites;
+using MonoGame.Extended.Graphics;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
-public class ModalsRenderer : RendererBase
+public class ModalsRenderer(ModalState gameState) : RendererBase
 {
-    private TextSprite _textSprite;
-    private TextureSprite _backgroundSprite;
+    private Sprite _backgroundSprite;
+    private Texture2D _texture;
+    private SpriteFont _font;
 
-    private readonly ModalState _gameState;
-
-    public ModalsRenderer(ModalState gameState)
+    public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _gameState = gameState;
+        _font = content.Load<SpriteFont>("font1");
+        _texture = content.Load<Texture2D>("snake");
+        
+        _backgroundSprite = new Sprite(new Texture2DRegion(
+            _texture,
+            new Rectangle(20, 40, 20, 20)
+            ));
     }
 
-    public override void LoadContent(ContentManager content)
-    {
-        _textSprite = TextSprite.Create().Load(content, "font1");
-        _textSprite.Text = "Game is paused";
-
-        _backgroundSprite = TextureSprite.Create(new Rectangle(20, 40, 20, 20)).Load(content, "snake");
-    }
-
-    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
         RenderModals(spriteBatch);
     }
 
     private void RenderModals(SpriteBatch spriteBatch)
     {
-        if (_gameState.Type == ModalState.ModalStateType.Paused)
+        if (gameState.Type == ModalState.ModalStateType.Paused)
             DrawPausedModal(spriteBatch);
     }
 
@@ -42,10 +39,24 @@ public class ModalsRenderer : RendererBase
         {
             for (var j = 0; j < 20; j++)
             {
-                Draw(spriteBatch, new Vector2(100 + j * 20, 100 + i * 20), _backgroundSprite);
+                _backgroundSprite.Draw(spriteBatch, new Vector2(100 + j * 20, 100 + i * 20), 0f, Vector2.One);
             }
         }
         
-        Draw(spriteBatch, new Vector2(200, 150), _textSprite);
+        const string text = "Game is paused";
+        spriteBatch.DrawString(
+            _font,
+            text,
+            new Vector2(200, 150),
+            Colors.DefaultTextColor,
+            0f,
+            _font.MeasureString(text) / 2f,
+            1f,
+            SpriteEffects.None,
+            0f);
+    }
+
+    public override void Update(GameTime gameTime)
+    {
     }
 }

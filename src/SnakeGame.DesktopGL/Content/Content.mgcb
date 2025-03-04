@@ -9,8 +9,7 @@
 /compress:False
 
 #-------------------------------- References --------------------------------#
-
-
+/reference:../pipeline-references/MonoGame.Extended.Content.Pipeline.dll
 #---------------------------------- Content ---------------------------------#
 
 #begin File.spritefont
@@ -19,6 +18,11 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont;font1.spritefont
+
+#begin Level1.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:Level1.tmx
 
 #begin snake.png
 /importer:TextureImporter

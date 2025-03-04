@@ -1,27 +1,40 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.DesktopGL.Core.Sprites;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class StartScreenRenderer : RendererBase
 {
-    private TextSprite _textSprite;
+    private SpriteFont _font;
     
-    public override void LoadContent(ContentManager content)
+    public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _textSprite = TextSprite.Create().Load(content, "font1");
-        _textSprite.Text = "Click anywhere to start";
+        _font = content.Load<SpriteFont>("font1");
     }
 
-    public override void Render(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, float deltaTime)
+    public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        Draw(spriteBatch, GetCenter(graphicsDevice), _textSprite);
+        const string text = "Click anywhere to start";
+
+        spriteBatch.DrawString(
+            _font,
+            text,
+            GetCenter(spriteBatch.GraphicsDevice),
+            Colors.DefaultTextColor,
+            0f,
+            _font.MeasureString(text) / 2f,
+            1f,
+            SpriteEffects.None,
+            0f);
     }
 
     private static Vector2 GetCenter(GraphicsDevice graphicsDevice)
     {
         return new Vector2(graphicsDevice.Viewport.Width / 2f, graphicsDevice.Viewport.Height / 2f);
+    }
+
+    public override void Update(GameTime gameTime)
+    {
     }
 }
