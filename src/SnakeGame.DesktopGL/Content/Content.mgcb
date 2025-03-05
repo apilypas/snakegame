@@ -9,22 +9,12 @@
 /compress:False
 
 #-------------------------------- References --------------------------------#
+
 /reference:../pipeline-references/MonoGame.Extended.Content.Pipeline.dll
+
 #---------------------------------- Content ---------------------------------#
 
-#begin File.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:File.spritefont;font1.spritefont
-
-#begin Level1.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:Level1.tmx
-
-#begin snake.png
+#begin Collectables.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -34,5 +24,29 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:snake.png
+/build:Collectables.png
+
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;font1.spritefont
+
+#begin Map.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:Map.tmx
+
+#begin Snake.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Snake.png
 

@@ -12,10 +12,11 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     private Sprite _snakePartSprite;
     private Sprite _speedBoostSprite;
     private Texture2D _texture;
+    private Vector2 _offset;
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _texture = content.Load<Texture2D>("snake");
+        _texture = content.Load<Texture2D>("Collectables");
         
         _diamondSprite = new Sprite(
             new Texture2DRegion(
@@ -37,27 +38,39 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
                 new Rectangle(0, 60, 20, 20)
                 )
             );
+
+        _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        var offset = PlayFieldRenderer.GetPlayFieldOffset(spriteBatch.GraphicsDevice);
-
         foreach (var collectable in gameWorld.Collectables)
         {
             if (collectable.Type == CollectableType.Diamond)
             {
-                _diamondSprite.Draw(spriteBatch, collectable.Location + offset, collectable.Rotation, Vector2.One);
+                _diamondSprite.Draw(
+                    spriteBatch,
+                    collectable.Location + _offset,
+                    collectable.Rotation,
+                    Vector2.One);
             }
 
             if (collectable.Type == CollectableType.SnakePart)
             {
-                _snakePartSprite.Draw(spriteBatch, collectable.Location + offset, collectable.Rotation, Vector2.One);
+                _snakePartSprite.Draw(
+                    spriteBatch,
+                    collectable.Location + _offset,
+                    collectable.Rotation,
+                    Vector2.One);
             }
 
             if (collectable.Type == CollectableType.SpeedBoost)
             {
-                _speedBoostSprite.Draw(spriteBatch, collectable.Location + offset, collectable.Rotation, Vector2.One);
+                _speedBoostSprite.Draw(
+                    spriteBatch,
+                    collectable.Location + _offset,
+                    collectable.Rotation,
+                    Vector2.One);
             }
         }
     }

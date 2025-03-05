@@ -14,7 +14,7 @@ public class ModalsRenderer(ModalState gameState) : RendererBase
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _font = content.Load<SpriteFont>("font1");
-        _texture = content.Load<Texture2D>("snake");
+        _texture = content.Load<Texture2D>("Snake");
         
         _backgroundSprite = new Sprite(new Texture2DRegion(
             _texture,

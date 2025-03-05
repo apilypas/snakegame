@@ -21,15 +21,18 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     private SnakeSprites _playerSnakeSprites;
     private SnakeSprites _enemySnakeTextures;
     
-    private Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
+    private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
+    private Vector2 _offset;
     
     private Texture2D _texture;
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _texture = content.Load<Texture2D>("snake");
+        _texture = content.Load<Texture2D>("Snake");
         _playerSnakeSprites = LoadSnakeSprites(0);
         _enemySnakeTextures = LoadSnakeSprites(20);
+        
+        _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 
     private SnakeSprites LoadSnakeSprites(int textureOffsetY)
@@ -85,54 +88,52 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     {
         foreach (var snake in snakes)
         {
-            RenderSnake(snake, spriteBatch.GraphicsDevice, spriteBatch);
+            RenderSnake(snake, spriteBatch);
         }
     }
 
-    private void RenderSnake(Snake snake, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+    private void RenderSnake(Snake snake, SpriteBatch spriteBatch)
     {
         if (snake.Segments.Count == 0)
             return;
 
-        var offset = PlayFieldRenderer.GetPlayFieldOffset(graphicsDevice);
-    
-        DrawSegment(spriteBatch, snake, snake.Head, offset);
+        DrawSegment(spriteBatch, snake, snake.Head);
 
         if (snake.Segments.Count > 1)
         {
             // Head & face drawing logic will cover this when length is equal to 1
-            DrawSegment(spriteBatch, snake, snake.Tail, offset);
+            DrawSegment(spriteBatch, snake, snake.Tail);
         }
         
         for (var i = 0; i < snake.Segments.Count - 1; i++)
         {
-            DrawBody(spriteBatch, snake, snake.Segments[i], offset);
+            DrawBody(spriteBatch, snake, snake.Segments[i]);
         }
         
-        DrawHead(spriteBatch, snake, offset);
+        DrawHead(spriteBatch, snake);
 
         if (snake.Segments.Count > 1)
         {
             // Head & face drawing logic will cover this when length is equal to 1
-            DrawTail(spriteBatch, snake, offset);
+            DrawTail(spriteBatch, snake);
         }
     }
 
-    private void DrawHead(SpriteBatch spriteBatch, Snake snake, Vector2 offset)
+    private void DrawHead(SpriteBatch spriteBatch, Snake snake)
     {
         if (snake.State == SnakeState.Alive)
         {
             // If snake is alive - draw face, otherwise face should not be shown
             GetSprites(snake).Face.Draw(
                 spriteBatch,
-                snake.Head.Location + offset + _origin,
+                snake.Head.Location + _offset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
         
         GetSprites(snake).Head.Draw(
             spriteBatch,
-            snake.Head.Location + offset + _origin,
+            snake.Head.Location + _offset + _origin,
             snake.Head.Rotation,
             Vector2.One);
 
@@ -141,45 +142,45 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
             // If snake size is equal to 1 - draw tail line on same segment too
             GetSprites(snake).Tail.Draw(
                 spriteBatch,
-                snake.Head.Location + offset + _origin,
+                snake.Head.Location + _offset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
     }
 
-    private void DrawTail(SpriteBatch spriteBatch, Snake snake, Vector2 offset)
+    private void DrawTail(SpriteBatch spriteBatch, Snake snake)
     {
         GetSprites(snake).Tail.Draw(
             spriteBatch,
-            snake.Tail.Location + offset + _origin,
+            snake.Tail.Location + _offset + _origin,
             snake.Tail.Rotation,
             Vector2.One);
     }
 
-    private void DrawBody(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment, Vector2 offset)
+    private void DrawBody(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment)
     {
         if (segment.IsCorner)
-            DrawCorner(spriteBatch, snake, segment, offset);
+            DrawCorner(spriteBatch, snake, segment);
         else
-            DrawSegment(spriteBatch, snake, segment, offset);
+            DrawSegment(spriteBatch, snake, segment);
     }
 
-    private void DrawSegment(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment, Vector2 offset)
+    private void DrawSegment(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment)
     {
         GetSprites(snake).Segment.Draw(
             spriteBatch,
-            segment.Location + offset + _origin,
+            segment.Location + _offset + _origin,
             segment.Rotation,
             Vector2.One);
     }
 
-    private void DrawCorner(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment, Vector2 offset)
+    private void DrawCorner(SpriteBatch spriteBatch, Snake snake, SnakeSegment segment)
     {
         if (segment.IsClockwise)
         {
             GetSprites(snake).Corners[0].Draw(
                 spriteBatch,
-                segment.Location + offset + _origin,
+                segment.Location + _offset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }
@@ -187,7 +188,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         {
             GetSprites(snake).Corners[1].Draw(
                 spriteBatch,
-                segment.Location + offset + _origin,
+                segment.Location + _offset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }
