@@ -2,18 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.DesktopGL.Core.Entities;
 
-public class PlayerSnake : Snake
+public class PlayerSnake(Vector2 location, int length, SnakeDirection direction) 
+    : Snake(location, length, direction)
 {
-    public PlayerSnake()
-        : base(GetInitialLocation())
-    {
-    }
-
-    private static Vector2 GetInitialLocation()
-    {
-        return new Vector2(
-            Constants.WallWidth / 2f * Constants.SegmentSize,
-            Constants.WallHeight / 2f * Constants.SegmentSize
-        );
-    }
 }

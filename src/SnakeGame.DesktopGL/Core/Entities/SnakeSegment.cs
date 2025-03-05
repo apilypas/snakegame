@@ -4,9 +4,9 @@ namespace SnakeGame.DesktopGL.Core.Entities;
 
 public class SnakeSegment : EntityBase
 {
-    public SnakeDirection Direction { get; set; }
-    public bool IsCorner { get; set; }
-    public bool IsClockwise { get; set; }
+    public SnakeDirection Direction { get; init; }
+    public bool IsCorner { get; init; }
+    public bool IsClockwise { get; init; }
 
     public Rectangle GetRectangle()
     {

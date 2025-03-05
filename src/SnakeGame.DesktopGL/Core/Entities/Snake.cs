@@ -7,12 +7,8 @@ namespace SnakeGame.DesktopGL.Core.Entities;
 public class Snake : EntityBase
 {
     private List<SnakeSegment> _segments;
-    private SnakeSegment _head;
-    private SnakeSegment _tail;
-    private SnakeState _state = SnakeState.Alive;
-    private Vector2 _initialLocation = Vector2.Zero;
-
-    private int _segmentsToGrow = 0;
+    
+    private int _segmentsToGrow;
 
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
@@ -22,20 +18,24 @@ public class Snake : EntityBase
     private float _speedTimer = 0f;
 
     public IList<SnakeSegment> Segments => _segments;
-    public SnakeSegment Head => _head;
-    public SnakeSegment Tail => _tail;
-    public SnakeState State => _state;
+    public SnakeSegment Head { get; private set; }
+    public SnakeSegment Tail { get; private set; }
+    public SnakeState State { get; private set; } = SnakeState.Alive;
+    
+    private readonly Vector2 _defaultLocation;
+    private readonly int _defaultLength;
+    private readonly SnakeDirection _defaultDirection;
 
-    private Snake() { }
-
-    protected Snake(Vector2 initialLocation)
+    protected Snake(Vector2 location, int length, SnakeDirection direction)
     {
-        _initialLocation = initialLocation;
+        _defaultLocation = location;
+        _defaultLength = length;
+        _defaultDirection = direction;
     }
 
     public void Initialize()
     {
-        Reset();
+        Reset(_defaultLocation, _defaultLength, _defaultDirection);
     }
 
     public void ChangeDirection(SnakeDirection direction)
@@ -72,12 +72,12 @@ public class Snake : EntityBase
         var head = _segments[0];
         var tail = _segments[^1];
 
-        _head.Location = MoveByDirection(_head.Location, _direction, movementSize);
+        Head.Location = MoveByDirection(Head.Location, _direction, movementSize);
 
         if (_segmentsToGrow <= 0)
-            _tail.Location = MoveByDirection(_tail.Location, tail.Direction, movementSize);
+            Tail.Location = MoveByDirection(Tail.Location, tail.Direction, movementSize);
 
-        if (_head.GetRectangle().Intersects(head.GetRectangle()))
+        if (Head.GetRectangle().Intersects(head.GetRectangle()))
             return;
     
         var newLocation = MoveByDirection(head.Location, _direction, Constants.SegmentSize);
@@ -94,7 +94,7 @@ public class Snake : EntityBase
         _direction = _nextDirection;
 
         _segments.Insert(0, newHead);
-        _head = newHead.Clone();
+        Head = newHead.Clone();
 
         if (_segmentsToGrow > 0)
         {
@@ -104,7 +104,7 @@ public class Snake : EntityBase
         else
         {
             _segments.Remove(tail);
-            _tail = _segments[^1].Clone();
+            Tail = _segments[^1].Clone();
         }
     }
 
@@ -115,7 +115,7 @@ public class Snake : EntityBase
 
     public bool IntersectsWithHead()
     {
-        var headRectangle = _head.GetRectangle();
+        var headRectangle = Head.GetRectangle();
 
         for (var i = 1; i < _segments.Count; i++)
         {
@@ -128,10 +128,10 @@ public class Snake : EntityBase
 
     public bool Intersects(Rectangle rectangle)
     {
-        if (_head.GetRectangle().Intersects(rectangle))
+        if (Head.GetRectangle().Intersects(rectangle))
             return true;
 
-        if (_tail.GetRectangle().Intersects(rectangle))
+        if (Tail.GetRectangle().Intersects(rectangle))
             return true;
 
         foreach (var segment in _segments)
@@ -145,7 +145,7 @@ public class Snake : EntityBase
 
     public void Die()
     {
-        _state = SnakeState.Dead;
+        State = SnakeState.Dead;
     }
 
     public bool Reduce(float deltaTime)
@@ -164,13 +164,13 @@ public class Snake : EntityBase
 
                 if (_segments.Count > 0)
                 {
-                    _head = _segments[0].Clone();
+                    Head = _segments[0].Clone();
                     _deathAnimationTimer -= reduceByMs;
                 }
                 else
                 {
-                    _head = null;
-                    _tail = null;
+                    Head = null;
+                    Tail = null;
                 }
             }
         }
@@ -178,33 +178,31 @@ public class Snake : EntityBase
         return reduced;
     }
 
-    public void Reset(int length = Constants.InitialSnakeSize)
+    public void Reset(Vector2 location, int length, SnakeDirection direction)
     {
         _segments = [];
-
-        var position = _initialLocation;
 
         for (var i = 0; i < length; i++)
         {
             var segment = new SnakeSegment
             {
-                Location = position,
-                Direction = SnakeDirection.Right,
-                Rotation = 0f
+                Location = location,
+                Direction = direction,
+                Rotation = GetRotation(direction)
             };
 
             _segments.Add(segment);
 
-            position.X -= Constants.SegmentSize;
+            location = MoveByDirection(location, direction.GetOpposite(), Constants.SegmentSize);
         }
 
-        _direction = SnakeDirection.Right;
-        _nextDirection = SnakeDirection.Right;
+        _direction = direction;
+        _nextDirection = direction;
 
-        _head = _segments[0].Clone();
-        _tail = _segments[^1].Clone();
-
-        _state = SnakeState.Alive;
+        Head = _segments[0].Clone();
+        Tail = _segments[^1].Clone();
+        
+        State = SnakeState.Alive;
         _speedTimer = 0f;
         _hasSpeed = false;
     }

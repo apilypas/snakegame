@@ -19,12 +19,9 @@ public class GameWorld
     {
         _entitySpawner = new EntitySpawner(this);
 
-        Snakes.Add(new PlayerSnake());
-        Snakes.Add(new EnemySnake(this, new Vector2(100f, 20f)));
-        Snakes.Add(new EnemySnake(this, new Vector2(100f, 60f)));
-        Snakes.Add(new EnemySnake(this, new Vector2(100f, 100f)));
-        Snakes.Add(new EnemySnake(this, new Vector2(100f, 140f)));
-        Snakes.Add(new EnemySnake(this, new Vector2(100f, 180f)));
+        // Let's start initially with player and one enemy
+        Snakes.Add(new PlayerSnake(new Vector2(140f, 400f), 3, SnakeDirection.Up));
+        Snakes.Add(new EnemySnake(new Vector2(460f, 400f), 3, SnakeDirection.Up, this));
     }
 
     public void Initialize()
@@ -77,29 +74,19 @@ public class GameWorld
             }
         }
 
-        foreach (var snake in Snakes)
-        {
-            if (snake.State == SnakeState.Dead)
-            {
-                if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
-                    _entitySpawner.SpawnSnakePart(snake.Segments[0].Location);
-
-                if (snake.Segments.Count == 0)
-                    snake.Reset();
-            }
-        }
-
         _entitySpawner.Update(deltaTime);
     }
 
     public void SpeedUp()
     {
-        Snakes[0].SpeedUp();
+        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
+        playerSnake?.SpeedUp();
     }
 
     public void SpeedDown()
     {
-        Snakes[0].SpeedDown();
+        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
+        playerSnake?.SpeedDown();
     }
 
     public static Rectangle GetRectangle()
@@ -114,6 +101,7 @@ public class GameWorld
 
     public void ChangeDirection(SnakeDirection direction)
     {
-        Snakes[0].ChangeDirection(direction);
+        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
+        playerSnake?.ChangeDirection(direction);
     }
 }

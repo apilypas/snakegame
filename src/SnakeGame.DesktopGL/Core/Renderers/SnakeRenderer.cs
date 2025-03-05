@@ -12,14 +12,14 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     private struct SnakeSprites()
     {
         public Sprite Segment { get; set; }
-        public Sprite[] Corners { get; } = new Sprite[2];
+        public Sprite[] Corners { get; } = new Sprite[5];
         public Sprite Face { get; set; }
         public Sprite Head { get; set; }
         public Sprite Tail { get; set; }
     }
 
     private SnakeSprites _playerSnakeSprites;
-    private SnakeSprites _enemySnakeTextures;
+    private readonly SnakeSprites[] _enemySnakeTextures = new SnakeSprites[4];
     
     private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     private Vector2 _offset;
@@ -30,7 +30,10 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     {
         _texture = content.Load<Texture2D>("Snake");
         _playerSnakeSprites = LoadSnakeSprites(0);
-        _enemySnakeTextures = LoadSnakeSprites(20);
+        _enemySnakeTextures[0] = LoadSnakeSprites(20);
+        _enemySnakeTextures[1] = LoadSnakeSprites(40);
+        _enemySnakeTextures[2] = LoadSnakeSprites(60);
+        _enemySnakeTextures[3] = LoadSnakeSprites(80);
         
         _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
@@ -196,7 +199,11 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
 
     private SnakeSprites GetSprites(Snake snake)
     {
-        return snake is PlayerSnake ? _playerSnakeSprites : _enemySnakeTextures;
+        if (snake is PlayerSnake)
+            return _playerSnakeSprites;
+        
+        var textureIndex = snake.Id % _enemySnakeTextures.Length;
+        return _enemySnakeTextures[textureIndex];
     }
 
     public override void Update(GameTime gameTime)
