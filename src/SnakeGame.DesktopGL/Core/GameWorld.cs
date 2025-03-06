@@ -14,6 +14,8 @@ public class GameWorld
     public IList<Collectable> Collectables { get; } = [];
     
     public EventManager EventManager { get; } = new();
+
+    public bool IsPaused { get; private set; } = false;
     
     public GameWorld()
     {
@@ -34,6 +36,9 @@ public class GameWorld
 
     public void Update(GameTime gameTime)
     {
+        if (IsPaused)
+            return;
+        
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
         foreach (var snake in Snakes)
@@ -103,5 +108,10 @@ public class GameWorld
     {
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
         playerSnake?.ChangeDirection(direction);
+    }
+
+    public void TogglePause()
+    {
+        IsPaused = !IsPaused;
     }
 }

@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.ECS;
-using MonoGame.Extended.Graphics;
 using SnakeGame.DesktopGL.Core.Commands;
 using SnakeGame.DesktopGL.Core.Events;
 using SnakeGame.DesktopGL.Core.Renderers;
@@ -12,7 +10,6 @@ public class PlayScreen(Game game) : ScreenBase(game)
 {
     private GameWorld _gameWorld;
     private ScoreBoard _scoreBoard;
-    private ModalState _modalState;
     
     private InputManager _inputManager;
     private GlobalCommands _globalCommands;
@@ -22,11 +19,10 @@ public class PlayScreen(Game game) : ScreenBase(game)
     {
         _gameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
-        _modalState = new ModalState();
         
         _inputManager = new InputManager();
         _globalCommands = new GlobalCommands(Game, ScreenManager);
-        _playScreenCommands = new PlayScreenCommands(_gameWorld, _modalState);
+        _playScreenCommands = new PlayScreenCommands(_gameWorld);
         
         _gameWorld.EventManager.AddObserver(_scoreBoard);
 
@@ -34,7 +30,7 @@ public class PlayScreen(Game game) : ScreenBase(game)
         AddRenderer(new SnakeRenderer(_gameWorld.Snakes));
         AddRenderer(new CollectableRenderer(_gameWorld));
         AddRenderer(new ScoreBoardRenderer(_scoreBoard));
-        AddRenderer(new ModalsRenderer(_modalState));
+        AddRenderer(new ModalsRenderer(_gameWorld));
         
         _gameWorld.Initialize();
         
@@ -58,9 +54,6 @@ public class PlayScreen(Game game) : ScreenBase(game)
         
         _inputManager.Update();
 
-        if (_modalState.Type == ModalState.ModalStateType.Paused)
-            return;
-        
         _gameWorld.Update(gameTime);
     }
 }

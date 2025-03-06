@@ -5,7 +5,7 @@ using MonoGame.Extended;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
-public class ModalsRenderer(ModalState gameState) : RendererBase
+public class ModalsRenderer(GameWorld gameWorld) : RendererBase
 {
     private SpriteFont _font;
 
@@ -21,7 +21,7 @@ public class ModalsRenderer(ModalState gameState) : RendererBase
 
     private void RenderModals(SpriteBatch spriteBatch)
     {
-        if (gameState.Type == ModalState.ModalStateType.Paused)
+        if (gameWorld.IsPaused)
             DrawPausedModal(spriteBatch);
     }
 

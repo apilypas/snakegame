@@ -2,7 +2,7 @@ using SnakeGame.DesktopGL.Core.Entities;
 
 namespace SnakeGame.DesktopGL.Core.Commands;
 
-public class PlayScreenCommands(GameWorld gameWorld, ModalState modalState)
+public class PlayScreenCommands(GameWorld gameWorld)
 {
     private class MoveUpCommand(GameWorld gameWorld) : ICommand
     {
@@ -52,11 +52,11 @@ public class PlayScreenCommands(GameWorld gameWorld, ModalState modalState)
         }
     }
     
-    private class PauseCommand(ModalState modalState) : ICommand
+    private class PauseCommand(GameWorld gameWorld) : ICommand
     {
         public void Execute()
         {
-            modalState.TogglePausedModal();
+            gameWorld.TogglePause();
         }
     }
 
@@ -66,5 +66,5 @@ public class PlayScreenCommands(GameWorld gameWorld, ModalState modalState)
     public ICommand MoveDown { get; } = new MoveDownCommand(gameWorld);
     public ICommand SpeedUp { get; } = new SpeedUpCommand(gameWorld);
     public ICommand SpeedDown { get; } = new SpeedDownCommand(gameWorld);
-    public ICommand Pause { get; } = new PauseCommand(modalState);
+    public ICommand Pause { get; } = new PauseCommand(gameWorld);
 }
