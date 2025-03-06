@@ -10,7 +10,7 @@ public class StartScreenRenderer : RendererBase
     
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _font = content.Load<SpriteFont>("font1");
+        _font = content.Load<SpriteFont>("MainFont");
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)

@@ -26,12 +26,12 @@
 /processorParam:TextureFormat=Color
 /build:Collectables.png
 
-#begin File.spritefont
+#begin MainFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:File.spritefont;font1.spritefont
+/build:MainFont.spritefont
 
 #begin Map.tmx
 /importer:TiledMapImporter

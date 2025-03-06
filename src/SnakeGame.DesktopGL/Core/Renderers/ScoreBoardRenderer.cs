@@ -11,7 +11,7 @@ public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _font = content.Load<SpriteFont>("font1");
+        _font = content.Load<SpriteFont>("MainFont");
         _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 

@@ -1,25 +1,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Graphics;
+using MonoGame.Extended;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
 public class ModalsRenderer(ModalState gameState) : RendererBase
 {
-    private Sprite _backgroundSprite;
-    private Texture2D _texture;
     private SpriteFont _font;
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        _font = content.Load<SpriteFont>("font1");
-        _texture = content.Load<Texture2D>("Snake");
-        
-        _backgroundSprite = new Sprite(new Texture2DRegion(
-            _texture,
-            new Rectangle(20, 40, 20, 20)
-            ));
+        _font = content.Load<SpriteFont>("MainFont");
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
@@ -35,28 +27,37 @@ public class ModalsRenderer(ModalState gameState) : RendererBase
 
     private void DrawPausedModal(SpriteBatch spriteBatch)
     {
-        for (var i = 0; i < 10; i++)
-        {
-            for (var j = 0; j < 20; j++)
-            {
-                _backgroundSprite.Draw(spriteBatch, new Vector2(100 + j * 20, 100 + i * 20), 0f, Vector2.One);
-            }
-        }
-        
-        const string text = "Game is paused";
-        spriteBatch.DrawString(
-            _font,
-            text,
-            new Vector2(200, 150),
-            Colors.DefaultTextColor,
-            0f,
-            _font.MeasureString(text) / 2f,
-            1f,
-            SpriteEffects.None,
-            0f);
+        DrawModal(spriteBatch, "Game is paused");   
     }
 
     public override void Update(GameTime gameTime)
     {
+    }
+
+    private void DrawModal(SpriteBatch spriteBatch, string text)
+    {
+        var textSize = _font.MeasureString(text);
+        
+        var screenWidth = spriteBatch.GraphicsDevice.Viewport.Width;
+        var screenHeight = spriteBatch.GraphicsDevice.Viewport.Height;
+
+        var modalWidth = textSize.X + 80f;
+        var modalHeight = textSize.Y + 80f;
+
+        var modalX = (screenWidth - modalWidth) / 2f;
+        var modalY = (screenHeight - modalHeight) / 2f;
+        
+        spriteBatch.FillRectangle(modalX, modalY, modalWidth, modalHeight, Colors.ModalBackgroundColor);
+        
+        spriteBatch.DrawString(
+            _font,
+            text,
+            new Vector2(modalX + 40f, modalY + 40f),
+            Colors.DefaultTextColor,
+            0f,
+            Vector2.Zero, 
+            1f,
+            SpriteEffects.None,
+            0f);
     }
 }
