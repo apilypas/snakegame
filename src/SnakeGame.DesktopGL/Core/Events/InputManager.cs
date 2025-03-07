@@ -8,40 +8,52 @@ public class InputManager
 {
     private KeyboardState _previousState;
     private KeyboardState _currentState;
+    
+    private MouseState _previousMouseState;
     private MouseState _currentMouseState;
+
+    private bool _isBindingsEnabled = true;
     
     private readonly Dictionary<Keys, ICommand> _keyDownBindings = new();
     private readonly Dictionary<Keys, ICommand> _keyPressedBindings = new();
     private readonly Dictionary<Keys, ICommand> _keyReleasedBindings = new();
-    private ICommand _leftClickCommand;
+    private ICommand _leftClickBinding;
+    
+    public MouseState MouseState => _currentMouseState;
+    public KeyboardState KeyboardState => _currentState;
 
     public void Update()
     {
         _previousState = _currentState;
         _currentState = Keyboard.GetState();
+
+        _previousMouseState = _currentMouseState;
         _currentMouseState = Mouse.GetState();
 
-        foreach (var key in _keyDownBindings.Keys)
+        if (_isBindingsEnabled)
         {
-            if (IsKeyDown(key))
-                _keyDownBindings[key].Execute();
-        }
+            foreach (var key in _keyDownBindings.Keys)
+            {
+                if (IsKeyDown(key))
+                    _keyDownBindings[key].Execute();
+            }
 
-        foreach (var key in _keyPressedBindings.Keys)
-        {
-            if (IsKeyPressed(key))
-                _keyPressedBindings[key].Execute();
-        }
+            foreach (var key in _keyPressedBindings.Keys)
+            {
+                if (IsKeyPressed(key))
+                    _keyPressedBindings[key].Execute();
+            }
 
-        foreach (var key in _keyReleasedBindings.Keys)
-        {
-            if (IsKeyReleased(key))
-                _keyReleasedBindings[key].Execute();
-        }
+            foreach (var key in _keyReleasedBindings.Keys)
+            {
+                if (IsKeyReleased(key))
+                    _keyReleasedBindings[key].Execute();
+            }
 
-        if (_leftClickCommand != null && _currentMouseState.LeftButton == ButtonState.Pressed)
-        {
-            _leftClickCommand.Execute();
+            if (_leftClickBinding != null && _currentMouseState.LeftButton == ButtonState.Pressed)
+            {
+                _leftClickBinding.Execute();
+            }
         }
     }
 
@@ -62,7 +74,17 @@ public class InputManager
 
     public void BindLeftClick(ICommand command)
     {
-        _leftClickCommand = command;
+        _leftClickBinding = command;
+    }
+
+    public void EnableBindings()
+    {
+        _isBindingsEnabled = true;
+    }
+
+    public void DisableBindings()
+    {
+        _isBindingsEnabled = false;
     }
 
     private bool IsKeyDown(Keys key)
@@ -77,6 +99,6 @@ public class InputManager
 
     private bool IsKeyReleased(Keys key)
     {
-        return _currentState.IsKeyUp(key) && !_previousState.IsKeyDown(key);
+        return _currentState.IsKeyUp(key) && _previousState.IsKeyDown(key);
     }
 }

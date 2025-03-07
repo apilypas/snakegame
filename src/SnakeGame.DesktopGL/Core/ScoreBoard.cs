@@ -1,3 +1,4 @@
+using System.Text;
 using SnakeGame.DesktopGL.Core.Entities;
 using SnakeGame.DesktopGL.Core.Events;
 
@@ -6,9 +7,11 @@ namespace SnakeGame.DesktopGL.Core;
 public class ScoreBoard : IObserver
 {
     private int _score = 0;
+    private float _timer = Constants.InitialTimer;
+    private int _deaths = 0;
 
-    public string ScoreText { get; private set; }
-
+    public string DisplayText { get; private set; } = string.Empty;
+    
     public ScoreBoard()
     {
         UpdateTexts();
@@ -18,6 +21,27 @@ public class ScoreBoard : IObserver
     {
         if (notifyEvent.EventType == NotifyEventType.CollectableRemoved)
             OnCollectableRemoved(notifyEvent);
+
+        if (notifyEvent.EventType == NotifyEventType.TimerChanged)
+            OnTimerChanged((NotifyTimerChangedEvent)notifyEvent);
+
+        if (notifyEvent.EventType == NotifyEventType.SnakeDied)
+            OnDeathsChanged(notifyEvent);
+    }
+
+    private void OnDeathsChanged(NotifyEvent notifyEvent)
+    {
+        if (notifyEvent.Target is not PlayerSnake)
+            return;
+
+        _deaths++;
+        UpdateTexts();
+    }
+
+    private void OnTimerChanged(NotifyTimerChangedEvent notifyEvent)
+    {
+        _timer = notifyEvent.Timer;
+        UpdateTexts();
     }
 
     private void OnCollectableRemoved(NotifyEvent notifyEvent)
@@ -46,6 +70,10 @@ public class ScoreBoard : IObserver
 
     private void UpdateTexts()
     {
-        ScoreText = $"Score: {_score}";
+        DisplayText = new StringBuilder()
+            .AppendLine($"Score: {_score}")
+            .AppendLine($"Timer: {(int)(_timer / 60):00}:{(int)(_timer % 60):00}")
+            .AppendLine($"Deaths: {_deaths}")
+            .ToString();
     }
 }

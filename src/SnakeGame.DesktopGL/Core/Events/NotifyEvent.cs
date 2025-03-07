@@ -2,16 +2,14 @@ using SnakeGame.DesktopGL.Core.Entities;
 
 namespace SnakeGame.DesktopGL.Core.Events;
 
-public class NotifyEvent
+public class NotifyTimerChangedEvent(float timer) : NotifyEvent(null, null, NotifyEventType.TimerChanged)
 {
-    public EntityBase Target { get; private set; }
-    public EntityBase TriggeredBy { get; private set; }
-    public NotifyEventType EventType { get; private set; }
+    public float Timer { get; private set; } = timer;
+}
 
-    public NotifyEvent(EntityBase target, EntityBase triggeredBy, NotifyEventType eventType)
-    {
-        Target = target;
-        TriggeredBy = triggeredBy;
-        EventType = eventType;
-    }
+public class NotifyEvent(EntityBase target, EntityBase triggeredBy, NotifyEventType eventType)
+{
+    public EntityBase Target { get; private set; } = target;
+    public EntityBase TriggeredBy { get; private set; } = triggeredBy;
+    public NotifyEventType EventType { get; private set; } = eventType;
 }

@@ -17,24 +17,26 @@ public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        RenderScores(spriteBatch);
-    }
-    
-    private void RenderScores(SpriteBatch spriteBatch)
-    {
-        spriteBatch.DrawString(
-            _font,
-            scoreBoard.ScoreText,
-            new Vector2(GameWorld.GetRectangle().Width + 60f, 20f) + _offset,
-            Colors.DefaultTextColor,
-            0f,
-            _font.MeasureString(scoreBoard.ScoreText) / 2f,
-            1f,
-            SpriteEffects.None,
-            0f);
+        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 20f, 20f) + _offset;
+        
+        DrawLine(spriteBatch, scoreBoard.DisplayText, displayTextPosition);
     }
 
     public override void Update(GameTime gameTime)
     {
+    }
+
+    private void DrawLine(SpriteBatch spriteBatch, string text, Vector2 position)
+    {
+        spriteBatch.DrawString(
+            _font,
+            text,
+            position,
+            Colors.DefaultTextColor,
+            0f,
+            Vector2.Zero,
+            1f,
+            SpriteEffects.None,
+            0f);
     }
 }

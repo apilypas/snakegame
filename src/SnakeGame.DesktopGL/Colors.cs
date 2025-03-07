@@ -15,6 +15,8 @@ Color palette values
 public static class Colors
 {
     public static Color DefaultBackgroundColor = Color.FromNonPremultiplied(0x02, 0x30, 0x47, 255);
-    public static Color ModalBackgroundColor = Color.FromNonPremultiplied(0x00, 0x67, 0x9B, 255);
     public static Color DefaultTextColor = Color.White;
+    public static Color FormBackgroundColor = Color.FromNonPremultiplied(0x00, 0x67, 0x9B, 255);
+    public static Color FormButtonColor = Color.FromNonPremultiplied(0xA3, 0x56, 0x00, 255);
+    public static Color FormButtonHoverColor = Color.FromNonPremultiplied(0x78, 0x47, 0x11, 255);
 }

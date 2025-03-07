@@ -8,14 +8,22 @@ namespace SnakeGame.DesktopGL.Core;
 
 public class GameWorld
 {
+    public enum GameWorldState
+    {
+        Running,
+        Paused,
+        Ended
+    }
+    
     private readonly EntitySpawner _entitySpawner;
-
+    private float _timer = Constants.InitialTimer;
+    
     public IList<Snake> Snakes { get; } = [];
     public IList<Collectable> Collectables { get; } = [];
     
     public EventManager EventManager { get; } = new();
 
-    public bool IsPaused { get; private set; } = false;
+    public GameWorldState State { get; private set; } = GameWorldState.Running;
     
     public GameWorld()
     {
@@ -36,10 +44,22 @@ public class GameWorld
 
     public void Update(GameTime gameTime)
     {
-        if (IsPaused)
+        if (State != GameWorldState.Running)
             return;
         
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        _timer -= deltaTime;
+
+        if (_timer >= 0f)
+        {
+            EventManager.Notify(new NotifyTimerChangedEvent(_timer));
+        }
+        else
+        {
+            State = GameWorldState.Ended;
+            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.GameEnded));
+        }
         
         foreach (var snake in Snakes)
         {
@@ -75,6 +95,7 @@ public class GameWorld
                     || Snakes.Any(x => x != snake && x.Intersects(headRectangle)))
                 {
                     snake.Die();
+                    EventManager.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
                 }
             }
         }
@@ -110,8 +131,20 @@ public class GameWorld
         playerSnake?.ChangeDirection(direction);
     }
 
-    public void TogglePause()
+    public void Pause()
     {
-        IsPaused = !IsPaused;
+        if (State == GameWorldState.Running)
+        {
+            State = GameWorldState.Paused;
+            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Paused));
+        }
+    }
+
+    public void Unpause()
+    {
+        if (State == GameWorldState.Paused)
+        {
+            State = GameWorldState.Running;
+        }
     }
 }

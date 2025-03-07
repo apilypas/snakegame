@@ -17,4 +17,6 @@ public static class Constants
     public const float DefaultSnakeSpeed = 100f;
     public const float IncreasedSnakeSpeed = 200f;
     public const float SpeedUpRate = 10f; // Seconds
+    public const float InitialTimer = 30f; // Seconds
+    public const float MaxTimer = 300f; // Seconds
 }

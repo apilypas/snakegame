@@ -1,4 +1,5 @@
 using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Screens;
 
 namespace SnakeGame.DesktopGL.Core.Commands;
 
@@ -56,7 +57,15 @@ public class PlayScreenCommands(GameWorld gameWorld)
     {
         public void Execute()
         {
-            gameWorld.TogglePause();
+            gameWorld.Pause();
+        }
+    }
+    
+    private class ResumeCommand(GameWorld gameWorld) : ICommand
+    {
+        public void Execute()
+        {
+            gameWorld.Unpause();
         }
     }
 
@@ -67,4 +76,5 @@ public class PlayScreenCommands(GameWorld gameWorld)
     public ICommand SpeedUp { get; } = new SpeedUpCommand(gameWorld);
     public ICommand SpeedDown { get; } = new SpeedDownCommand(gameWorld);
     public ICommand Pause { get; } = new PauseCommand(gameWorld);
+    public ICommand Resume { get; } = new ResumeCommand(gameWorld);
 }
