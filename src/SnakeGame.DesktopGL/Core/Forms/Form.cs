@@ -21,12 +21,12 @@ public class Form(int id)
 
     private bool _shouldResize = true;
 
-    public void Add(FormElement element)
+    protected void Add(FormElement element)
     {
         Elements.Add(element);
     }
 
-    public void AddAction(FormAction action)
+    protected void Add(FormAction action)
     {
         Actions.Add(action);
     }

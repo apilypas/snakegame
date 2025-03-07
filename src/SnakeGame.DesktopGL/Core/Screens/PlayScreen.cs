@@ -15,11 +15,9 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     private FormsManager _forms;
     private GlobalCommands _globalCommands;
     private PlayScreenCommands _playScreenCommands;
+    private PlayScreenForms _playScreenForms;
 
     private GameWorld _gameWorld;
-
-    private const int PauseFormId = 1;
-    private const int GameOverFormId = 2;
 
     public override void Initialize()
     {
@@ -30,6 +28,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _forms = new FormsManager(_inputs);
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         _playScreenCommands = new PlayScreenCommands(_gameWorld);
+        _playScreenForms = new PlayScreenForms(_playScreenCommands, _globalCommands);
         
         _gameWorld.EventManager.AddObserver(this);
         _gameWorld.EventManager.AddObserver(_scoreBoard);
@@ -40,18 +39,8 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         AddRenderer(new ScoreBoardRenderer(_scoreBoard));
         AddRenderer(new FormsRenderer(_forms));
         
-        _gameWorld.Initialize();
-
-        var pauseForm = new Form(PauseFormId);
-        pauseForm.Add(new FormText("Game is paused"));
-        pauseForm.AddAction(new FormAction("Resume", Keys.Escape, _playScreenCommands.Resume));
-        pauseForm.AddAction(new FormAction("Quit", Keys.Q, _globalCommands.Quit));
-        _forms.Add(pauseForm);
-        
-        var gameOverForm = new Form(GameOverFormId);
-        gameOverForm.Add(new FormText("Game is over"));
-        gameOverForm.AddAction(new FormAction("Quit", Keys.Q, _globalCommands.Quit));
-        _forms.Add(gameOverForm);
+        _forms.Add(_playScreenForms.Pause);
+        _forms.Add(_playScreenForms.GameOver);
         
         _inputs.BindKeyDown(Keys.Up, _playScreenCommands.MoveUp);
         _inputs.BindKeyDown(Keys.Left, _playScreenCommands.MoveLeft);
@@ -65,6 +54,8 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
         _inputs.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
         _inputs.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        
+        _gameWorld.Initialize();
     }
 
     public override void Update(GameTime gameTime)
@@ -81,12 +72,12 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     {
         if (notifyEvent.EventType == NotifyEventType.GameEnded)
         {
-            _forms.Show(GameOverFormId);
+            _forms.Show(PlayScreenForms.GameOverFormId);
         }
 
         if (notifyEvent.EventType == NotifyEventType.Paused)
         {
-            _forms.Show(PauseFormId);
+            _forms.Show(PlayScreenForms.PauseFormId);
         }
     }
 }
