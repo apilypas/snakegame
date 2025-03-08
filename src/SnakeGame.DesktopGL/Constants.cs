@@ -2,7 +2,7 @@ namespace SnakeGame.DesktopGL;
 
 public static class Constants
 {
-    public const int SegmentSize = 20; // Pixels
+    public const int SegmentSize = 16; // Pixels
     public const int WallWidth = 32; // Segments
     public const int WallHeight = 32; // Segments
     public const float DiamondSpawnRate = 3f; // Seconds

@@ -30,10 +30,10 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     {
         _texture = content.Load<Texture2D>("Snake");
         _playerSnakeSprites = LoadSnakeSprites(0);
-        _enemySnakeTextures[0] = LoadSnakeSprites(20);
-        _enemySnakeTextures[1] = LoadSnakeSprites(40);
-        _enemySnakeTextures[2] = LoadSnakeSprites(60);
-        _enemySnakeTextures[3] = LoadSnakeSprites(80);
+        _enemySnakeTextures[0] = LoadSnakeSprites(16);
+        _enemySnakeTextures[1] = LoadSnakeSprites(32);
+        _enemySnakeTextures[2] = LoadSnakeSprites(48);
+        _enemySnakeTextures[3] = LoadSnakeSprites(64);
         
         _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
@@ -45,20 +45,20 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         // Segment
         sprite.Segment = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(20, textureOffsetY, 20, 20))
+            new Rectangle(16, textureOffsetY, 16, 16))
             );
         sprite.Segment.Origin = _origin;
 
         // Corner
         sprite.Corners[0] = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(0, textureOffsetY, 20, 20))
+            new Rectangle(0, textureOffsetY, 16, 16))
             );
         sprite.Corners[0].Origin = _origin;
         
         sprite.Corners[1] = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(0, textureOffsetY, 20, 20))
+            new Rectangle(0, textureOffsetY, 16, 16))
             );
         sprite.Corners[1].Effect = SpriteEffects.FlipVertically;
         sprite.Corners[1].Origin = _origin;
@@ -66,13 +66,13 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         // Head
         sprite.Face = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(40, textureOffsetY, 20, 20))
+            new Rectangle(32, textureOffsetY, 16, 16))
             );
         sprite.Face.Origin = _origin;
 
         sprite.Head = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(60, textureOffsetY, 20, 20))
+            new Rectangle(48, textureOffsetY, 16, 16))
             );
         sprite.Head.Effect = SpriteEffects.FlipHorizontally;
         sprite.Head.Origin = _origin;
@@ -80,7 +80,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         // Tail
         sprite.Tail = new Sprite(new Texture2DRegion(
             _texture,
-            new Rectangle(60, textureOffsetY, 20, 20))
+            new Rectangle(48, textureOffsetY, 16, 16))
             );
         sprite.Tail.Origin = _origin;
         

@@ -30,8 +30,16 @@ public class GameWorld
         _entitySpawner = new EntitySpawner(this);
 
         // Let's start initially with player and one enemy
-        Snakes.Add(new PlayerSnake(new Vector2(140f, 400f), 3, SnakeDirection.Up));
-        Snakes.Add(new EnemySnake(new Vector2(460f, 400f), 3, SnakeDirection.Up, this));
+        Snakes.Add(new PlayerSnake(
+            new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize),
+            3,
+            SnakeDirection.Up
+            ));
+        Snakes.Add(new EnemySnake(
+            new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
+            3,
+            SnakeDirection.Up, this
+            ));
     }
 
     public void Initialize()

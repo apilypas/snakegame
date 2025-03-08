@@ -17,7 +17,7 @@ public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 20f, 20f) + _offset;
+        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 16f, 16f) + _offset;
         
         DrawLine(spriteBatch, scoreBoard.DisplayText, displayTextPosition);
     }

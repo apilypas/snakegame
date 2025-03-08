@@ -21,21 +21,21 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
         _diamondSprite = new Sprite(
             new Texture2DRegion(
                 _texture, 
-                new Rectangle(40, 60, 20, 20)
+                new Rectangle(0, 32, 16, 16)
                 )
             );
         
         _snakePartSprite = new Sprite(
             new Texture2DRegion(
                 _texture, 
-                new Rectangle(20, 60, 20, 20)
+                new Rectangle(0, 16, 16, 16)
                 )
             );
         
         _speedBoostSprite = new Sprite(
             new Texture2DRegion(
                 _texture, 
-                new Rectangle(0, 60, 20, 20)
+                new Rectangle(0, 0, 16, 16)
                 )
             );
 
