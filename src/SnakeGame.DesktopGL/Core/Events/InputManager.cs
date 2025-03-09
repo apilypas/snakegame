@@ -10,7 +10,6 @@ public class InputManager(ScreenBase screen)
     private KeyboardState _previousState;
     private KeyboardState _currentState;
     
-    private MouseState _previousMouseState;
     private MouseState _currentMouseState;
 
     private bool _isBindingsEnabled = true;
@@ -27,7 +26,6 @@ public class InputManager(ScreenBase screen)
         _previousState = _currentState;
         _currentState = Keyboard.GetState();
 
-        _previousMouseState = _currentMouseState;
         _currentMouseState = Mouse.GetState();
 
         if (_isBindingsEnabled)
