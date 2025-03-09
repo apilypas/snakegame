@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 
@@ -25,6 +26,13 @@ namespace SnakeGame.DesktopGL.Core.Renderers
         public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
         {
             _mapRenderer.Draw(Matrix.CreateTranslation(Offset.X, Offset.Y, 0.0f));
+            
+            spriteBatch.DrawRectangle(
+                Offset.X,
+                Offset.Y,
+                _map.WidthInPixels,
+                _map.WidthInPixels,
+                Colors.DefaultTextColor);
         }
 
         public override void Update(GameTime gameTime)

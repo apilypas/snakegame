@@ -61,10 +61,12 @@ public class EntitySpawner(GameWorld gameWorld)
     {
         _diamondSpawnTimer += deltaTime;
         
-        if (gameWorld.Collectables.Count != 0 && _diamondSpawnTimer < Constants.DiamondSpawnRate)
+        var diamondCount = gameWorld.Collectables.Count(x => x.Type == CollectableType.Diamond);
+        
+        if (diamondCount > 0 && _diamondSpawnTimer < Constants.DiamondSpawnRate)
             return;
 
-        if (gameWorld.Collectables.Count(x => x.Type == CollectableType.Diamond) >= Constants.MaxDiamondLimit)
+        if (diamondCount >= Constants.MaxDiamondLimit)
             return;
 
         var location = FindFreeLocation();

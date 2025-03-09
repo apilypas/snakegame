@@ -29,6 +29,8 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
         
         spriteBatch.FillRectangle(form.Location, form.Size, Colors.FormBackgroundColor);
         
+        spriteBatch.DrawRectangle(form.Location, form.Size, Colors.DefaultTextColor);
+        
         spriteBatch.DrawString(
             _font,
             ((FormText)form.Elements[0]).Text,
