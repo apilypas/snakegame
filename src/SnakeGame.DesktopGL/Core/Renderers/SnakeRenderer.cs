@@ -22,7 +22,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     private readonly SnakeSprites[] _enemySnakeTextures = new SnakeSprites[4];
     
     private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
-    private Vector2 _offset;
+    private readonly Vector2 _offset = PlayFieldRenderer.Offset;
     
     private Texture2D _texture;
 
@@ -34,8 +34,6 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         _enemySnakeTextures[1] = LoadSnakeSprites(32);
         _enemySnakeTextures[2] = LoadSnakeSprites(48);
         _enemySnakeTextures[3] = LoadSnakeSprites(64);
-        
-        _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 
     private SnakeSprites LoadSnakeSprites(int textureOffsetY)

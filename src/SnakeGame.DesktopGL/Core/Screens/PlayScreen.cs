@@ -7,7 +7,7 @@ using SnakeGame.DesktopGL.Core.Renderers;
 
 namespace SnakeGame.DesktopGL.Core.Screens;
 
-public class PlayScreen(Game game) : ScreenBase(game), IObserver
+public class PlayScreen(SnakeGame game) : ScreenBase(game), IObserver
 {
     private ScoreBoard _scoreBoard;
     
@@ -24,9 +24,9 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _gameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
         
-        _inputs = new InputManager();
+        _inputs = new InputManager(this);
         _forms = new FormsManager(_inputs);
-        _globalCommands = new GlobalCommands(Game, ScreenManager);
+        _globalCommands = new GlobalCommands(game, ScreenManager);
         _playScreenCommands = new PlayScreenCommands(_gameWorld);
         _playScreenForms = new PlayScreenForms(_playScreenCommands, _globalCommands);
         
@@ -54,6 +54,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
         _inputs.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
         _inputs.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputs.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
         
         _gameWorld.Initialize();
     }

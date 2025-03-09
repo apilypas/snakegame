@@ -10,18 +10,21 @@ namespace SnakeGame.DesktopGL.Core.Renderers
     {
         private TiledMap _map;
         private TiledMapRenderer _mapRenderer;
-        private Vector2 _offset;
+        
+        public readonly static Vector2 Offset = new(
+            (Constants.ScreenWidth - Constants.WallWidth * Constants.SegmentSize) / 2f,
+            (Constants.ScreenHeight - Constants.WallHeight * Constants.SegmentSize) / 2f
+            );
         
         public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
             _map = content.Load<TiledMap>("Map");
             _mapRenderer = new TiledMapRenderer(graphicsDevice, _map);
-            _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
         }
 
         public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            _mapRenderer.Draw(Matrix.CreateTranslation(_offset.X, _offset.Y, 0.0f));
+            _mapRenderer.Draw(Matrix.CreateTranslation(Offset.X, Offset.Y, 0.0f));
         }
 
         public override void Update(GameTime gameTime)

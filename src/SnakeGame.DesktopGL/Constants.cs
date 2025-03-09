@@ -19,4 +19,6 @@ public static class Constants
     public const float SpeedUpRate = 10f; // Seconds
     public const float InitialTimer = 30f; // Seconds
     public const float MaxTimer = 300f; // Seconds
+    public const int ScreenWidth = 960;
+    public const int ScreenHeight = 540;
 }

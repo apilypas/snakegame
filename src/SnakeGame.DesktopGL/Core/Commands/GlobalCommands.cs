@@ -4,7 +4,7 @@ using SnakeGame.DesktopGL.Core.Screens;
 
 namespace SnakeGame.DesktopGL.Core.Commands;
 
-public class GlobalCommands(Game game, ScreenManager screenManager)
+public class GlobalCommands(SnakeGame game, ScreenManager screenManager)
 {
     private class QuitCommand(Game game) : ICommand
     {
@@ -14,7 +14,7 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
         }
     }
     
-    private class OpenPlayScreenCommand(Game game, ScreenManager screenManager) : ICommand
+    private class OpenPlayScreenCommand(SnakeGame game, ScreenManager screenManager) : ICommand
     {
         public void Execute()
         {
@@ -22,6 +22,15 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
         }
     }
 
+    private class FullScreenCommand(SnakeGame game) : ICommand
+    {
+        public void Execute()
+        {
+            game.Graphics.ToggleFullScreen();
+        }
+    }
+
     public ICommand Quit => new QuitCommand(game);
     public ICommand OpenPlayScreen => new OpenPlayScreenCommand(game, screenManager);
+    public ICommand FullScreen => new FullScreenCommand(game);
 }

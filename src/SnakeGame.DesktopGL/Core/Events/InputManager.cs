@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.DesktopGL.Core.Commands;
+using SnakeGame.DesktopGL.Core.Screens;
 
 namespace SnakeGame.DesktopGL.Core.Events;
 
-public class InputManager
+public class InputManager(ScreenBase screen)
 {
     private KeyboardState _previousState;
     private KeyboardState _currentState;
@@ -19,7 +20,6 @@ public class InputManager
     private readonly Dictionary<Keys, ICommand> _keyReleasedBindings = new();
     private ICommand _leftClickBinding;
     
-    public MouseState MouseState => _currentMouseState;
     public KeyboardState KeyboardState => _currentState;
 
     public void Update()
@@ -85,6 +85,29 @@ public class InputManager
     public void DisableBindings()
     {
         _isBindingsEnabled = false;
+    }
+
+    public bool IsMouseLeftButtonPressed
+    {
+        get { return _currentMouseState.LeftButton == ButtonState.Pressed; }
+    }
+
+    public int MouseX
+    {
+        get
+        {
+            var x = _currentMouseState.X;
+            return (int)(x / screen.ScalingHandler.Scale + screen.ScalingHandler.Position.X);
+        }
+    }
+
+    public int MouseY
+    {
+        get
+        {
+            var y = _currentMouseState.Y;
+            return (int)(y / screen.ScalingHandler.Scale + screen.ScalingHandler.Position.Y);
+        }
     }
 
     private bool IsKeyDown(Keys key)

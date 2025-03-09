@@ -12,7 +12,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     private Sprite _snakePartSprite;
     private Sprite _speedBoostSprite;
     private Texture2D _texture;
-    private Vector2 _offset;
+    private readonly Vector2 _offset = PlayFieldRenderer.Offset;
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
@@ -38,8 +38,6 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
                 new Rectangle(0, 0, 16, 16)
                 )
             );
-
-        _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)

@@ -7,12 +7,11 @@ namespace SnakeGame.DesktopGL.Core.Renderers;
 public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 {
     private SpriteFont _font;
-    private Vector2 _offset;
+    private readonly Vector2 _offset = PlayFieldRenderer.Offset;
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _font = content.Load<SpriteFont>("MainFont");
-        _offset = RendererUtils.GetPlayFieldOffset(graphicsDevice);
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)

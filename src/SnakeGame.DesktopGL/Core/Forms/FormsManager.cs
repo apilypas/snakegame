@@ -13,8 +13,7 @@ public class FormsManager(InputManager inputs)
     
     private KeyboardState _previousState;
     private KeyboardState _currentState;
-    private MouseState _mouseState;
-
+    
     public void Add(Form form)
     {
         _forms[form.Id] = form;
@@ -41,7 +40,6 @@ public class FormsManager(InputManager inputs)
         
         _previousState = _currentState;
         _currentState = inputs.KeyboardState;
-        _mouseState = inputs.MouseState;
     }
 
     public void Close()
@@ -58,7 +56,6 @@ public class FormsManager(InputManager inputs)
         {
             _previousState = _currentState;
             _currentState = inputs.KeyboardState;
-            _mouseState = inputs.MouseState;
             
             HoverElement(form);
             ClickElement(form);
@@ -68,12 +65,12 @@ public class FormsManager(InputManager inputs)
 
     private void HoverElement(Form form)
     {
-        form.HoverElement(_mouseState.X, _mouseState.Y);
+        form.HoverElement(inputs.MouseX, inputs.MouseY);
     }
 
     private void ClickElement(Form form)
     {
-        if (_mouseState.LeftButton != ButtonState.Pressed)
+        if (!inputs.IsMouseLeftButtonPressed)
             return;
         
         foreach (var action in form.Actions)
