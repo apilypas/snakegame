@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
 using SnakeGame.DesktopGL.Core.Entities;
+using SnakeGame.DesktopGL.Core.Renderers.Animations;
 
 namespace SnakeGame.DesktopGL.Core.Renderers;
 
@@ -13,6 +14,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     private Sprite _speedBoostSprite;
     private Texture2D _texture;
     private readonly Vector2 _offset = PlayFieldRenderer.Offset;
+    private readonly JumpingAnimation _jumpingAnimation = new();
 
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
@@ -48,7 +50,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _diamondSprite.Draw(
                     spriteBatch,
-                    collectable.Location + _offset,
+                    collectable.Location + _offset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -57,7 +59,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _snakePartSprite.Draw(
                     spriteBatch,
-                    collectable.Location + _offset,
+                    collectable.Location + _offset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -66,7 +68,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _speedBoostSprite.Draw(
                     spriteBatch,
-                    collectable.Location + _offset,
+                    collectable.Location + _offset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -75,5 +77,6 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
 
     public override void Update(GameTime gameTime)
     {
+        _jumpingAnimation.Update(gameTime);
     }
 }
