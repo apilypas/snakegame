@@ -2,3 +2,7 @@ src/SnakeGame.DesktopGL/bin/*
 src/SnakeGame.DesktopGL/obj/*
 src/SnakeGame.DesktopGL/Content/bin/*
 src/SnakeGame.DesktopGL/Content/obj/*
+src/SnakeGame.Core/bin/*
+src/SnakeGame.Core/obj/*
+src/SnakeGame.Core/Content/bin/*
+src/SnakeGame.Core/Content/obj/*

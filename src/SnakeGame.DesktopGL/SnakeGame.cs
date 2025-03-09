@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended.Screens;
-using SnakeGame.DesktopGL.Core.Screens;
+using SnakeGame.Core;
+using SnakeGame.Core.Screens;
 
 namespace SnakeGame.DesktopGL;
 
