@@ -1,22 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended.Screens;
-using SnakeGame.Core;
 using SnakeGame.Core.Screens;
 
-namespace SnakeGame.DesktopGL;
+namespace SnakeGame.Android;
 
 public class SnakeGame : Game
 {
     private ScreenManager _screenManager;
     private GraphicsDeviceManager _graphics;
-
+    
     public SnakeGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = Constants.ScreenWidth;
-        _graphics.PreferredBackBufferHeight = Constants.ScreenHeight;
-        
-        Window.Title = "Snake Game";
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;

@@ -11,16 +11,10 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-      <None Update="Content\snake.tsx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Remove="pipeline-references\**" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Remove="pipeline-references\**" />
-    </ItemGroup>
-    <ItemGroup>
-      <MonoGameContentReference Include="Content\Content.mgcb" />
     </ItemGroup>
     <ItemGroup>
       <None Update="Content\Map.tmx">
