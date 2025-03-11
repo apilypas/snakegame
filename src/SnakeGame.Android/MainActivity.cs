@@ -21,7 +21,7 @@ namespace SnakeGame.Android;
     Theme = "@android:style/Theme.NoTitleBar.Fullscreen",
     HardwareAccelerated = true
     )]
-public class Activity1 : AndroidGameActivity
+public class MainActivity : AndroidGameActivity
 {
     private SnakeGame _game;
     private View _view;

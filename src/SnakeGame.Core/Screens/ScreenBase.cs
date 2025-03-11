@@ -101,10 +101,9 @@ public abstract class ScreenBase(Game game) : GameScreen(game)
         
         var screenRatio = _screenWidth / (float)_screenHeight;
         var width = (int) (Constants.ScreenHeight * screenRatio);
+        var scale = MathF.Min(_screenWidth / (float)width, _screenHeight / (float)Constants.ScreenHeight);
 
         _renderTarget = new RenderTarget2D(GraphicsDevice, width, Constants.ScreenHeight);
-        
-        var scale = MathF.Min(_screenWidth / (float)width, _screenHeight / (float)Constants.ScreenHeight);
 
         _scale = new Vector2(scale, scale);
     }
