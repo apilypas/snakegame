@@ -1,23 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using SnakeGame.Core.Commands;
 using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Events;
 
-public class InputManager(ScreenBase screen)
+public class KeyboardInputManager
 {
     private KeyboardState _previousState;
     private KeyboardState _currentState;
     
-    private MouseState _currentMouseState;
-
     private bool _isBindingsEnabled = true;
     
     private readonly Dictionary<Keys, ICommand> _keyDownBindings = new();
     private readonly Dictionary<Keys, ICommand> _keyPressedBindings = new();
     private readonly Dictionary<Keys, ICommand> _keyReleasedBindings = new();
-    private ICommand _leftClickBinding;
     
     public KeyboardState KeyboardState => _currentState;
 
@@ -25,9 +24,7 @@ public class InputManager(ScreenBase screen)
     {
         _previousState = _currentState;
         _currentState = Keyboard.GetState();
-
-        _currentMouseState = Mouse.GetState();
-
+        
         if (_isBindingsEnabled)
         {
             foreach (var key in _keyDownBindings.Keys)
@@ -47,14 +44,9 @@ public class InputManager(ScreenBase screen)
                 if (IsKeyReleased(key))
                     _keyReleasedBindings[key].Execute();
             }
-
-            if (_leftClickBinding != null && _currentMouseState.LeftButton == ButtonState.Pressed)
-            {
-                _leftClickBinding.Execute();
-            }
         }
     }
-
+    
     public void BindKeyDown(Keys key, ICommand command)
     {
         _keyDownBindings.Add(key, command);
@@ -69,12 +61,7 @@ public class InputManager(ScreenBase screen)
     {
         _keyReleasedBindings.Add(key, command);
     }
-
-    public void BindLeftClick(ICommand command)
-    {
-        _leftClickBinding = command;
-    }
-
+    
     public void EnableBindings()
     {
         _isBindingsEnabled = true;
@@ -84,30 +71,7 @@ public class InputManager(ScreenBase screen)
     {
         _isBindingsEnabled = false;
     }
-
-    public bool IsMouseLeftButtonPressed
-    {
-        get { return _currentMouseState.LeftButton == ButtonState.Pressed; }
-    }
-
-    public int MouseX
-    {
-        get
-        {
-            var x = _currentMouseState.X;
-            return (int)(x / screen.ScalingHandler.Scale + screen.ScalingHandler.Position.X);
-        }
-    }
-
-    public int MouseY
-    {
-        get
-        {
-            var y = _currentMouseState.Y;
-            return (int)(y / screen.ScalingHandler.Scale + screen.ScalingHandler.Position.Y);
-        }
-    }
-
+    
     private bool IsKeyDown(Keys key)
     {
         return _currentState.IsKeyDown(key);
@@ -121,5 +85,71 @@ public class InputManager(ScreenBase screen)
     private bool IsKeyReleased(Keys key)
     {
         return _currentState.IsKeyUp(key) && _previousState.IsKeyDown(key);
+    }
+}
+
+public class MouseInputManager(ScreenBase screen)
+{
+    private MouseState _state;
+    
+    private ICommand _leftClickBinding;
+
+    public void Update()
+    {
+        _state = Mouse.GetState();
+        
+        if (_leftClickBinding != null && _state.LeftButton == ButtonState.Pressed)
+        {
+            _leftClickBinding.Execute();
+        }
+    }
+    
+    public bool IsLeftButtonPressed => _state.LeftButton == ButtonState.Pressed;
+    public MouseState State => _state;
+
+    public void BindLeftClick(ICommand command)
+    {
+        _leftClickBinding = command;
+    }
+}
+
+public class TouchInputManager(ScreenBase screen)
+{
+    private TouchCollection _state;
+    
+    private ICommand _touchedBinding;
+
+    public void Update()
+    {
+        _state = TouchPanel.GetState();
+
+        if (_touchedBinding != null && IsTouched)
+        {
+            _touchedBinding.Execute();
+        }
+    }
+    
+    public void BindTouched(ICommand command)
+    {
+        _touchedBinding = command;
+    }
+
+    public bool IsConnected => _state.IsConnected;
+    public bool IsTouched => _state.Any(x => x.State is TouchLocationState.Pressed or TouchLocationState.Moved);
+    
+    public TouchCollection State => _state;
+}
+
+public class InputManager(ScreenBase screen)
+{
+    public KeyboardInputManager Keyboard { get; } = new();
+    public MouseInputManager Mouse { get; } = new(screen);
+    public TouchInputManager Touch { get; } = new(screen);
+
+    public void Update()
+    {
+        Keyboard.Update();
+        Mouse.Update();
+        Touch.Update();
     }
 }

@@ -117,11 +117,11 @@ public class Form(int id)
         _shouldResize = false;
     }
 
-    public void HoverElement(int x, int y)
+    public void HoverElement(float x, float y)
     {
         foreach (var action in Actions)
         {
-            action.IsHovered = action.IsMouseOver(x, y);
+            action.IsHovered = action.Bounds.Contains(new Vector2(x, y));
         }
     }
 }

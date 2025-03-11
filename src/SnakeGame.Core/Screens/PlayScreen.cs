@@ -25,7 +25,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _scoreBoard = new ScoreBoard();
         
         _inputs = new InputManager(this);
-        _forms = new FormsManager(_inputs);
+        _forms = new FormsManager(this, _inputs);
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         _playScreenCommands = new PlayScreenCommands(_gameWorld);
         _playScreenForms = new PlayScreenForms(_playScreenCommands, _globalCommands);
@@ -42,19 +42,19 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _forms.Add(_playScreenForms.Pause);
         _forms.Add(_playScreenForms.GameOver);
         
-        _inputs.BindKeyDown(Keys.Up, _playScreenCommands.MoveUp);
-        _inputs.BindKeyDown(Keys.Left, _playScreenCommands.MoveLeft);
-        _inputs.BindKeyDown(Keys.Right, _playScreenCommands.MoveRight);
-        _inputs.BindKeyDown(Keys.Down, _playScreenCommands.MoveDown);
-        _inputs.BindKeyDown(Keys.W, _playScreenCommands.MoveUp);
-        _inputs.BindKeyDown(Keys.A, _playScreenCommands.MoveLeft);
-        _inputs.BindKeyDown(Keys.D, _playScreenCommands.MoveRight);
-        _inputs.BindKeyDown(Keys.S, _playScreenCommands.MoveDown);
-        _inputs.BindKeyPressed(Keys.Space, _playScreenCommands.SpeedUp);
-        _inputs.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
-        _inputs.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
-        _inputs.BindKeyPressed(Keys.Q, _globalCommands.Quit);
-        _inputs.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
+        _inputs.Keyboard.BindKeyDown(Keys.Up, _playScreenCommands.MoveUp);
+        _inputs.Keyboard.BindKeyDown(Keys.Left, _playScreenCommands.MoveLeft);
+        _inputs.Keyboard.BindKeyDown(Keys.Right, _playScreenCommands.MoveRight);
+        _inputs.Keyboard.BindKeyDown(Keys.Down, _playScreenCommands.MoveDown);
+        _inputs.Keyboard.BindKeyDown(Keys.W, _playScreenCommands.MoveUp);
+        _inputs.Keyboard.BindKeyDown(Keys.A, _playScreenCommands.MoveLeft);
+        _inputs.Keyboard.BindKeyDown(Keys.D, _playScreenCommands.MoveRight);
+        _inputs.Keyboard.BindKeyDown(Keys.S, _playScreenCommands.MoveDown);
+        _inputs.Keyboard.BindKeyPressed(Keys.Space, _playScreenCommands.SpeedUp);
+        _inputs.Keyboard.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
+        _inputs.Keyboard.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
+        _inputs.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputs.Keyboard.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
         
         _gameWorld.Initialize();
     }

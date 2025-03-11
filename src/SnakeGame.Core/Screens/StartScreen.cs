@@ -18,10 +18,11 @@ public class StartScreen(Game game) : ScreenBase(game)
         _inputManager = new InputManager(this);
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         
-        _inputManager.BindKeyPressed(Keys.Q, _globalCommands.Quit);
-        _inputManager.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
-        _inputManager.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
-        _inputManager.BindLeftClick(_globalCommands.OpenPlayScreen);
+        _inputManager.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputManager.Keyboard.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
+        _inputManager.Keyboard.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
+        _inputManager.Mouse.BindLeftClick(_globalCommands.OpenPlayScreen);
+        _inputManager.Touch.BindTouched(_globalCommands.OpenPlayScreen);
     }
 
     public override void Update(GameTime gameTime)

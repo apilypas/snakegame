@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Screens;
 
@@ -12,6 +13,11 @@ public class SnakeGame : Game
     public SnakeGame()
     {
         _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        _graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+        _graphics.IsFullScreen = true;
+        _graphics.ApplyChanges();
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;

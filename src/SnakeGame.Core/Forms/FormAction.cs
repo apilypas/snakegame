@@ -15,10 +15,5 @@ public class FormAction(string title, Keys key, ICommand command)
     public SizeF Size { get; set; }
     public Keys Key { get; } = key;
 
-    public bool IsMouseOver(int x, int y)
-    {
-        var point = new Vector2(x, y);
-        var rectangle = new RectangleF(Location, Size);
-        return rectangle.Contains(point);
-    }
+    public RectangleF Bounds => new(Location, Size);
 }

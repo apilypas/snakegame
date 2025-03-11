@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using SnakeGame.Core.Events;
+using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Forms;
 
-public class FormsManager(InputManager inputs)
+public class FormsManager(ScreenBase screen, InputManager inputs)
 {
     private int _visibleFormId = -1;
     
@@ -29,7 +32,7 @@ public class FormsManager(InputManager inputs)
 
     public void Show(int formId)
     {
-        inputs.DisableBindings();
+        inputs.Keyboard.DisableBindings();
         
         _visibleFormId = formId;
 
@@ -39,13 +42,13 @@ public class FormsManager(InputManager inputs)
             throw new ArgumentException($"Unknown form id {formId}", nameof(formId));
         
         _previousState = _currentState;
-        _currentState = inputs.KeyboardState;
+        _currentState = inputs.Keyboard.KeyboardState;
     }
 
     public void Close()
     {
         _visibleFormId = -1;
-        inputs.EnableBindings();
+        inputs.Keyboard.EnableBindings();
     }
 
     public void Update()
@@ -55,7 +58,7 @@ public class FormsManager(InputManager inputs)
         if (form != null)
         {
             _previousState = _currentState;
-            _currentState = inputs.KeyboardState;
+            _currentState = inputs.Keyboard.KeyboardState;
             
             HoverElement(form);
             ClickElement(form);
@@ -65,23 +68,54 @@ public class FormsManager(InputManager inputs)
 
     private void HoverElement(Form form)
     {
-        form.HoverElement(inputs.MouseX, inputs.MouseY);
+        var position = CalculateWithScale(inputs.Mouse.State.X, inputs.Mouse.State.Y);
+        
+        form.HoverElement(position.X, position.Y);
     }
 
-    private void ClickElement(Form form)
+    private bool ClickElement(Form form)
     {
-        if (!inputs.IsMouseLeftButtonPressed)
-            return;
-        
+        if (inputs.Touch.IsConnected && inputs.Touch.IsTouched)
+        {
+            foreach (var state in inputs.Touch.State)
+            {
+                if (state.State == TouchLocationState.Pressed)
+                {
+                    var position = CalculateWithScale(state.Position.X, state.Position.Y);
+                    
+                    if (ClickElement(form, position.X, position.Y))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if (inputs.Mouse.IsLeftButtonPressed)
+        {
+            var position = CalculateWithScale(inputs.Mouse.State.X, inputs.Mouse.State.Y);
+
+            if (ClickElement(form, position.X, position.Y))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool ClickElement(Form form, float x, float y)
+    {
         foreach (var action in form.Actions)
         {
-            if (action.IsHovered)
+            if (action.Bounds.Contains(new Vector2(x, y)))
             {
                 action.Command.Execute();
                 Close();
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 
     private void HandleKeyboardInput(Form form)
@@ -95,5 +129,11 @@ public class FormsManager(InputManager inputs)
                 break;
             }
         }
+    }
+
+    private Vector2 CalculateWithScale(float x, float y)
+    {
+        var screenScale = screen.GetScale();
+        return new Vector2(x / screenScale.X, y / screenScale.Y);
     }
 }
