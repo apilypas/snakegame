@@ -7,3 +7,9 @@ Features:
 * Scores
 * Speed ups
 * Multiple enemy with simple AI
+* On-screen game pad support
+* Physical game pad support
+
+Platforms:
+* .NET 8+ (Linux, Windows)
+* Mobile (Android)
