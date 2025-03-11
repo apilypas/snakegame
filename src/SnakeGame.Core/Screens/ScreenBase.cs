@@ -15,6 +15,9 @@ public abstract class ScreenBase(Game game) : GameScreen(game)
     private int _screenWidth;
     private int _screenHeight;
     private Vector2 _scale = Vector2.One;
+
+    public int VirtualWidth { get; private set; }
+    public int VirtualHeight { get; private set; }
     
     public override void LoadContent()
     {
@@ -62,7 +65,7 @@ public abstract class ScreenBase(Game game) : GameScreen(game)
             Color.White,
             0f,
             Vector2.Zero,
-            GetScale(),
+            _scale,
             SpriteEffects.None,
             0f);
         
@@ -78,10 +81,10 @@ public abstract class ScreenBase(Game game) : GameScreen(game)
             renderer.Update(gameTime);
         }
     }
-    
-    public Vector2 GetScale()
+
+    public Vector2 TransformPoint(Vector2 point)
     {
-        return _scale;
+        return point / _scale;
     }
 
     protected void AddRenderer(RendererBase renderer)
@@ -106,5 +109,8 @@ public abstract class ScreenBase(Game game) : GameScreen(game)
         _renderTarget = new RenderTarget2D(GraphicsDevice, width, Constants.ScreenHeight);
 
         _scale = new Vector2(scale, scale);
+
+        VirtualWidth = width;
+        VirtualHeight = Constants.ScreenHeight;
     }
 }

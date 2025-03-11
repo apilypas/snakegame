@@ -68,39 +68,32 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
     private void HoverElement(Form form)
     {
-        var position = CalculateWithScale(inputs.Mouse.State.X, inputs.Mouse.State.Y);
+        var position = screen.TransformPoint(new Vector2(inputs.Mouse.State.X, inputs.Mouse.State.Y));
         
         form.HoverElement(position.X, position.Y);
     }
 
-    private bool ClickElement(Form form)
+    private void ClickElement(Form form)
     {
         if (inputs.Touch.IsConnected && inputs.Touch.IsTouched)
         {
-            foreach (var state in inputs.Touch.State)
+            foreach (var state in inputs.Touch.Touches)
             {
                 if (state.State == TouchLocationState.Pressed)
                 {
-                    var position = CalculateWithScale(state.Position.X, state.Position.Y);
+                    var position = screen.TransformPoint(state.Position);
                     
                     if (ClickElement(form, position.X, position.Y))
-                    {
-                        return true;
-                    }
+                        return;
                 }
             }
         }
         else if (inputs.Mouse.IsLeftButtonPressed)
         {
-            var position = CalculateWithScale(inputs.Mouse.State.X, inputs.Mouse.State.Y);
+            var position = screen.TransformPoint(new Vector2(inputs.Mouse.State.X, inputs.Mouse.State.Y));
 
-            if (ClickElement(form, position.X, position.Y))
-            {
-                return true;
-            }
+            ClickElement(form, position.X, position.Y);
         }
-
-        return false;
     }
 
     private bool ClickElement(Form form, float x, float y)
@@ -129,11 +122,5 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
                 break;
             }
         }
-    }
-
-    private Vector2 CalculateWithScale(float x, float y)
-    {
-        var screenScale = screen.GetScale();
-        return new Vector2(x / screenScale.X, y / screenScale.Y);
     }
 }

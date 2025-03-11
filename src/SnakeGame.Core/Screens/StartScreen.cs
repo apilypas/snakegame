@@ -23,6 +23,7 @@ public class StartScreen(Game game) : ScreenBase(game)
         _inputManager.Keyboard.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
         _inputManager.Mouse.BindLeftClick(_globalCommands.OpenPlayScreen);
         _inputManager.Touch.BindTouched(_globalCommands.OpenPlayScreen);
+        _inputManager.GamePad.BindButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
     }
 
     public override void Update(GameTime gameTime)

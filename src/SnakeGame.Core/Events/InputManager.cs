@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using SnakeGame.Core.Commands;
@@ -115,13 +116,13 @@ public class MouseInputManager(ScreenBase screen)
 
 public class TouchInputManager(ScreenBase screen)
 {
-    private TouchCollection _state;
+    private TouchCollection _touches;
     
     private ICommand _touchedBinding;
 
     public void Update()
     {
-        _state = TouchPanel.GetState();
+        _touches = TouchPanel.GetState();
 
         if (_touchedBinding != null && IsTouched)
         {
@@ -134,10 +135,90 @@ public class TouchInputManager(ScreenBase screen)
         _touchedBinding = command;
     }
 
-    public bool IsConnected => _state.IsConnected;
-    public bool IsTouched => _state.Any(x => x.State is TouchLocationState.Pressed or TouchLocationState.Moved);
+    public bool IsConnected => _touches.IsConnected;
+    public bool IsTouched => _touches.Any(x => x.State is TouchLocationState.Pressed or TouchLocationState.Moved);
     
-    public TouchCollection State => _state;
+    public TouchCollection Touches => _touches;
+}
+
+public interface IVirtualGamePad
+{
+    GamePadState GetState(GamePadState state);
+}
+
+public class GamePadManager(PlayerIndex playerIndex = PlayerIndex.One)
+{
+    private readonly Dictionary<Buttons, ICommand> _buttonPressedBindings = new();
+    private readonly Dictionary<Buttons, ICommand> _buttonReleasedBindings = new();
+    private readonly Dictionary<Buttons, ICommand> _buttonDownBindings = new();
+
+    private GamePadState _previousState;
+    private GamePadState _currentState;
+
+    public IVirtualGamePad VirtualGamePad { get; set; }
+    
+    public void Update()
+    {
+        _previousState = _currentState;
+        _currentState = GamePad.GetState(playerIndex);
+        
+        if (VirtualGamePad != null)
+            _currentState = VirtualGamePad.GetState(_currentState);
+        
+        foreach (var button in _buttonPressedBindings.Keys)
+        {
+            if (IsButtonPressed(button))
+            {
+                _buttonPressedBindings[button].Execute();
+            }
+        }
+        
+        foreach (var button in _buttonReleasedBindings.Keys)
+        {
+            if (IsButtonReleased(button))
+            {
+                _buttonReleasedBindings[button].Execute();
+            }
+        }
+        
+        foreach (var button in _buttonDownBindings.Keys)
+        {
+            if (IsButtonDown(button))
+            {
+                _buttonDownBindings[button].Execute();
+            }
+        }
+    }
+
+    public void BindButtonPressed(Buttons button, ICommand command)
+    {
+        _buttonPressedBindings.Add(button, command);
+    }
+    
+    public void BindButtonReleased(Buttons button, ICommand command)
+    {
+        _buttonReleasedBindings.Add(button, command);
+    }
+
+    public void BindButtonDown(Buttons button, ICommand command)
+    {
+        _buttonDownBindings.Add(button, command);
+    }
+    
+    private bool IsButtonPressed(Buttons button)
+    {
+        return _currentState.IsButtonDown(button) && _previousState.IsButtonUp(button);
+    }
+
+    private bool IsButtonReleased(Buttons button)
+    {
+        return _currentState.IsButtonUp(button) && _previousState.IsButtonDown(button);
+    }
+
+    private bool IsButtonDown(Buttons button)
+    {
+        return _currentState.IsButtonDown(button);
+    }
 }
 
 public class InputManager(ScreenBase screen)
@@ -145,11 +226,13 @@ public class InputManager(ScreenBase screen)
     public KeyboardInputManager Keyboard { get; } = new();
     public MouseInputManager Mouse { get; } = new(screen);
     public TouchInputManager Touch { get; } = new(screen);
+    public GamePadManager GamePad { get; } = new();
 
     public void Update()
     {
         Keyboard.Update();
         Mouse.Update();
         Touch.Update();
+        GamePad.Update();
     }
 }
