@@ -88,7 +88,7 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
                 }
             }
         }
-        else if (inputs.Mouse.IsLeftButtonPressed)
+        else if (inputs.Mouse.IsLeftButtonDown)
         {
             var position = screen.TransformPoint(new Vector2(inputs.Mouse.State.X, inputs.Mouse.State.Y));
 

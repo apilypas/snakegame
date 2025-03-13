@@ -15,7 +15,7 @@ public class StartScreen(Game game) : ScreenBase(game)
     {
         AddRenderer(new StartScreenRenderer());
         
-        _inputManager = new InputManager(this);
+        _inputManager = new InputManager();
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         
         _inputManager.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.Quit);

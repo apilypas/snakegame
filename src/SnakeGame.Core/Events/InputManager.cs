@@ -4,14 +4,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using SnakeGame.Core.Commands;
-using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Events;
 
 public class KeyboardInputManager
 {
     private KeyboardState _previousState;
-    private KeyboardState _currentState;
+    private KeyboardState _currentState = Keyboard.GetState();
     
     private bool _isBindingsEnabled = true;
     
@@ -89,24 +88,28 @@ public class KeyboardInputManager
     }
 }
 
-public class MouseInputManager(ScreenBase screen)
+public class MouseInputManager
 {
-    private MouseState _state;
+    private MouseState _currentState = Mouse.GetState();
+    private MouseState _previousState;
     
     private ICommand _leftClickBinding;
 
     public void Update()
     {
-        _state = Mouse.GetState();
+        _previousState = _currentState;
+        _currentState = Mouse.GetState();
         
-        if (_leftClickBinding != null && _state.LeftButton == ButtonState.Pressed)
+        if (_leftClickBinding != null
+            && _currentState.LeftButton == ButtonState.Pressed
+            && _previousState.LeftButton == ButtonState.Released)
         {
             _leftClickBinding.Execute();
         }
     }
     
-    public bool IsLeftButtonPressed => _state.LeftButton == ButtonState.Pressed;
-    public MouseState State => _state;
+    public bool IsLeftButtonDown => _currentState.LeftButton == ButtonState.Pressed;
+    public MouseState State => _currentState;
 
     public void BindLeftClick(ICommand command)
     {
@@ -114,7 +117,7 @@ public class MouseInputManager(ScreenBase screen)
     }
 }
 
-public class TouchInputManager(ScreenBase screen)
+public class TouchInputManager
 {
     private TouchCollection _touches;
     
@@ -221,11 +224,11 @@ public class GamePadManager(PlayerIndex playerIndex = PlayerIndex.One)
     }
 }
 
-public class InputManager(ScreenBase screen)
+public class InputManager
 {
     public KeyboardInputManager Keyboard { get; } = new();
-    public MouseInputManager Mouse { get; } = new(screen);
-    public TouchInputManager Touch { get; } = new(screen);
+    public MouseInputManager Mouse { get; } = new();
+    public TouchInputManager Touch { get; } = new();
     public GamePadManager GamePad { get; } = new();
 
     public void Update()

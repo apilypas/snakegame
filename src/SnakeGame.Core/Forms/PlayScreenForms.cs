@@ -15,7 +15,7 @@ public class PlayScreenForms(PlayScreenCommands playScreenCommands, GlobalComman
         {
             Add(new FormText("Game is paused"));
             Add(new FormAction("Resume", Keys.Escape, playScreenCommands.Resume));
-            Add(new FormAction("Quit", Keys.Q, globalCommands.Quit));
+            Add(new FormAction("Quit", Keys.Q, globalCommands.OpenStartScreen));
         }
     }
 
@@ -25,7 +25,7 @@ public class PlayScreenForms(PlayScreenCommands playScreenCommands, GlobalComman
             : base(GameOverFormId)
         {
             Add(new FormText("Game is over"));
-            Add(new FormAction("Quit", Keys.Q, globalCommands.Quit));
+            Add(new FormAction("Quit", Keys.Q, globalCommands.OpenStartScreen));
         }
     }
     

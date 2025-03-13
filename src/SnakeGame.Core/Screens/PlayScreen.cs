@@ -25,7 +25,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _gameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
         
-        _inputs = new InputManager(this);
+        _inputs = new InputManager();
         _forms = new FormsManager(this, _inputs);
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         _playScreenCommands = new PlayScreenCommands(_gameWorld);
@@ -57,7 +57,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.Keyboard.BindKeyPressed(Keys.Space, _playScreenCommands.SpeedUp);
         _inputs.Keyboard.BindKeyReleased(Keys.Space, _playScreenCommands.SpeedDown);
         _inputs.Keyboard.BindKeyPressed(Keys.Escape, _playScreenCommands.Pause);
-        _inputs.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputs.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.OpenStartScreen);
         _inputs.Keyboard.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
         _inputs.GamePad.BindButtonDown(Buttons.DPadUp, _playScreenCommands.MoveUp);
         _inputs.GamePad.BindButtonDown(Buttons.DPadLeft, _playScreenCommands.MoveLeft);
@@ -70,7 +70,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.GamePad.BindButtonPressed(Buttons.A, _playScreenCommands.SpeedUp);
         _inputs.GamePad.BindButtonReleased(Buttons.A, _playScreenCommands.SpeedDown);
         _inputs.GamePad.BindButtonPressed(Buttons.Start, _playScreenCommands.Pause);
-        _inputs.GamePad.BindButtonPressed(Buttons.Back, _globalCommands.Quit);
+        _inputs.GamePad.BindButtonPressed(Buttons.Back, _globalCommands.OpenStartScreen);
         
         _gameWorld.Initialize();
     }
