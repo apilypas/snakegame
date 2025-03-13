@@ -1,35 +1,38 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
-using SnakeGame.Core.Events;
+using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 
 namespace SnakeGame.Core.Screens;
 
 public class StartScreen(Game game) : ScreenBase(game)
 {
-    private InputManager _inputManager;
+    private InputManager _inputs;
     private GlobalCommands _globalCommands;
 
     public override void Initialize()
     {
         AddRenderer(new StartScreenRenderer());
         
-        _inputManager = new InputManager();
+        _inputs = new InputManager();
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         
-        _inputManager.Keyboard.BindKeyPressed(Keys.Q, _globalCommands.Quit);
-        _inputManager.Keyboard.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
-        _inputManager.Keyboard.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
-        _inputManager.Mouse.BindLeftClick(_globalCommands.OpenPlayScreen);
-        _inputManager.Touch.BindTouched(_globalCommands.OpenPlayScreen);
-        _inputManager.GamePad.BindButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputs.Bindings.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
+        
+        _inputs.Mouse.BindLeftClick(_globalCommands.OpenPlayScreen);
+        
+        _inputs.Touch.BindTouched(_globalCommands.OpenPlayScreen);
+        
+        _inputs.GamePad.BindButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
     }
 
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);
         
-        _inputManager.Update();
+        _inputs.Update();
     }
 }

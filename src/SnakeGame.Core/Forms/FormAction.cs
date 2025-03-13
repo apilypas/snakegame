@@ -5,7 +5,7 @@ using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Forms;
 
-public class FormAction(string title, Keys key, ICommand command)
+public class FormAction(string title, ICommand command)
 {
     public string Title { get; } = title;
     public bool IsHovered { get; set; }
@@ -13,7 +13,6 @@ public class FormAction(string title, Keys key, ICommand command)
     public Vector2 Location { get; set; }
     public Vector2 TitleLocation { get; set; }
     public SizeF Size { get; set; }
-    public Keys Key { get; } = key;
 
     public RectangleF Bounds => new(Location, Size);
 }

@@ -1,79 +1,71 @@
 using SnakeGame.Core.Entities;
+using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Commands;
 
-public class PlayScreenCommands(GameWorld gameWorld)
+public class PlayScreenCommands(PlayScreen playScreen)
 {
-    private class MoveUpCommand(GameWorld gameWorld) : ICommand
+    private class MoveUpCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.ChangeDirection(SnakeDirection.Up);
+            playScreen.GameWorld.ChangeDirection(SnakeDirection.Up);
         }
     }
 
-    private class MoveLeftCommand(GameWorld gameWorld) : ICommand
+    private class MoveLeftCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.ChangeDirection(SnakeDirection.Left);
+            playScreen.GameWorld.ChangeDirection(SnakeDirection.Left);
         }
     }
 
-    private class MoveRightCommand(GameWorld gameWorld) : ICommand
+    private class MoveRightCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.ChangeDirection(SnakeDirection.Right);
+            playScreen.GameWorld.ChangeDirection(SnakeDirection.Right);
         }
     }
 
-    private class MoveDownCommand(GameWorld gameWorld) : ICommand
+    private class MoveDownCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.ChangeDirection(SnakeDirection.Down);
+            playScreen.GameWorld.ChangeDirection(SnakeDirection.Down);
         }
     }
     
-    private class SpeedUpCommand(GameWorld gameWorld) : ICommand
+    private class SpeedUpCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.SpeedUp();
+            playScreen.GameWorld.SpeedUp();
         }
     }
     
-    private class SpeedDownCommand(GameWorld gameWorld) : ICommand
+    private class SpeedDownCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.SpeedDown();
+            playScreen.GameWorld.SpeedDown();
         }
     }
     
-    private class PauseCommand(GameWorld gameWorld) : ICommand
+    private class PauseCommand(PlayScreen playScreen) : ICommand
     {
         public void Execute()
         {
-            gameWorld.Pause();
-        }
-    }
-    
-    private class ResumeCommand(GameWorld gameWorld) : ICommand
-    {
-        public void Execute()
-        {
-            gameWorld.Unpause();
+            playScreen.GameWorld.TogglePause();
         }
     }
 
-    public ICommand MoveUp { get; } = new MoveUpCommand(gameWorld);
-    public ICommand MoveLeft { get; } = new MoveLeftCommand(gameWorld);
-    public ICommand MoveRight { get; } = new MoveRightCommand(gameWorld);
-    public ICommand MoveDown { get; } = new MoveDownCommand(gameWorld);
-    public ICommand SpeedUp { get; } = new SpeedUpCommand(gameWorld);
-    public ICommand SpeedDown { get; } = new SpeedDownCommand(gameWorld);
-    public ICommand Pause { get; } = new PauseCommand(gameWorld);
-    public ICommand Resume { get; } = new ResumeCommand(gameWorld);
+    public ICommand MoveUp { get; } = new MoveUpCommand(playScreen);
+    public ICommand MoveLeft { get; } = new MoveLeftCommand(playScreen);
+    public ICommand MoveRight { get; } = new MoveRightCommand(playScreen);
+    public ICommand MoveDown { get; } = new MoveDownCommand(playScreen);
+    public ICommand SpeedUp { get; } = new SpeedUpCommand(playScreen);
+    public ICommand SpeedDown { get; } = new SpeedDownCommand(playScreen);
+    public ICommand Pause { get; } = new PauseCommand(playScreen);
 }

@@ -113,12 +113,18 @@ public class GameWorld
 
     public void SpeedUp()
     {
+        if (State != GameWorldState.Running)
+            return;
+        
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
         playerSnake?.SpeedUp();
     }
 
     public void SpeedDown()
     {
+        if (State != GameWorldState.Running)
+            return;
+        
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
         playerSnake?.SpeedDown();
     }
@@ -135,24 +141,24 @@ public class GameWorld
 
     public void ChangeDirection(SnakeDirection direction)
     {
+        if (State != GameWorldState.Running)
+            return;
+        
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
         playerSnake?.ChangeDirection(direction);
     }
 
-    public void Pause()
+    public void TogglePause()
     {
         if (State == GameWorldState.Running)
         {
             State = GameWorldState.Paused;
             EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Paused));
         }
-    }
-
-    public void Unpause()
-    {
-        if (State == GameWorldState.Paused)
+        else if (State == GameWorldState.Paused)
         {
             State = GameWorldState.Running;
+            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
         }
     }
 }

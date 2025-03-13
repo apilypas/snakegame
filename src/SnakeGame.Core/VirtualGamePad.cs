@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using MonoGame.Extended;
 using SnakeGame.Core.Events;
+using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core;

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
-using SnakeGame.Core.Events;
+using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Forms;
@@ -13,9 +12,6 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
     private int _visibleFormId = -1;
     
     private readonly Dictionary<int, Form> _forms = [];
-    
-    private KeyboardState _previousState;
-    private KeyboardState _currentState;
     
     public void Add(Form form)
     {
@@ -32,23 +28,17 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
     public void Show(int formId)
     {
-        inputs.Keyboard.DisableBindings();
-        
         _visibleFormId = formId;
 
         var form = GetVisibleForm();
         
         if (form == null)
             throw new ArgumentException($"Unknown form id {formId}", nameof(formId));
-        
-        _previousState = _currentState;
-        _currentState = inputs.Keyboard.KeyboardState;
     }
 
     public void Close()
     {
         _visibleFormId = -1;
-        inputs.Keyboard.EnableBindings();
     }
 
     public void Update()
@@ -57,12 +47,8 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
         if (form != null)
         {
-            _previousState = _currentState;
-            _currentState = inputs.Keyboard.KeyboardState;
-            
             HoverElement(form);
             ClickElement(form);
-            HandleKeyboardInput(form);
         }
     }
 
@@ -103,24 +89,10 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
             if (action.Bounds.Contains(new Vector2(x, y)))
             {
                 action.Command.Execute();
-                Close();
                 return true;
             }
         }
 
         return false;
-    }
-
-    private void HandleKeyboardInput(Form form)
-    {
-        foreach (var action in form.Actions)
-        {
-            if (_currentState.IsKeyDown(action.Key) && _previousState.IsKeyUp(action.Key))
-            {
-                action.Command.Execute();
-                Close();
-                break;
-            }
-        }
     }
 }

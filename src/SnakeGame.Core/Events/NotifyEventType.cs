@@ -7,4 +7,5 @@ public enum NotifyEventType
     SnakeDied,
     GameEnded,
     Paused,
+    Resume
 }
