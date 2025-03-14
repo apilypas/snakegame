@@ -29,7 +29,7 @@ public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInpu
     
     public void Update()
     {
-        if (!IsConnected)
+        if (!IsConnected || !IsVisible)
             return;
         
         LeftButton.Position = new Vector2(10, screen.VirtualHeight - 150);
