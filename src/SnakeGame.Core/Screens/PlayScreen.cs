@@ -42,6 +42,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         AddRenderer(new PlayFieldRenderer());
         AddRenderer(new SnakeRenderer(GameWorld.Snakes));
         AddRenderer(new CollectableRenderer(GameWorld));
+        AddRenderer(new FadeOutTextRenderer(GameWorld.FadeOutTexts));
         AddRenderer(new ScoreBoardRenderer(_scoreBoard));
         AddRenderer(new FormsRenderer(_formManager));
         AddRenderer(new VirtualGamePadRenderer(_virtualGamePad));

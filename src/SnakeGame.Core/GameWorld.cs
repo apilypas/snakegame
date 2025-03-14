@@ -20,6 +20,7 @@ public class GameWorld
     
     public IList<Snake> Snakes { get; } = [];
     public IList<Collectable> Collectables { get; } = [];
+    public IList<FadeOutText> FadeOutTexts { get; } = [];
     
     public EventManager EventManager { get; } = new();
 
@@ -84,17 +85,41 @@ public class GameWorld
                     if (collectable.Type == CollectableType.Diamond)
                     {
                         snake.Grow();
+                        if (snake is PlayerSnake)
+                        {
+                            FadeOutTexts.Add(new FadeOutText
+                            {
+                                Text = $"+{Constants.DiamondCollectScore}",
+                                Location = snake.Head.Location,
+                            });
+                        }
                     }
 
                     if (collectable.Type == CollectableType.SnakePart)
                     {
                         snake.Grow();
+                        if (snake is PlayerSnake)
+                        {
+                            FadeOutTexts.Add(new FadeOutText
+                            {
+                                Text = $"+{Constants.SnakePartCollectScore}",
+                                Location = snake.Head.Location,
+                            });
+                        }
                     }
 
                     if (collectable.Type == CollectableType.SpeedBoost)
                     {
                         snake.Grow();
                         snake.ResetSpeedUpTimer();
+                        if (snake is PlayerSnake)
+                        {
+                            FadeOutTexts.Add(new FadeOutText
+                            {
+                                Text = $"+{Constants.SpeedBoostCollectScore} (Speed)",
+                                Location = snake.Head.Location,
+                            });
+                        }
                     }
                 }
 
@@ -107,6 +132,8 @@ public class GameWorld
                 }
             }
         }
+        
+        UpdateFadeOutTexts(gameTime);
 
         _entitySpawner.Update(deltaTime);
     }
@@ -159,6 +186,24 @@ public class GameWorld
         {
             State = GameWorldState.Running;
             EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
+        }
+    }
+    
+    private void UpdateFadeOutTexts(GameTime gameTime)
+    {
+        var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        foreach (var fadeOutText in FadeOutTexts)
+        {
+            fadeOutText.TimeToLive -= elapsed;
+            fadeOutText.Location += new Vector2(0f, -elapsed * 30f);
+        }
+        
+        var oldTexts = FadeOutTexts.Where(x => x.TimeToLive <= 0f).ToList();
+
+        foreach (var fadeOutText in oldTexts)
+        {
+            FadeOutTexts.Remove(fadeOutText);
         }
     }
 }
