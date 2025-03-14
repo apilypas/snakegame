@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SnakeGame.Core.Inputs;
 
-public class KeyboardInputManager
+public class KeyboardInputHandler
 {
     private KeyboardState _previousState = Keyboard.GetState();
     private KeyboardState _currentState = Keyboard.GetState();
@@ -13,17 +13,17 @@ public class KeyboardInputManager
         _currentState = Keyboard.GetState();
     }
     
-    public bool IsKeyDown(Keys key)
+    public bool GetIsKeyDown(Keys key)
     {
         return _currentState.IsKeyDown(key);
     }
 
-    public bool IsKeyPressed(Keys key)
+    public bool GetIsKeyPressed(Keys key)
     {
         return _currentState.IsKeyDown(key) && _previousState.IsKeyUp(key);
     }
 
-    public bool IsKeyReleased(Keys key)
+    public bool GetIsKeyReleased(Keys key)
     {
         return _currentState.IsKeyUp(key) && _previousState.IsKeyDown(key);
     }

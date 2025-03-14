@@ -1,22 +1,16 @@
-using Microsoft.Xna.Framework;
-
 namespace SnakeGame.Core.Inputs;
 
 public class InputManager
 {
     public InputBindingManager Bindings { get; }
-    public KeyboardInputManager Keyboard { get; }
-    public MouseInputManager Mouse { get; }
-    public TouchInputManager Touch { get; }
-    public GamePadManager GamePad { get; }
-    
+    public KeyboardInputHandler Keyboard { get; } = new();
+    public MouseInputHandler Mouse { get; } = new();
+    public TouchInputHandler Touch { get; } = new();
+    public GamePadInputHandler GamePad { get; } = new();
+
     public InputManager()
     {
-        Keyboard = new KeyboardInputManager();
-        Mouse = new MouseInputManager();
-        Touch = new TouchInputManager();
-        GamePad = new GamePadManager();
-        Bindings = new InputBindingManager(Keyboard, Mouse);
+        Bindings = new(Keyboard, Mouse);
     }
 
     public void Update()

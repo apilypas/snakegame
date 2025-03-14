@@ -5,7 +5,7 @@ using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
-public class GamePadManager(PlayerIndex playerIndex = PlayerIndex.One)
+public class GamePadInputHandler(PlayerIndex playerIndex = PlayerIndex.One)
 {
     private readonly Dictionary<Buttons, ICommand> _buttonPressedBindings = new();
     private readonly Dictionary<Buttons, ICommand> _buttonReleasedBindings = new();

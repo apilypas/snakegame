@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SnakeGame.Core.Inputs;
 
-public class MouseInputManager
+public class MouseInputHandler
 {
     private MouseState _currentState = Mouse.GetState();
     private MouseState _previousState = Mouse.GetState();

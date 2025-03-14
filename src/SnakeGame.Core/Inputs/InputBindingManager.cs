@@ -4,7 +4,7 @@ using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
-public class InputBindingManager(KeyboardInputManager keyboard, MouseInputManager mouse)
+public class InputBindingManager(KeyboardInputHandler keyboard, MouseInputHandler mouse)
 {
     private readonly Dictionary<Keys, ICommand> _keyDownBindings = new();
     private readonly Dictionary<Keys, ICommand> _keyPressedBindings = new();
@@ -51,7 +51,7 @@ public class InputBindingManager(KeyboardInputManager keyboard, MouseInputManage
     {
         foreach (var key in _keyReleasedBindings.Keys)
         {
-            if (keyboard.IsKeyReleased(key))
+            if (keyboard.GetIsKeyReleased(key))
             {
                 _keyReleasedBindings[key].Execute();
             }
@@ -62,7 +62,7 @@ public class InputBindingManager(KeyboardInputManager keyboard, MouseInputManage
     {
         foreach (var key in _keyPressedBindings.Keys)
         {
-            if (keyboard.IsKeyPressed(key))
+            if (keyboard.GetIsKeyPressed(key))
             {
                 _keyPressedBindings[key].Execute();
             }
@@ -73,7 +73,7 @@ public class InputBindingManager(KeyboardInputManager keyboard, MouseInputManage
     {
         foreach (var key in _keyDownBindings.Keys)
         {
-            if (keyboard.IsKeyDown(key))
+            if (keyboard.GetIsKeyDown(key))
             {
                 _keyDownBindings[key].Execute();
             }

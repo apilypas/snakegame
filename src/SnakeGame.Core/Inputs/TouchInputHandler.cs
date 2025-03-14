@@ -4,7 +4,7 @@ using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
-public class TouchInputManager
+public class TouchInputHandler
 {
     private TouchCollection _touches;
     
