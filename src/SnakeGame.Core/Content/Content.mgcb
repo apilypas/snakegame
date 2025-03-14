@@ -14,6 +14,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin BigFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:BigFont.spritefont
+
 #begin Collectables.png
 /importer:TextureImporter
 /processor:TextureProcessor

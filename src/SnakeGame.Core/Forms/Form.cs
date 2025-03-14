@@ -31,13 +31,13 @@ public class Form(int id)
         Actions.Add(action);
     }
 
-    public void UpdateSize(SpriteBatch spriteBatch, SpriteFont font, Vector2 scale)
+    public void UpdateSize(SpriteBatch spriteBatch, SpriteFont font)
     {
         if (!_shouldResize)
             return;
         
-        UpdateContentSize(font, scale);
-        UpdateActionsSize(font, scale);
+        UpdateContentSize(font);
+        UpdateActionsSize(font);
         UpdateContentMarginSize();
         UpdateActionsMarginSize();
         UpdateContentAlignment();
@@ -134,18 +134,18 @@ public class Form(int id)
         }
     }
 
-    private void UpdateActionsSize(SpriteFont font, Vector2 scale)
+    private void UpdateActionsSize(SpriteFont font)
     {
         foreach (var action in Actions)
         {
             var textSize = font.MeasureString(action.Title);
             action.Location = Vector2.Zero;
-            action.Size = textSize * scale;
+            action.Size = textSize;
             action.TitleLocation = Vector2.Zero;
         }
     }
 
-    private void UpdateContentSize(SpriteFont font, Vector2 scale)
+    private void UpdateContentSize(SpriteFont font)
     {
         foreach (var element in Elements)
         {
@@ -153,7 +153,7 @@ public class Form(int id)
             {
                 var textSize = font.MeasureString(formText.Text);
                 element.Location = Vector2.One;
-                element.Size = new SizeF(textSize.X, textSize.Y) * scale;
+                element.Size = new SizeF(textSize.X, textSize.Y);
             }
         }
     }

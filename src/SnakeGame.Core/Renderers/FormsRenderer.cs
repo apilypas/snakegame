@@ -3,16 +3,19 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using SnakeGame.Core.Forms;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Renderers;
 
 public class FormsRenderer(FormsManager formsManager) : RendererBase
 {
     private SpriteFont _font;
+    private SpriteFont _bigFont;
     
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _font = content.Load<SpriteFont>("MainFont");
+        _bigFont = content.Load<SpriteFont>("BigFont");
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
@@ -27,9 +30,9 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
 
     private void RenderForm(SpriteBatch spriteBatch, Form form)
     {
-        var scale = Globals.IsMobileDevice ? new Vector2(2f, 2f) : Vector2.One;
+        var font = Globals.IsMobileDevice ? _bigFont : _font;
         
-        form.UpdateSize(spriteBatch, _font, scale);
+        form.UpdateSize(spriteBatch, font);
 
         if (Globals.IsMobileDevice)
         {
@@ -50,16 +53,13 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
         {
             if (element is FormText formText)
             {
-                spriteBatch.DrawString(
-                    _font,
+                spriteBatch.DrawStringWithShadow(
+                    font,
                     formText.Text,
                     formText.Location,
                     Colors.DefaultTextColor,
                     0f,
-                    Vector2.Zero,
-                    scale,
-                    SpriteEffects.None,
-                    0f);
+                    Vector2.Zero);
             }
         }
 
@@ -100,16 +100,13 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
                     );
             }
 
-            spriteBatch.DrawString(
-                _font,
+            spriteBatch.DrawStringWithShadow(
+                font,
                 action.Title,
                 action.TitleLocation,
                 Colors.DefaultTextColor,
                 0f,
-                Vector2.Zero,
-                scale,
-                SpriteEffects.None,
-                0f);
+                Vector2.Zero);
         }
     }
 

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Renderers;
 
@@ -30,15 +31,12 @@ public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 
     private void DrawLine(SpriteBatch spriteBatch, string text, Vector2 position)
     {
-        spriteBatch.DrawString(
+        spriteBatch.DrawStringWithShadow(
             _font,
             text,
             position,
             Colors.DefaultTextColor,
             0f,
-            Vector2.Zero,
-            1f,
-            SpriteEffects.None,
-            0f);
+            Vector2.Zero);
     }
 }
