@@ -36,7 +36,7 @@ public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInpu
         RightButton.Position = new Vector2(130, screen.VirtualHeight - 150);
         UpButton.Position = new Vector2(70, screen.VirtualHeight - 210);
         DownButton.Position = new Vector2(70, screen.VirtualHeight - 90);
-        ActionButton.Position = new Vector2(screen.VirtualWidth - 150, screen.VirtualHeight - 150);
+        ActionButton.Position = new Vector2(screen.VirtualWidth - 180, screen.VirtualHeight - 180);
         StartButton.Position = new Vector2(70, 70);
 
         var pressedPoints = input.Touch.GetTouchedPoints().ToList();

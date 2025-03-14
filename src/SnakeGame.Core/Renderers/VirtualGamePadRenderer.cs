@@ -11,6 +11,8 @@ public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
 
     private Sprite _buttonSprite;
     private Sprite _pressedButtonSprite;
+    private Sprite _bigButtonSprite;
+    private Sprite _pressedBigButtonSprite;
     private Sprite _upArrowSprite;
     private Sprite _downArrowSprite;
     private Sprite _leftArrowSprite;
@@ -22,7 +24,9 @@ public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
     {
         _texture = content.Load<Texture2D>("GamePad");
         _buttonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 0, 64, 64)));
+        _bigButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 96, 96, 96)));
         _pressedButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(64, 0, 64, 64)));
+        _pressedBigButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(96, 96, 96, 96)));
         _upArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 64, 32, 32)));
         _downArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(32, 64, 32, 32)));
         _rightArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(64, 64, 32, 32)));
@@ -39,9 +43,19 @@ public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
             RenderButton(spriteBatch, gamePad.RightButton, _rightArrowSprite);
             RenderButton(spriteBatch, gamePad.UpButton, _upArrowSprite);
             RenderButton(spriteBatch, gamePad.DownButton, _downArrowSprite);
-            RenderButton(spriteBatch, gamePad.ActionButton, _actionSprite);
             RenderButton(spriteBatch, gamePad.StartButton, _pauseSprite);
+            RenderBigButton(spriteBatch, gamePad.ActionButton, _actionSprite);
         }
+    }
+
+    private void RenderBigButton(SpriteBatch spriteBatch, VirtualGamePad.VirtualGamePadButton button, Sprite signSprite)
+    {
+        if (button.IsPressed)
+            _pressedBigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+        else
+            _bigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+        
+        signSprite.Draw(spriteBatch, button.Position + new Vector2(32f, 32f), 0f, Vector2.One);
     }
 
     private void RenderButton(SpriteBatch spriteBatch, VirtualGamePad.VirtualGamePadButton button, Sprite signSprite)
