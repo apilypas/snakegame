@@ -10,7 +10,7 @@ public class InputManager
 
     public InputManager()
     {
-        Bindings = new(Keyboard, Mouse);
+        Bindings = new(Keyboard, Mouse, Touch, GamePad);
     }
 
     public void Update()

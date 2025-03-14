@@ -40,7 +40,7 @@ public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
             RenderButton(spriteBatch, gamePad.UpButton, _upArrowSprite);
             RenderButton(spriteBatch, gamePad.DownButton, _downArrowSprite);
             RenderButton(spriteBatch, gamePad.ActionButton, _actionSprite);
-            RenderButton(spriteBatch, gamePad.PauseButton, _pauseSprite);
+            RenderButton(spriteBatch, gamePad.StartButton, _pauseSprite);
         }
     }
 

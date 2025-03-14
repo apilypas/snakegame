@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Screens;
 
@@ -69,17 +68,12 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
     private void HandleClick(Form form)
     {
-        if (inputs.Touch.IsConnected && inputs.Touch.IsTouched)
+        if (inputs.Touch.IsConnected)
         {
-            foreach (var state in inputs.Touch.Touches)
+            foreach (var touchPoint in inputs.Touch.GetTouchedPoints())
             {
-                if (state.State == TouchLocationState.Pressed)
-                {
-                    var position = screen.TransformPoint(state.Position);
-                    
-                    if (DoClick(form, position))
-                        return;
-                }
+                var position = screen.TransformPoint(touchPoint);
+                DoClick(form, position);
             }
         }
         
@@ -90,17 +84,15 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
         }
     }
 
-    private bool DoClick(Form form, Vector2 position)
+    private void DoClick(Form form, Vector2 position)
     {
         foreach (var action in form.Actions)
         {
             if (action.Bounds.Contains(position))
             {
                 action.Command.Execute();
-                return true;
+                break;
             }
         }
-
-        return false;
     }
 }

@@ -1,81 +1,53 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
 public class GamePadInputHandler(PlayerIndex playerIndex = PlayerIndex.One)
 {
-    private readonly Dictionary<Buttons, ICommand> _buttonPressedBindings = new();
-    private readonly Dictionary<Buttons, ICommand> _buttonReleasedBindings = new();
-    private readonly Dictionary<Buttons, ICommand> _buttonDownBindings = new();
-
-    private GamePadState _previousState;
-    private GamePadState _currentState;
-
-    public IVirtualGamePad VirtualGamePad { get; set; }
+    public interface IVirtualGamePad
+    {
+        GamePadState GetState(GamePadState state);
+        bool IsConnected { get; }
+    }
+    
+    private GamePadState _previousState = GamePad.GetState(playerIndex);
+    private GamePadState _currentState = GamePad.GetState(playerIndex);
+    private IVirtualGamePad _virtualGamePad;
+    
+    public bool IsConnected => GetIsConnected();
     
     public void Update()
     {
         _previousState = _currentState;
         _currentState = GamePad.GetState(playerIndex);
         
-        if (VirtualGamePad != null)
-            _currentState = VirtualGamePad.GetState(_currentState);
-        
-        foreach (var button in _buttonPressedBindings.Keys)
-        {
-            if (IsButtonPressed(button))
-            {
-                _buttonPressedBindings[button].Execute();
-            }
-        }
-        
-        foreach (var button in _buttonReleasedBindings.Keys)
-        {
-            if (IsButtonReleased(button))
-            {
-                _buttonReleasedBindings[button].Execute();
-            }
-        }
-        
-        foreach (var button in _buttonDownBindings.Keys)
-        {
-            if (IsButtonDown(button))
-            {
-                _buttonDownBindings[button].Execute();
-            }
-        }
-    }
-
-    public void BindButtonPressed(Buttons button, ICommand command)
-    {
-        _buttonPressedBindings.Add(button, command);
+        if (_virtualGamePad != null)
+            _currentState = _virtualGamePad.GetState(_currentState);
     }
     
-    public void BindButtonReleased(Buttons button, ICommand command)
-    {
-        _buttonReleasedBindings.Add(button, command);
-    }
-
-    public void BindButtonDown(Buttons button, ICommand command)
-    {
-        _buttonDownBindings.Add(button, command);
-    }
-    
-    private bool IsButtonPressed(Buttons button)
+    public bool GetIsButtonPressed(Buttons button)
     {
         return _currentState.IsButtonDown(button) && _previousState.IsButtonUp(button);
     }
 
-    private bool IsButtonReleased(Buttons button)
+    public bool GetIsButtonReleased(Buttons button)
     {
         return _currentState.IsButtonUp(button) && _previousState.IsButtonDown(button);
     }
 
-    private bool IsButtonDown(Buttons button)
+    public bool GetIsButtonDown(Buttons button)
     {
         return _currentState.IsButtonDown(button);
+    }
+
+    public void AttachVirtualGamePad(IVirtualGamePad virtualGamePad)
+    {
+        _virtualGamePad = virtualGamePad;
+    }
+
+    private bool GetIsConnected()
+    {
+        return _currentState.IsConnected || _virtualGamePad is { IsConnected: true };
     }
 }

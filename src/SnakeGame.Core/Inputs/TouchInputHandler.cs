@@ -1,32 +1,33 @@
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
-using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
 public class TouchInputHandler
 {
-    private TouchCollection _touches;
+    private TouchCollection _touches = TouchPanel.GetState();
     
-    private ICommand _touchedBinding;
+    public bool IsConnected => _touches.IsConnected;
+    public bool IsTouchedAnywhere => GetIsPressedAnywhere();
 
     public void Update()
     {
         _touches = TouchPanel.GetState();
+    }
 
-        if (_touchedBinding != null && IsTouched)
+    public IEnumerable<Vector2> GetTouchedPoints()
+    {
+        foreach (var touch in _touches)
         {
-            _touchedBinding.Execute();
+            if (touch.State is TouchLocationState.Pressed or TouchLocationState.Moved)
+                yield return touch.Position;
         }
     }
-    
-    public void BindTouched(ICommand command)
-    {
-        _touchedBinding = command;
-    }
 
-    public bool IsConnected => _touches.IsConnected;
-    public bool IsTouched => _touches.Any(x => x.State is TouchLocationState.Pressed or TouchLocationState.Moved);
-    
-    public TouchCollection Touches => _touches;
+    private bool GetIsPressedAnywhere()
+    {
+        return _touches.Any(x => x.State is TouchLocationState.Pressed);
+    }
 }

@@ -18,15 +18,15 @@ public class StartScreen(Game game) : ScreenBase(game)
         _inputs = new InputManager();
         _globalCommands = new GlobalCommands(Game, ScreenManager);
         
-        _inputs.Bindings.BindKeyPressed(Keys.Q, _globalCommands.Quit);
-        _inputs.Bindings.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
-        _inputs.Bindings.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
+        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Q, _globalCommands.Quit);
+        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, _globalCommands.FullScreen);
         
         _inputs.Bindings.BindMouseLeftClick(_globalCommands.OpenPlayScreen);
         
-        _inputs.Touch.BindTouched(_globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindTouchScreenTouched(_globalCommands.OpenPlayScreen);
         
-        _inputs.GamePad.BindButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
     }
 
     public override void Update(GameTime gameTime)
