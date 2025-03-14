@@ -6,7 +6,7 @@ public class StartScreenForms(StartScreen startScreen)
 {
     public const int MainMenuFormId = 1;
 
-    private class MainMenuForm : Form
+    public class MainMenuForm : Form
     {
         public MainMenuForm(StartScreen startScreen) : base(MainMenuFormId)
         {
@@ -17,5 +17,5 @@ public class StartScreenForms(StartScreen startScreen)
         }
     }
     
-    public Form MainMenu { get; } = new MainMenuForm(startScreen);
+    public MainMenuForm MainMenu { get; } = new(startScreen);
 }

@@ -6,12 +6,12 @@ namespace SnakeGame.Core;
 
 public class ScoreBoard : IObserver
 {
-    private int _score = 0;
     private float _timer = Constants.InitialTimer;
-    private int _deaths = 0;
 
     public string DisplayText { get; private set; } = string.Empty;
-    
+    public int Score { get; private set; } = 0;
+    public int Deaths { get; private set; } = 0;
+
     public ScoreBoard()
     {
         UpdateTexts();
@@ -34,7 +34,7 @@ public class ScoreBoard : IObserver
         if (notifyEvent.Target is not PlayerSnake)
             return;
 
-        _deaths++;
+        Deaths++;
         UpdateTexts();
     }
 
@@ -55,13 +55,13 @@ public class ScoreBoard : IObserver
         switch (collectable.Type)
         {
             case CollectableType.Diamond:
-                _score += Constants.DiamondCollectScore;
+                Score += Constants.DiamondCollectScore;
                 break;
             case CollectableType.SnakePart:
-                _score += Constants.SnakePartCollectScore;
+                Score += Constants.SnakePartCollectScore;
                 break;
             case CollectableType.SpeedBoost:
-                _score += Constants.SpeedBoostCollectScore;
+                Score += Constants.SpeedBoostCollectScore;
                 break;
         }
 
@@ -71,9 +71,9 @@ public class ScoreBoard : IObserver
     private void UpdateTexts()
     {
         DisplayText = new StringBuilder()
-            .AppendLine($"Score: {_score}")
+            .AppendLine($"Score: {Score}")
             .AppendLine($"Timer: {(int)(_timer / 60):00}:{(int)(_timer % 60):00}")
-            .AppendLine($"Deaths: {_deaths}")
+            .AppendLine($"Deaths: {Deaths}")
             .ToString();
     }
 }
