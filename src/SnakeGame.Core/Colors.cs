@@ -19,4 +19,5 @@ public static class Colors
     public static Color FormBackgroundColor = Color.FromNonPremultiplied(0x00, 0x67, 0x9B, 255);
     public static Color FormButtonColor = Color.FromNonPremultiplied(0xA3, 0x56, 0x00, 255);
     public static Color FormButtonHoverColor = Color.FromNonPremultiplied(0x78, 0x47, 0x11, 255);
+    public static Color FormButtonSelectedColor = Color.Black;
 }

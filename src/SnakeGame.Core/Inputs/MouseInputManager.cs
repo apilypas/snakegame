@@ -1,33 +1,33 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using SnakeGame.Core.Commands;
 
 namespace SnakeGame.Core.Inputs;
 
 public class MouseInputManager
 {
     private MouseState _currentState = Mouse.GetState();
-    private MouseState _previousState;
+    private MouseState _previousState = Mouse.GetState();
     
-    private ICommand _leftClickBinding;
-
+    public bool IsLeftButtonDown => _currentState.LeftButton == ButtonState.Pressed;
+    public bool IsLeftButtonPressed => GetIsLeftButtonPressed();
+    public bool IsLeftButtonReleased => GetIsLeftButtonReleased();
+    public Vector2 Position => new(_currentState.X, _currentState.Y);
+    
     public void Update()
     {
         _previousState = _currentState;
         _currentState = Mouse.GetState();
-        
-        if (_leftClickBinding != null
-            && _currentState.LeftButton == ButtonState.Pressed
-            && _previousState.LeftButton == ButtonState.Released)
-        {
-            _leftClickBinding.Execute();
-        }
     }
-    
-    public bool IsLeftButtonDown => _currentState.LeftButton == ButtonState.Pressed;
-    public MouseState State => _currentState;
 
-    public void BindLeftClick(ICommand command)
+    private bool GetIsLeftButtonPressed()
     {
-        _leftClickBinding = command;
+        return _previousState.LeftButton == ButtonState.Released 
+               && _currentState.LeftButton == ButtonState.Pressed;
+    }
+
+    private bool GetIsLeftButtonReleased()
+    {
+        return _previousState.LeftButton == ButtonState.Pressed
+               && _currentState.LeftButton == ButtonState.Released;
     }
 }

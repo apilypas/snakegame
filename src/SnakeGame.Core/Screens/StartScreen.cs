@@ -22,7 +22,7 @@ public class StartScreen(Game game) : ScreenBase(game)
         _inputs.Bindings.BindKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
         _inputs.Bindings.BindKeyPressed(Keys.F, _globalCommands.FullScreen);
         
-        _inputs.Mouse.BindLeftClick(_globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindMouseLeftClick(_globalCommands.OpenPlayScreen);
         
         _inputs.Touch.BindTouched(_globalCommands.OpenPlayScreen);
         

@@ -124,4 +124,12 @@ public class Form(int id)
             action.IsHovered = action.Bounds.Contains(new Vector2(x, y));
         }
     }
+    
+    public void SelectElement(float x, float y, bool isMouseButtonDown)
+    {
+        foreach (var action in Actions)
+        {
+            action.IsSelected = isMouseButtonDown && action.Bounds.Contains(new Vector2(x, y));
+        }
+    }
 }

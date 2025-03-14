@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace SnakeGame.Core.Inputs;
 
 public class InputManager
@@ -14,7 +16,7 @@ public class InputManager
         Mouse = new MouseInputManager();
         Touch = new TouchInputManager();
         GamePad = new GamePadManager();
-        Bindings = new InputBindingManager(Keyboard);
+        Bindings = new InputBindingManager(Keyboard, Mouse);
     }
 
     public void Update()

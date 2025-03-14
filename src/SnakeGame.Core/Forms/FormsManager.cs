@@ -47,19 +47,27 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
         if (form != null)
         {
-            HoverElement(form);
-            ClickElement(form);
+            HandleHover(form);
+            HandleSelection(form);
+            HandleClick(form);
         }
     }
 
-    private void HoverElement(Form form)
+    private void HandleHover(Form form)
     {
-        var position = screen.TransformPoint(new Vector2(inputs.Mouse.State.X, inputs.Mouse.State.Y));
+        var position = screen.TransformPoint(inputs.Mouse.Position);
         
         form.HoverElement(position.X, position.Y);
     }
+    
+    private void HandleSelection(Form form)
+    {
+        var position = screen.TransformPoint(inputs.Mouse.Position);
+        
+        form.SelectElement(position.X, position.Y, inputs.Mouse.IsLeftButtonDown);
+    }
 
-    private void ClickElement(Form form)
+    private void HandleClick(Form form)
     {
         if (inputs.Touch.IsConnected && inputs.Touch.IsTouched)
         {
@@ -69,24 +77,24 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
                 {
                     var position = screen.TransformPoint(state.Position);
                     
-                    if (ClickElement(form, position.X, position.Y))
+                    if (DoClick(form, position))
                         return;
                 }
             }
         }
-        else if (inputs.Mouse.IsLeftButtonDown)
+        
+        if (inputs.Mouse.IsLeftButtonReleased)
         {
-            var position = screen.TransformPoint(new Vector2(inputs.Mouse.State.X, inputs.Mouse.State.Y));
-
-            ClickElement(form, position.X, position.Y);
+            var position = screen.TransformPoint(inputs.Mouse.Position);
+            DoClick(form, position);
         }
     }
 
-    private bool ClickElement(Form form, float x, float y)
+    private bool DoClick(Form form, Vector2 position)
     {
         foreach (var action in form.Actions)
         {
-            if (action.Bounds.Contains(new Vector2(x, y)))
+            if (action.Bounds.Contains(position))
             {
                 action.Command.Execute();
                 return true;

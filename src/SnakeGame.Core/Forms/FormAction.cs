@@ -9,6 +9,7 @@ public class FormAction(string title, ICommand command)
 {
     public string Title { get; } = title;
     public bool IsHovered { get; set; }
+    public bool IsSelected { get; set; }
     public ICommand Command { get; } = command;
     public Vector2 Location { get; set; }
     public Vector2 TitleLocation { get; set; }

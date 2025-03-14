@@ -46,12 +46,31 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
         {
             foreach (var action in form.Actions)
             {
-                spriteBatch.FillRectangle(
-                    action.Location,
-                    action.Size,
-                    action.IsHovered ? Colors.FormButtonHoverColor : Colors.FormButtonColor
-                    );
-                
+                if (action.IsSelected)
+                {
+                    spriteBatch.FillRectangle(
+                        action.Location,
+                        action.Size,
+                        Colors.FormButtonSelectedColor
+                        );
+                }
+                else if (action.IsHovered)
+                {
+                    spriteBatch.FillRectangle(
+                        action.Location,
+                        action.Size,
+                        Colors.FormButtonHoverColor
+                        );
+                }
+                else
+                {
+                    spriteBatch.FillRectangle(
+                        action.Location,
+                        action.Size,
+                        Colors.FormButtonColor
+                        );
+                }
+
                 spriteBatch.DrawString(
                     _font,
                     action.Title,
