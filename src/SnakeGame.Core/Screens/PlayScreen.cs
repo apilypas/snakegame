@@ -59,7 +59,6 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.Space, Commands.SpeedUp);
         _inputs.Bindings.BindKeyboardKeyReleased(Keys.Space, Commands.SpeedDown);
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.Escape, Commands.Pause);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Q, GlobalCommands.OpenStartScreen);
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
         _inputs.Bindings.BindGamePadButtonDown(Buttons.DPadUp, Commands.MoveUp);

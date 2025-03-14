@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Screens;
 
@@ -37,6 +38,13 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
 
     public void Close()
     {
+        var form = GetVisibleForm();
+
+        if (form != null)
+        {
+            form.Unfocus();
+        }
+        
         _visibleFormId = -1;
     }
 
@@ -47,8 +55,53 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
         if (form != null)
         {
             HandleHover(form);
-            HandleSelection(form);
+            HandlePress(form);
+            HandleFocus(form);
             HandleClick(form);
+        }
+    }
+
+    private void HandleFocus(Form form)
+    {
+        if (inputs.Keyboard.GetIsKeyPressed(Keys.Right) 
+            || inputs.Keyboard.GetIsKeyPressed(Keys.Down)
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.DPadRight))
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.DPadDown)))
+        {
+            if (form.Actions.Count > 0)
+            {
+                var focusedIndex = form.GetFocusedActionIndex();
+                focusedIndex++;
+                form.FocusByIndex(focusedIndex);
+            }
+        }
+        
+        if (inputs.Keyboard.GetIsKeyPressed(Keys.Left)
+            || inputs.Keyboard.GetIsKeyPressed(Keys.Up)
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.DPadLeft))
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.DPadUp)))
+        {
+            if (form.Actions.Count > 0)
+            {
+                var focusedIndex = form.GetFocusedActionIndex();
+                focusedIndex--;
+                form.FocusByIndex(focusedIndex);
+            }
+        }
+
+        if (inputs.Keyboard.GetIsKeyPressed(Keys.Space)
+            || inputs.Keyboard.GetIsKeyPressed(Keys.Enter)
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.Start))
+            || (inputs.GamePad.IsConnected && inputs.GamePad.GetIsButtonPressed(Buttons.A)))
+        {
+            if (form.Actions.Count > 0)
+            {
+                var focusedIndex = form.GetFocusedActionIndex();
+                if (focusedIndex >= 0 && focusedIndex < form.Actions.Count)
+                {
+                    form.Actions[focusedIndex].Command.Execute();
+                }
+            }
         }
     }
 
@@ -59,11 +112,11 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
         form.HoverElement(position.X, position.Y);
     }
     
-    private void HandleSelection(Form form)
+    private void HandlePress(Form form)
     {
         var position = screen.TransformPoint(inputs.Mouse.Position);
         
-        form.SelectElement(position.X, position.Y, inputs.Mouse.IsLeftButtonDown);
+        form.PressElement(position.X, position.Y, inputs.Mouse.IsLeftButtonDown);
     }
 
     private void HandleClick(Form form)

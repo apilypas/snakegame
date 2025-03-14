@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
+using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 
@@ -9,24 +10,28 @@ namespace SnakeGame.Core.Screens;
 public class StartScreen(Game game) : ScreenBase(game)
 {
     private InputManager _inputs;
-    private GlobalCommands _globalCommands;
+    private FormsManager _formManager;
+    private StartScreenForms _forms;
+    
+    public GlobalCommands GlobalCommands { get; private set; }
 
     public override void Initialize()
     {
-        AddRenderer(new StartScreenRenderer());
-        
         _inputs = new InputManager();
-        _globalCommands = new GlobalCommands(Game, ScreenManager);
+        _formManager = new FormsManager(this, _inputs);
+        GlobalCommands = new GlobalCommands(Game, ScreenManager);
+        _forms = new StartScreenForms(this);
         
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Q, _globalCommands.Quit);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Space, _globalCommands.OpenPlayScreen);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, _globalCommands.FullScreen);
+        _formManager.Add(_forms.MainMenu);
         
-        _inputs.Bindings.BindMouseLeftClick(_globalCommands.OpenPlayScreen);
+        AddRenderer(new StartScreenRenderer());
+        AddRenderer(new FormsRenderer(_formManager));
         
-        _inputs.Bindings.BindTouchScreenTouched(_globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, _globalCommands.OpenPlayScreen);
+        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, GlobalCommands.OpenPlayScreen);
+        
+        _formManager.Show(StartScreenForms.MainMenuFormId);
     }
 
     public override void Update(GameTime gameTime)
@@ -34,5 +39,6 @@ public class StartScreen(Game game) : ScreenBase(game)
         base.Update(gameTime);
         
         _inputs.Update();
+        _formManager.Update();
     }
 }

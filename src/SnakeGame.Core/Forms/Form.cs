@@ -37,10 +37,12 @@ public class Form(int id)
             return;
         
         var contentSize = new SizeF(0f, 0f);
-        var margin = new Vector2(ContentMarginSize, ContentMarginSize);
+        var margin = new Vector2(0f, 0f);
 
         foreach (var element in Elements)
         {
+            margin = new Vector2(ContentMarginSize, ContentMarginSize);
+            
             var textSize = font.MeasureString(((FormText)element).Text);
             
             contentSize.Width = MathF.Max(contentSize.Width, textSize.X);
@@ -76,6 +78,11 @@ public class Form(int id)
             }
 
             var totalButtonWidth = Actions.Sum(x => x.Size.Width) + (Actions.Count - 1) * ButtonMarginSize;
+            
+            Size = new SizeF(
+                MathF.Max(Size.Width, totalButtonWidth + ButtonMarginSize * 2),
+                Size.Height + actionsHeight + 4f * ButtonMarginSize);
+            
             var totalButtonOffset = new Vector2((Size.Width - totalButtonWidth) / 2f, 0f);
             
             for (var i = 0; i < Actions.Count; i++)
@@ -97,8 +104,6 @@ public class Form(int id)
                     action.TitleLocation += totalButtonOffset;
                 }
             }
-
-            Size += new SizeF(0f, actionsHeight + 4f * ButtonMarginSize);
         }
 
         // Center to screen
@@ -125,11 +130,48 @@ public class Form(int id)
         }
     }
     
-    public void SelectElement(float x, float y, bool isMouseButtonDown)
+    public void PressElement(float x, float y, bool isMouseButtonDown)
     {
         foreach (var action in Actions)
         {
-            action.IsSelected = isMouseButtonDown && action.Bounds.Contains(new Vector2(x, y));
+            action.IsPressed = isMouseButtonDown && action.Bounds.Contains(new Vector2(x, y));
+        }
+    }
+
+    public int GetFocusedActionIndex()
+    {
+        var focusedIndex = -1;
+
+        for (var i = 0; i < Actions.Count; i++)
+        {
+            if (Actions[i].IsFocused)
+            {
+                focusedIndex = i;
+                break;
+            }
+        }
+
+        return focusedIndex;
+    }
+
+    public void FocusByIndex(int focusedIndex)
+    {
+        if (focusedIndex < Actions.Count && focusedIndex >= 0)
+        {
+            foreach (var action in Actions)
+            {
+                action.IsFocused = false;
+            }
+                
+            Actions[focusedIndex].IsFocused = true;
+        }
+    }
+
+    public void Unfocus()
+    {
+        foreach (var action in Actions)
+        {
+            action.IsFocused = false;
         }
     }
 }

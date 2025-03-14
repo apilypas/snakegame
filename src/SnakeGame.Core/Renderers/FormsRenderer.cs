@@ -30,23 +30,26 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
         spriteBatch.FillRectangle(form.Location, form.Size, Colors.FormBackgroundColor);
         
         spriteBatch.DrawRectangle(form.Location, form.Size, Colors.DefaultTextColor);
-        
-        spriteBatch.DrawString(
-            _font,
-            ((FormText)form.Elements[0]).Text,
-            form.Elements[0].Location,
-            Colors.DefaultTextColor,
-            0f,
-            Vector2.Zero,
-            1f,
-            SpriteEffects.None,
-            0f);
+
+        if (form.Elements.Count > 0)
+        {
+            spriteBatch.DrawString(
+                _font,
+                ((FormText)form.Elements[0]).Text,
+                form.Elements[0].Location,
+                Colors.DefaultTextColor,
+                0f,
+                Vector2.Zero,
+                1f,
+                SpriteEffects.None,
+                0f);
+        }
 
         if (form.Actions.Count > 0)
         {
             foreach (var action in form.Actions)
             {
-                if (action.IsSelected)
+                if (action.IsPressed)
                 {
                     spriteBatch.FillRectangle(
                         action.Location,
@@ -68,6 +71,16 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
                         action.Location,
                         action.Size,
                         Colors.FormButtonColor
+                        );
+                }
+
+                if (action.IsFocused)
+                {
+                    spriteBatch.DrawRectangle(
+                        action.Location,
+                        action.Size,
+                        Colors.FormButtonSelectedColor,
+                        3f
                         );
                 }
 

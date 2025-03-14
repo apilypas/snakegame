@@ -13,7 +13,7 @@ public class PlayScreenForms(PlayScreen playScreen)
         {
             Add(new FormText("Game is paused"));
             Add(new FormAction("Resume", playScreen.Commands.Pause));
-            Add(new FormAction("Quit", playScreen.GlobalCommands.OpenStartScreen));
+            Add(new FormAction("Exit", playScreen.GlobalCommands.OpenStartScreen));
         }
     }
 
@@ -22,7 +22,7 @@ public class PlayScreenForms(PlayScreen playScreen)
         public GameOverForm(PlayScreen playScreen) : base(GameOverFormId)
         {
             Add(new FormText("Game is over"));
-            Add(new FormAction("Quit", playScreen.GlobalCommands.OpenStartScreen));
+            Add(new FormAction("Exit", playScreen.GlobalCommands.OpenStartScreen));
         }
     }
     
