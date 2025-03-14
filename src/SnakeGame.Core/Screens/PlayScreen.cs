@@ -27,13 +27,14 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _scoreBoard = new ScoreBoard();
         
         _inputs = new InputManager();
-        _formManager = new FormsManager(this, _inputs);
         GlobalCommands = new GlobalCommands(Game, ScreenManager);
         Commands = new PlayScreenCommands(this);
         _forms = new PlayScreenForms(this);
         
         _virtualGamePad = new VirtualGamePad(this, _inputs);
         _inputs.GamePad.AttachVirtualGamePad(_virtualGamePad);
+        
+        _formManager = new FormsManager(this, _inputs, _virtualGamePad);
         
         GameWorld.EventManager.AddObserver(this);
         GameWorld.EventManager.AddObserver(_scoreBoard);

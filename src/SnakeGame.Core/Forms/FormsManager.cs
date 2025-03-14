@@ -7,7 +7,7 @@ using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Forms;
 
-public class FormsManager(ScreenBase screen, InputManager inputs)
+public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad virtualGamePad)
 {
     private int _visibleFormId = -1;
     
@@ -34,6 +34,9 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
         
         if (form == null)
             throw new ArgumentException($"Unknown form id {formId}", nameof(formId));
+        
+        if (virtualGamePad != null)
+            virtualGamePad.IsVisible = false;
     }
 
     public void Close()
@@ -46,6 +49,9 @@ public class FormsManager(ScreenBase screen, InputManager inputs)
         }
         
         _visibleFormId = -1;
+        
+        if (virtualGamePad != null)
+            virtualGamePad.IsVisible = true;
     }
 
     public void Update()

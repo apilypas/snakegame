@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Screens;
+using SnakeGame.Core;
 using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Android;
@@ -12,6 +13,8 @@ public class SnakeGame : Game
     
     public SnakeGame()
     {
+        Globals.IsMobileDevice = true;
+        
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;

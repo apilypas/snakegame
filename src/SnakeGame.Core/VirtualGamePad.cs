@@ -18,6 +18,7 @@ public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInpu
     }
     
     public bool IsConnected { get; } = input.Touch.IsConnected;
+    public bool IsVisible { get; set; } = true;
     
     public VirtualGamePadButton LeftButton { get; } = new() { GamePadButton = Buttons.DPadLeft };
     public VirtualGamePadButton RightButton { get; } = new() { GamePadButton = Buttons.DPadRight };

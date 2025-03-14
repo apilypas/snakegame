@@ -33,7 +33,7 @@ public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (gamePad.IsConnected)
+        if (gamePad.IsConnected && gamePad.IsVisible)
         {
             RenderButton(spriteBatch, gamePad.LeftButton, _leftArrowSprite);
             RenderButton(spriteBatch, gamePad.RightButton, _rightArrowSprite);

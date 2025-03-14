@@ -12,6 +12,7 @@ public class StartScreenForms(StartScreen startScreen)
         {
             Add(new FormText("Snake Game"));
             Add(new FormAction("Start", startScreen.GlobalCommands.OpenPlayScreen));
+            Add(new FormAction("Credits", startScreen.GlobalCommands.OpenPlayScreen));
             Add(new FormAction("Quit", startScreen.GlobalCommands.Quit));
         }
     }

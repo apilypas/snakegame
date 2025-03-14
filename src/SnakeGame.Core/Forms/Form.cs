@@ -31,95 +31,131 @@ public class Form(int id)
         Actions.Add(action);
     }
 
-    public void CalculateSizes(SpriteBatch spriteBatch, SpriteFont font)
+    public void UpdateSize(SpriteBatch spriteBatch, SpriteFont font, Vector2 scale)
     {
         if (!_shouldResize)
             return;
         
-        var contentSize = new SizeF(0f, 0f);
-        var margin = new Vector2(0f, 0f);
+        UpdateContentSize(font, scale);
+        UpdateActionsSize(font, scale);
+        UpdateContentMarginSize();
+        UpdateActionsMarginSize();
+        UpdateContentAlignment();
+        UpdateActionsAlignment();
+        UpdateFormSize();
+        UpdateActionCentering();
+        UpdateAllToScreenCenter(spriteBatch);
 
-        foreach (var element in Elements)
-        {
-            margin = new Vector2(ContentMarginSize, ContentMarginSize);
-            
-            var textSize = font.MeasureString(((FormText)element).Text);
-            
-            contentSize.Width = MathF.Max(contentSize.Width, textSize.X);
-            contentSize.Height = textSize.Y;
-            
-            element.Location = margin;
-            element.Size = new SizeF(textSize.X, textSize.Y);
-        }
+        _shouldResize = false;
+    }
 
-        var formSize = contentSize + (2f * margin).ToSize();
-        
-        Location = Vector2.Zero;
-        Size = formSize;
-
+    private void UpdateAllToScreenCenter(SpriteBatch spriteBatch)
+    {
         var screenWidth = spriteBatch.GraphicsDevice.Viewport.Width;
         var screenHeight = spriteBatch.GraphicsDevice.Viewport.Height;
-        
-        if (Actions.Count > 0)
-        {
-            var actionsHeight = 0f;
-            
-            foreach (var action in Actions)
-            {
-                var textSize = font.MeasureString(action.Title);
-                actionsHeight = MathF.Max(actionsHeight, textSize.Y);
-                
-                action.Location = new Vector2(0, Size.Height + ButtonMarginSize);
-                action.Size = textSize + new Vector2(ButtonMarginSize * 2f, ButtonMarginSize * 2f);
-                action.TitleLocation = new Vector2(
-                    action.Location.X + (action.Size.Width - textSize.X) / 2f,
-                    action.Location.Y + (action.Size.Height - textSize.Y) / 2f
-                    );
-            }
-
-            var totalButtonWidth = Actions.Sum(x => x.Size.Width) + (Actions.Count - 1) * ButtonMarginSize;
-            
-            Size = new SizeF(
-                MathF.Max(Size.Width, totalButtonWidth + ButtonMarginSize * 2),
-                Size.Height + actionsHeight + 4f * ButtonMarginSize);
-            
-            var totalButtonOffset = new Vector2((Size.Width - totalButtonWidth) / 2f, 0f);
-            
-            for (var i = 0; i < Actions.Count; i++)
-            {
-                var action = Actions[i];
-                
-                if (i > 0)
-                {
-                    var previousAction = Actions[i - 1];
-                    var buttonOffset = new Vector2(
-                        ButtonMarginSize + previousAction.Location.X + previousAction.Size.Width,
-                        0f);
-                    action.Location += buttonOffset;
-                    action.TitleLocation += buttonOffset;
-                }
-                else
-                {
-                    action.Location += totalButtonOffset;
-                    action.TitleLocation += totalButtonOffset;
-                }
-            }
-        }
-
-        // Center to screen
         var offset = new Vector2(screenWidth - Size.Width, screenHeight - Size.Height) / 2f;
+        
         Location += offset;
         
         foreach (var element in Elements)
+        {
             element.Location += offset;
+        }
 
         foreach (var action in Actions)
         {
             action.Location += offset;
             action.TitleLocation += offset;
         }
+    }
 
-        _shouldResize = false;
+    private void UpdateActionCentering()
+    {
+        var actionButtonsWidth = Actions.Sum(x => x.Size.Width);
+        actionButtonsWidth += Actions.Count * ButtonMarginSize;
+        var actionButtonOffset = (Size.Width - actionButtonsWidth - ButtonMarginSize) / 2f;
+        foreach (var action in Actions)
+        {
+            action.Location += new Vector2(actionButtonOffset, 0f);
+            action.TitleLocation += new Vector2(actionButtonOffset, 0f);
+        }
+    }
+
+    private void UpdateFormSize()
+    {
+        var formWidth = MathF.Max(
+            Elements.Max(x => x.Size.Width),
+            Actions.Sum(x => x.Size.Width + ButtonMarginSize) + ButtonMarginSize);
+        var formHeight = Elements.Sum(x => x.Size.Height);
+        formHeight += Actions.Max(x => x.Size.Height);
+        formHeight += ButtonMarginSize * 2f;
+        
+        Location = Vector2.Zero;
+        Size = new SizeF(formWidth, formHeight);
+    }
+
+    private void UpdateActionsAlignment()
+    {
+        var actionX = 0f;
+        var actionY = Elements.Sum(x => x.Size.Height);
+        foreach (var action in Actions)
+        {
+            action.Location += new Vector2(actionX + ButtonMarginSize, actionY + ButtonMarginSize);
+            action.TitleLocation += new Vector2(actionX + ButtonMarginSize, actionY + ButtonMarginSize);
+            actionX += action.Size.Width + ButtonMarginSize;
+        }
+    }
+
+    private void UpdateContentAlignment()
+    {
+        var contentY = 0f;
+        foreach (var element in Elements)
+        {
+            element.Location += new Vector2(0f, contentY);
+            contentY += element.Size.Height;
+        }
+    }
+
+    private void UpdateActionsMarginSize()
+    {
+        foreach (var action in Actions)
+        {
+            action.TitleLocation += new Vector2(ButtonMarginSize, ButtonMarginSize);
+            action.Size += new SizeF(2f * ButtonMarginSize, 2f * ButtonMarginSize);
+        }
+    }
+
+    private void UpdateContentMarginSize()
+    {
+        foreach (var element in Elements)
+        {
+            element.Location += new Vector2(ContentMarginSize, ContentMarginSize);
+            element.Size += new SizeF(2f * ContentMarginSize, 2f * ContentMarginSize);
+        }
+    }
+
+    private void UpdateActionsSize(SpriteFont font, Vector2 scale)
+    {
+        foreach (var action in Actions)
+        {
+            var textSize = font.MeasureString(action.Title);
+            action.Location = Vector2.Zero;
+            action.Size = textSize * scale;
+            action.TitleLocation = Vector2.Zero;
+        }
+    }
+
+    private void UpdateContentSize(SpriteFont font, Vector2 scale)
+    {
+        foreach (var element in Elements)
+        {
+            if (element is FormText formText)
+            {
+                var textSize = font.MeasureString(formText.Text);
+                element.Location = Vector2.One;
+                element.Size = new SizeF(textSize.X, textSize.Y) * scale;
+            }
+        }
     }
 
     public void HoverElement(float x, float y)
