@@ -25,6 +25,15 @@ public class TouchInputHandler
                 yield return touch.Position;
         }
     }
+    
+    public IEnumerable<Vector2> GetReleasedPoints()
+    {
+        foreach (var touch in _touches)
+        {
+            if (touch.State is TouchLocationState.Released)
+                yield return touch.Position;
+        }
+    }
 
     private bool GetIsPressedAnywhere()
     {

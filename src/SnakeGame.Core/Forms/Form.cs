@@ -166,11 +166,11 @@ public class Form(int id)
         }
     }
     
-    public void PressElement(float x, float y, bool isMouseButtonDown)
+    public void PressElement(float x, float y)
     {
         foreach (var action in Actions)
         {
-            action.IsPressed = isMouseButtonDown && action.Bounds.Contains(new Vector2(x, y));
+            action.IsPressed = action.Bounds.Contains(new Vector2(x, y));
         }
     }
 

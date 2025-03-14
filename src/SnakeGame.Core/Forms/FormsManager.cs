@@ -120,16 +120,27 @@ public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad
     
     private void HandlePress(Form form)
     {
-        var position = screen.TransformPoint(inputs.Mouse.Position);
-        
-        form.PressElement(position.X, position.Y, inputs.Mouse.IsLeftButtonDown);
+        if (inputs.Touch.IsConnected)
+        {
+            foreach (var touchPoint in inputs.Touch.GetTouchedPoints())
+            {
+                var point = screen.TransformPoint(touchPoint);
+                form.PressElement(point.X, point.Y);
+            }
+        }
+
+        if (inputs.Mouse.IsLeftButtonDown)
+        {
+            var position = screen.TransformPoint(inputs.Mouse.Position);
+            form.PressElement(position.X, position.Y);
+        }
     }
 
     private void HandleClick(Form form)
     {
         if (inputs.Touch.IsConnected)
         {
-            foreach (var touchPoint in inputs.Touch.GetTouchedPoints())
+            foreach (var touchPoint in inputs.Touch.GetReleasedPoints())
             {
                 var position = screen.TransformPoint(touchPoint);
                 DoClick(form, position);
