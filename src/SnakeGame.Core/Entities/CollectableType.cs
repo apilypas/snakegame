@@ -4,5 +4,6 @@ public enum CollectableType
 {
     Diamond,
     SnakePart,
-    SpeedBoost
+    SpeedBoost,
+    Clock
 }

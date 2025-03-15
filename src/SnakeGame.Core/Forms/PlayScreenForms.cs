@@ -28,12 +28,14 @@ public class PlayScreenForms(PlayScreen playScreen)
             Add(new FormAction("Exit", playScreen.GlobalCommands.OpenStartScreen));
         }
         
-        public void UpdateResultsText(int score, int deaths)
+        public void UpdateResultsText(int score, int deaths, int longest)
         {
             var formText = (FormText) Elements[1];
             formText.Text = new StringBuilder()
-                .AppendLine($"Your score: {score}")
-                .AppendLine($"Your deaths: {deaths}")
+                .AppendLine("Your results:")
+                .AppendLine($"Score: {score}")
+                .AppendLine($"Deaths: {deaths}")
+                .AppendLine($"Longest snake: {longest}")
                 .ToString();
         }
     }

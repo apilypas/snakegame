@@ -14,6 +14,7 @@ public static class Constants
     public const int DiamondCollectScore = 1; // Points
     public const int SnakePartCollectScore = 1; // Points
     public const int SpeedBoostCollectScore = 2; // Points
+    public const int ClockCollectScore = 3; // Points
     public const float DefaultSnakeSpeed = 100f;
     public const float IncreasedSnakeSpeed = 200f;
     public const float SpeedUpRate = 10f; // Seconds
@@ -21,4 +22,5 @@ public static class Constants
     public const float MaxTimer = 300f; // Seconds
     public const int ScreenWidth = 960;
     public const int ScreenHeight = 540;
+    public const int InitialSnakeSize = 3;
 }

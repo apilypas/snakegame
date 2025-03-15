@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -33,12 +34,12 @@ public class GameWorld
         // Let's start initially with player and one enemy
         Snakes.Add(new PlayerSnake(
             new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize),
-            3,
+            Constants.InitialSnakeSize,
             SnakeDirection.Up
             ));
         Snakes.Add(new EnemySnake(
             new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
-            3,
+            Constants.InitialSnakeSize,
             SnakeDirection.Up, this
             ));
     }
@@ -117,6 +118,22 @@ public class GameWorld
                             FadeOutTexts.Add(new FadeOutText
                             {
                                 Text = $"+{Constants.SpeedBoostCollectScore} (Speed)",
+                                Location = snake.Head.Location,
+                            });
+                        }
+                    }
+
+                    if (collectable.Type == CollectableType.Clock)
+                    {
+                        snake.Grow();
+                        if (snake is PlayerSnake)
+                        {
+                            _timer += 30;
+                            _timer = Math.Min(_timer, Constants.MaxTimer);
+                            
+                            FadeOutTexts.Add(new FadeOutText
+                            {
+                                Text = $"+{Constants.ClockCollectScore} (Time)",
                                 Location = snake.Head.Location,
                             });
                         }

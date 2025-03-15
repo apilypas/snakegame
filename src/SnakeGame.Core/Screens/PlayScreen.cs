@@ -94,7 +94,10 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     {
         if (notifyEvent.EventType == NotifyEventType.GameEnded)
         {
-            _forms.GameOver.UpdateResultsText(_scoreBoard.Score, _scoreBoard.Deaths);
+            _forms.GameOver.UpdateResultsText(
+                _scoreBoard.Score,
+                _scoreBoard.Deaths,
+                _scoreBoard.LongestSnake);
             _formManager.Show(PlayScreenForms.GameOverFormId);
         }
 

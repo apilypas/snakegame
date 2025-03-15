@@ -12,6 +12,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     private Sprite _diamondSprite;
     private Sprite _snakePartSprite;
     private Sprite _speedBoostSprite;
+    private Sprite _clockSprite;
     private Texture2D _texture;
     private readonly JumpingAnimation _jumpingAnimation = new();
     private PlayFieldOffsetHandler _playFieldOffsetHandler;
@@ -38,6 +39,13 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             new Texture2DRegion(
                 _texture, 
                 new Rectangle(0, 0, 16, 16)
+                )
+            );
+        
+        _clockSprite = new Sprite(
+            new Texture2DRegion(
+                _texture, 
+                new Rectangle(16, 0, 16, 16)
                 )
             );
 
@@ -71,6 +79,15 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             if (collectable.Type == CollectableType.SpeedBoost)
             {
                 _speedBoostSprite.Draw(
+                    spriteBatch,
+                    collectable.Location + offset + _jumpingAnimation.AdjustVector,
+                    collectable.Rotation,
+                    Vector2.One);
+            }
+            
+            if (collectable.Type == CollectableType.Clock)
+            {
+                _clockSprite.Draw(
                     spriteBatch,
                     collectable.Location + offset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,

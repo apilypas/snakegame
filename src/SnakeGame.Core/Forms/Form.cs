@@ -127,10 +127,11 @@ public class Form(int id)
 
     private void UpdateContentMarginSize()
     {
-        foreach (var element in Elements)
+        for (var i = 0; i < Elements.Count; i++)
         {
-            element.Location += new Vector2(ContentMarginSize, ContentMarginSize);
-            element.Size += new SizeF(2f * ContentMarginSize, 2f * ContentMarginSize);
+            var element = Elements[i];
+            element.Location += new Vector2(ContentMarginSize, i == 0 ? ContentMarginSize : 0f);
+            element.Size += new SizeF(2f * ContentMarginSize, i == 0 ? (2f * ContentMarginSize) : 0f);
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
@@ -11,6 +12,7 @@ public class ScoreBoard : IObserver
     public string DisplayText { get; private set; } = string.Empty;
     public int Score { get; private set; } = 0;
     public int Deaths { get; private set; } = 0;
+    public int LongestSnake { get; private set; } = Constants.InitialSnakeSize;
 
     public ScoreBoard()
     {
@@ -49,7 +51,7 @@ public class ScoreBoard : IObserver
         if (notifyEvent.Target is not Collectable collectable)
             return;
 
-        if (notifyEvent.TriggeredBy is not PlayerSnake)
+        if (notifyEvent.TriggeredBy is not PlayerSnake playerSnake)
             return;
         
         switch (collectable.Type)
@@ -63,7 +65,12 @@ public class ScoreBoard : IObserver
             case CollectableType.SpeedBoost:
                 Score += Constants.SpeedBoostCollectScore;
                 break;
+            case CollectableType.Clock:
+                Score += Constants.ClockCollectScore;
+                break;
         }
+
+        LongestSnake = Math.Max(LongestSnake, playerSnake.Segments.Count);
 
         UpdateTexts();
     }

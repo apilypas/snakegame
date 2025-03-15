@@ -257,27 +257,46 @@ public class EntitySpawner(GameWorld gameWorld)
         foreach (var snake in deadSnakes)
         {
             if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
-                SpawnSnakePart(snake.Segments[0].Location);
+            {
+                SpawnSnakePart(snake);
+            }
 
             if (snake.Segments.Count == 0)
                 gameWorld.Snakes.Remove(snake);
         }
     }
     
-    private void SpawnSnakePart(Vector2 location)
+    private void SpawnSnakePart(Snake snake)
     {
-        var shouldSpawn = _random.Next() % 3 == 0;
-        
-        if (!shouldSpawn)
-            return;
+        var spawnSnakePart = _random.Next() % 3 == 0;
 
-        var snakePart = new Collectable
+        if (spawnSnakePart)
         {
-            Id = GetNextId(),
-            Type = CollectableType.SnakePart,
-            Location = location
-        };
-        gameWorld.Collectables.Add(snakePart);
+            var snakePart = new Collectable
+            {
+                Id = GetNextId(),
+                Type = CollectableType.SnakePart,
+                Location = snake.Segments[0].Location
+            };
+
+            gameWorld.Collectables.Add(snakePart);
+        }
+        else if (snake is EnemySnake) // Only enemies can spawn clocks
+        {
+            var spawnClock = _random.Next() % 6 == 0;
+
+            if (spawnClock)
+            {
+                var clock = new Collectable
+                {
+                    Id = GetNextId(),
+                    Type = CollectableType.Clock,
+                    Location = snake.Segments[0].Location
+                };
+
+                gameWorld.Collectables.Add(clock);
+            }
+        }
     }
 
     private int GetNextId()
