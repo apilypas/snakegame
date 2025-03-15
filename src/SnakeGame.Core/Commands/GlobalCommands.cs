@@ -30,6 +30,14 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
         }
     }
 
+    private class OpenCreditsScreenCommand(Game game, ScreenManager screenManager) : ICommand
+    {
+        public void Execute()
+        {
+            screenManager.LoadScreen(new CreditsScreen(game));
+        }
+    }
+
     private class FullScreenCommand(Game game) : ICommand
     {
         public void Execute()
@@ -42,5 +50,6 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
     public ICommand Quit => new QuitCommand(game);
     public ICommand OpenPlayScreen => new OpenPlayScreenCommand(game, screenManager);
     public ICommand OpenStartScreen => new OpenStartScreenCommand(game, screenManager);
+    public ICommand OpenCreditsScreen => new OpenCreditsScreenCommand(game, screenManager);
     public ICommand FullScreen => new FullScreenCommand(game);
 }
