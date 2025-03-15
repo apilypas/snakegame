@@ -26,8 +26,6 @@ public class SnakeGame : Game
     {
         _screenManager = new ScreenManager();
         _screenManager.Initialize();
-        
-        Components.Add(_screenManager);
 
         base.Initialize();
     }
@@ -37,5 +35,17 @@ public class SnakeGame : Game
         _screenManager.LoadScreen(new StartScreen(this));
         
         base.LoadContent();
+    }
+
+    protected override void Update(GameTime gameTime)
+    {
+        _screenManager.Update(gameTime);
+        base.Update(gameTime);
+    }
+
+    protected override void Draw(GameTime gameTime)
+    {
+        _screenManager.Draw(gameTime);
+        base.Draw(gameTime);
     }
 }
