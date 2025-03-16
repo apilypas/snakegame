@@ -8,25 +8,21 @@ namespace SnakeGame.Core.Renderers;
 public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 {
     private SpriteFont _font;
-    private PlayFieldOffsetHandler _playFieldOffsetHandler;
     
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _font = content.Load<SpriteFont>("MainFont");
-        _playFieldOffsetHandler = new PlayFieldOffsetHandler(graphicsDevice);
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        var offset = _playFieldOffsetHandler.Offset;
-        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 16f, 16f) + offset;
+        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 16f, 16f) + Globals.PlayFieldOffset;
         
         DrawLine(spriteBatch, scoreBoard.DisplayText, displayTextPosition);
     }
 
     public override void Update(GameTime gameTime)
     {
-        _playFieldOffsetHandler.Update();
     }
 
     private void DrawLine(SpriteBatch spriteBatch, string text, Vector2 position)

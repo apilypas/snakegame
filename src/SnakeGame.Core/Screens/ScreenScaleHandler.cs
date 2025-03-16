@@ -27,6 +27,10 @@ public class ScreenScaleHandler(GameScreen screen)
         Globals.ScreenScale = new Vector2(scale, scale);
         Globals.VirtualScreenWidth = width;
         Globals.VirtualScreenHeight = Constants.ScreenHeight;
+        
+        Globals.PlayFieldOffset = new Vector2(
+            (Globals.VirtualScreenWidth - Constants.WallWidth * Constants.SegmentSize) / 2f,
+            (Globals.VirtualScreenHeight - Constants.WallHeight * Constants.SegmentSize) / 2f);
 
         return true;
     }

@@ -22,8 +22,6 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     private readonly SnakeSprites[] _enemySnakeTextures = new SnakeSprites[4];
     
     private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
-    private Vector2 _offset;
-    private PlayFieldOffsetHandler _playFieldOffsetHandler;
     
     private Texture2D _texture;
 
@@ -35,7 +33,6 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         _enemySnakeTextures[1] = LoadSnakeSprites(32);
         _enemySnakeTextures[2] = LoadSnakeSprites(48);
         _enemySnakeTextures[3] = LoadSnakeSprites(64);
-        _playFieldOffsetHandler = new PlayFieldOffsetHandler(graphicsDevice);
     }
 
     private SnakeSprites LoadSnakeSprites(int textureOffsetY)
@@ -129,14 +126,14 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
             // If snake is alive - draw face, otherwise face should not be shown
             GetSprites(snake).Face.Draw(
                 spriteBatch,
-                snake.Head.Location + _offset + _origin,
+                snake.Head.Location + Globals.PlayFieldOffset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
         
         GetSprites(snake).Head.Draw(
             spriteBatch,
-            snake.Head.Location + _offset + _origin,
+            snake.Head.Location + Globals.PlayFieldOffset + _origin,
             snake.Head.Rotation,
             Vector2.One);
 
@@ -145,7 +142,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
             // If snake size is equal to 1 - draw tail line on same segment too
             GetSprites(snake).Tail.Draw(
                 spriteBatch,
-                snake.Head.Location + _offset + _origin,
+                snake.Head.Location + Globals.PlayFieldOffset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
@@ -155,7 +152,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     {
         GetSprites(snake).Tail.Draw(
             spriteBatch,
-            snake.Tail.Location + _offset + _origin,
+            snake.Tail.Location + Globals.PlayFieldOffset + _origin,
             snake.Tail.Rotation,
             Vector2.One);
     }
@@ -172,7 +169,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
     {
         GetSprites(snake).Segment.Draw(
             spriteBatch,
-            segment.Location + _offset + _origin,
+            segment.Location + Globals.PlayFieldOffset + _origin,
             segment.Rotation,
             Vector2.One);
     }
@@ -183,7 +180,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         {
             GetSprites(snake).Corners[0].Draw(
                 spriteBatch,
-                segment.Location + _offset + _origin,
+                segment.Location + Globals.PlayFieldOffset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }
@@ -191,7 +188,7 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
         {
             GetSprites(snake).Corners[1].Draw(
                 spriteBatch,
-                segment.Location + _offset + _origin,
+                segment.Location + Globals.PlayFieldOffset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }
@@ -208,7 +205,5 @@ public class SnakeRenderer(IList<Snake> snakes) : RendererBase
 
     public override void Update(GameTime gameTime)
     {
-        _playFieldOffsetHandler.Update();
-        _offset = _playFieldOffsetHandler.Offset;
     }
 }

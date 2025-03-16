@@ -11,24 +11,24 @@ namespace SnakeGame.Core.Renderers
     {
         private TiledMap _map;
         private TiledMapRenderer _mapRenderer;
-        private PlayFieldOffsetHandler _playFieldOffsetHandler;
         
         public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
             _map = content.Load<TiledMap>("Map");
             _mapRenderer = new TiledMapRenderer(graphicsDevice, _map);
-            _playFieldOffsetHandler = new PlayFieldOffsetHandler(graphicsDevice);
         }
 
         public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            var offset = _playFieldOffsetHandler.Offset;
-            
-            _mapRenderer.Draw(Matrix.CreateTranslation(offset.X, offset.Y, 0.0f));
+            _mapRenderer.Draw(
+                Matrix.CreateTranslation(
+                    Globals.PlayFieldOffset.X,
+                    Globals.PlayFieldOffset.Y,
+                    0.0f));
             
             spriteBatch.DrawRectangle(
-                offset.X,
-                offset.Y,
+                Globals.PlayFieldOffset.X,
+                Globals.PlayFieldOffset.Y,
                 _map.WidthInPixels,
                 _map.WidthInPixels,
                 Colors.DefaultTextColor);
@@ -36,7 +36,6 @@ namespace SnakeGame.Core.Renderers
 
         public override void Update(GameTime gameTime)
         {
-            _playFieldOffsetHandler.Update();
             _mapRenderer.Update(gameTime);
         }
     }

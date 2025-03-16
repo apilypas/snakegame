@@ -15,8 +15,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     private Sprite _clockSprite;
     private Texture2D _texture;
     private readonly JumpingAnimation _jumpingAnimation = new();
-    private PlayFieldOffsetHandler _playFieldOffsetHandler;
-
+    
     public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
         _texture = content.Load<Texture2D>("Collectables");
@@ -48,21 +47,17 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
                 new Rectangle(16, 0, 16, 16)
                 )
             );
-
-        _playFieldOffsetHandler = new PlayFieldOffsetHandler(graphicsDevice);
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        var offset = _playFieldOffsetHandler.Offset;
-        
         foreach (var collectable in gameWorld.Collectables)
         {
             if (collectable.Type == CollectableType.Diamond)
             {
                 _diamondSprite.Draw(
                     spriteBatch,
-                    collectable.Location + offset + _jumpingAnimation.AdjustVector,
+                    collectable.Location + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -71,7 +66,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _snakePartSprite.Draw(
                     spriteBatch,
-                    collectable.Location + offset + _jumpingAnimation.AdjustVector,
+                    collectable.Location + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -80,7 +75,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _speedBoostSprite.Draw(
                     spriteBatch,
-                    collectable.Location + offset + _jumpingAnimation.AdjustVector,
+                    collectable.Location + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -89,7 +84,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
             {
                 _clockSprite.Draw(
                     spriteBatch,
-                    collectable.Location + offset + _jumpingAnimation.AdjustVector,
+                    collectable.Location + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
                     collectable.Rotation,
                     Vector2.One);
             }
@@ -98,7 +93,6 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
 
     public override void Update(GameTime gameTime)
     {
-        _playFieldOffsetHandler.Update();
         _jumpingAnimation.Update(gameTime);
     }
 }
