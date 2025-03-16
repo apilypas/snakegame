@@ -23,18 +23,19 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
 
     public override void Initialize()
     {
+        base.Initialize();
+        
         GameWorld = new GameWorld();
         _scoreBoard = new ScoreBoard();
-        
         _inputs = new InputManager();
         GlobalCommands = new GlobalCommands(Game, ScreenManager);
         Commands = new PlayScreenCommands(this);
         _forms = new PlayScreenForms(this);
         
-        _virtualGamePad = new VirtualGamePad(this, _inputs);
+        _virtualGamePad = new VirtualGamePad(_inputs);
         _inputs.GamePad.AttachVirtualGamePad(_virtualGamePad);
         
-        _formManager = new FormsManager(this, _inputs, _virtualGamePad);
+        _formManager = new FormsManager(_inputs, _virtualGamePad);
         
         GameWorld.EventManager.AddObserver(this);
         GameWorld.EventManager.AddObserver(_scoreBoard);

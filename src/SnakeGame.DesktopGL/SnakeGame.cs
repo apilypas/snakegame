@@ -33,7 +33,6 @@ public class SnakeGame : Game
     protected override void LoadContent()
     {
         _screenManager.LoadScreen(new StartScreen(this));
-        
         base.LoadContent();
     }
 

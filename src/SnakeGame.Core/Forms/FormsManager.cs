@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Inputs;
-using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Forms;
 
-public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad virtualGamePad)
+public class FormsManager(InputManager inputs, VirtualGamePad virtualGamePad)
 {
     private int _visibleFormId = -1;
     
@@ -113,9 +112,7 @@ public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad
 
     private void HandleHover(Form form)
     {
-        var position = screen.TransformPoint(inputs.Mouse.Position);
-        
-        form.HoverElement(position.X, position.Y);
+        form.HoverElement(inputs.Mouse.Position.X, inputs.Mouse.Position.Y);
     }
     
     private void HandlePress(Form form)
@@ -124,15 +121,13 @@ public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad
         {
             foreach (var touchPoint in inputs.Touch.GetTouchedPoints())
             {
-                var point = screen.TransformPoint(touchPoint);
-                form.PressElement(point.X, point.Y);
+                form.PressElement(touchPoint.X, touchPoint.Y);
             }
         }
 
         if (inputs.Mouse.IsLeftButtonDown)
         {
-            var position = screen.TransformPoint(inputs.Mouse.Position);
-            form.PressElement(position.X, position.Y);
+            form.PressElement(inputs.Mouse.Position.X, inputs.Mouse.Position.Y);
         }
     }
 
@@ -142,15 +137,13 @@ public class FormsManager(ScreenBase screen, InputManager inputs, VirtualGamePad
         {
             foreach (var touchPoint in inputs.Touch.GetReleasedPoints())
             {
-                var position = screen.TransformPoint(touchPoint);
-                DoClick(form, position);
+                DoClick(form, touchPoint);
             }
         }
         
         if (inputs.Mouse.IsLeftButtonReleased)
         {
-            var position = screen.TransformPoint(inputs.Mouse.Position);
-            DoClick(form, position);
+            DoClick(form, inputs.Mouse.Position);
         }
     }
 

@@ -18,7 +18,7 @@ public class StartScreen(Game game) : ScreenBase(game)
     public override void Initialize()
     {
         _inputs = new InputManager();
-        _formManager = new FormsManager(this, _inputs, null);
+        _formManager = new FormsManager(_inputs, null);
         GlobalCommands = new GlobalCommands(Game, ScreenManager);
         _forms = new StartScreenForms(this);
         

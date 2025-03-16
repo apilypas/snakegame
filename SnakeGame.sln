@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame", "src/SnakeGame.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame.Core", "src/SnakeGame.Core/SnakeGame.Core.csproj", "{FEB6EE19-B326-4588-AA99-A6AA6957391E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame.Android", "src\SnakeGame.Android\SnakeGame.Android.csproj", "{82EA5E7E-4509-424F-8573-659DFBF087DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame.Android", "src/SnakeGame.Android/SnakeGame.Android.csproj", "{82EA5E7E-4509-424F-8573-659DFBF087DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

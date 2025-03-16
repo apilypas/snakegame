@@ -11,12 +11,19 @@ public class MouseInputHandler
     public bool IsLeftButtonDown => _currentState.LeftButton == ButtonState.Pressed;
     public bool IsLeftButtonPressed => GetIsLeftButtonPressed();
     public bool IsLeftButtonReleased => GetIsLeftButtonReleased();
-    public Vector2 Position => new(_currentState.X, _currentState.Y);
+    public Vector2 Position => GetPosition();
     
     public void Update()
     {
         _previousState = _currentState;
         _currentState = Mouse.GetState();
+    }
+
+    private Vector2 GetPosition()
+    {
+        return new Vector2(
+            _currentState.X / Globals.ScreenScale.X,
+            _currentState.Y / Globals.ScreenScale.Y);
     }
 
     private bool GetIsLeftButtonPressed()

@@ -22,7 +22,7 @@ public class TouchInputHandler
         foreach (var touch in _touches)
         {
             if (touch.State is TouchLocationState.Pressed or TouchLocationState.Moved)
-                yield return touch.Position;
+                yield return touch.Position / Globals.ScreenScale;
         }
     }
     
@@ -31,7 +31,7 @@ public class TouchInputHandler
         foreach (var touch in _touches)
         {
             if (touch.State is TouchLocationState.Released)
-                yield return touch.Position;
+                yield return touch.Position / Globals.ScreenScale;
         }
     }
 

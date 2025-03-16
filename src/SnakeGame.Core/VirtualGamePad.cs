@@ -4,11 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using SnakeGame.Core.Inputs;
-using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core;
 
-public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInputHandler.IVirtualGamePad
+public class VirtualGamePad(InputManager input) : GamePadInputHandler.IVirtualGamePad
 {
     public class VirtualGamePadButton
     {
@@ -32,11 +31,11 @@ public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInpu
         if (!IsConnected || !IsVisible)
             return;
         
-        LeftButton.Position = new Vector2(10, screen.VirtualHeight - 150);
-        RightButton.Position = new Vector2(130, screen.VirtualHeight - 150);
-        UpButton.Position = new Vector2(70, screen.VirtualHeight - 210);
-        DownButton.Position = new Vector2(70, screen.VirtualHeight - 90);
-        ActionButton.Position = new Vector2(screen.VirtualWidth - 180, screen.VirtualHeight - 180);
+        LeftButton.Position = new Vector2(10, Globals.VirtualScreenHeight - 150);
+        RightButton.Position = new Vector2(130, Globals.VirtualScreenHeight - 150);
+        UpButton.Position = new Vector2(70, Globals.VirtualScreenHeight - 210);
+        DownButton.Position = new Vector2(70, Globals.VirtualScreenHeight - 90);
+        ActionButton.Position = new Vector2(Globals.VirtualScreenWidth - 180, Globals.VirtualScreenHeight - 180);
         StartButton.Position = new Vector2(70, 70);
 
         var pressedPoints = input.Touch.GetTouchedPoints().ToList();
@@ -84,11 +83,10 @@ public class VirtualGamePad(ScreenBase screen, InputManager input) : GamePadInpu
         
         foreach (var touchPoint in touchPoints)
         {
-            var point = screen.TransformPoint(touchPoint);
             var rectangle = new RectangleF(button.Position.X, button.Position.Y, 64, 64);
             rectangle.Inflate(20f, 20f); // Give bigger space for button so player can press multiple of them
 
-            if (rectangle.Contains(point))
+            if (rectangle.Contains(touchPoint))
             {
                 isPressed = true;
                 break;
