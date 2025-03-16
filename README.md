@@ -11,8 +11,8 @@ A simple snake game created as part of learning MonoGame framework.
 * Scores
 * Speed ups
 * Multiple enemy with simple AI
-* On-screen game pad support
-* Physical game pad support
+* Onscreen gamepad support
+* Physical gamepad support
 
 ## Platforms
 
@@ -21,7 +21,7 @@ A simple snake game created as part of learning MonoGame framework.
 
 ## Keyboard bindings
 
-* Arrow keys - moves snake arround
+* Arrow keys - moves snake around
 * W, A, S, D - moves snake around too
 * Space - speeds snake up
 * Esc - pauses game
@@ -29,11 +29,11 @@ A simple snake game created as part of learning MonoGame framework.
 
 ## Gamepad button bindings
 
-* D-pad - moves snake arround
+* D-pad - moves snake around
 * A - speeds snake up
 * Start - pauses game
 
 ## Screenshots
 
-![Screenshot](/images/screenshot1.png)
-![Screenshot](/images/screenshot2.png)
+![Screenshot 1](/images/screenshot1.png)
+![Screenshot 2](/images/screenshot2.png)
