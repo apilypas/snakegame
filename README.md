@@ -36,3 +36,4 @@ A simple snake game created as part of learning MonoGame framework.
 ## Screenshots
 
 ![Screenshot](/images/screenshot1.png)
+![Screenshot](/images/screenshot2.png)
