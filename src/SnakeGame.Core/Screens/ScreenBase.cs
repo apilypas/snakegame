@@ -13,10 +13,8 @@ public class ScreenBase(Game game) : GameScreen(game)
     private ScreenScaleHandler _screenScaleHandler;
     private readonly IList<RendererBase> _renderers = [];
 
-    public override void LoadContent()
+    public override void Initialize()
     {
-        base.LoadContent();
-        
         _screenScaleHandler = new ScreenScaleHandler(this);
         _screenScaleHandler.UpdateScreenScaling();
         

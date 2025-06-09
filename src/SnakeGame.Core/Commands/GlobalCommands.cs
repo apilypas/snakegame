@@ -18,7 +18,7 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
     {
         public void Execute()
         {
-            screenManager.LoadScreen(new PlayScreen(game));
+            screenManager.LoadScreen(new PlayScreen(game, screenManager));
         }
     }
     
@@ -26,7 +26,7 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
     {
         public void Execute()
         {
-            screenManager.LoadScreen(new StartScreen(game));
+            screenManager.LoadScreen(new StartScreen(game, screenManager));
         }
     }
 
@@ -34,7 +34,7 @@ public class GlobalCommands(Game game, ScreenManager screenManager)
     {
         public void Execute()
         {
-            screenManager.LoadScreen(new CreditsScreen(game));
+            screenManager.LoadScreen(new CreditsScreen(game, screenManager));
         }
     }
 

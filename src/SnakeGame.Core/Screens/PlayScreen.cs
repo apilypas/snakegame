@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Screens;
 using SnakeGame.Core.Commands;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
@@ -10,26 +11,23 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class PlayScreen(Game game) : ScreenBase(game), IObserver
+public class PlayScreen : ScreenBase, IObserver
 {
-    private ScoreBoard _scoreBoard;
-    private VirtualGamePadManager _virtualGamePadManager;
+    private readonly ScoreBoard _scoreBoard;
+    private readonly VirtualGamePadManager _virtualGamePadManager;
+    private readonly InputManager _inputs;
+    private readonly FormsManager _formManager;
+    private readonly PlayScreenForms _forms;
+    private readonly VirtualGamePad _virtualGamePad;
+    private readonly PlayField _playField;
+    private readonly AssetManager _assets;
     
-    private InputManager _inputs;
-    private FormsManager _formManager;
-    private PlayScreenForms _forms;
-    private VirtualGamePad _virtualGamePad;
-    private PlayField _playField;
-    private AssetManager _assets;
+    public GameManager GameManager { get; }
+    public PlayScreenCommands Commands { get; }
+    public GlobalCommands GlobalCommands { get; }
 
-    public GameManager GameManager { get; private set; }
-    public PlayScreenCommands Commands { get; private set; }
-    public GlobalCommands GlobalCommands { get; private set; }
-
-    public override void Initialize()
+    public PlayScreen(Game game, ScreenManager screenManager) : base(game)
     {
-        base.Initialize();
-
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
@@ -38,7 +36,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _scoreBoard = new ScoreBoard(_assets);
         _virtualGamePad = new VirtualGamePad(_assets);
         _inputs = new InputManager();
-        GlobalCommands = new GlobalCommands(Game, ScreenManager);
+        GlobalCommands = new GlobalCommands(Game, screenManager);
         Commands = new PlayScreenCommands(this);
         _forms = new PlayScreenForms(this);
         _playField = new PlayField(_assets);

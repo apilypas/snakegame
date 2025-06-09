@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Screens;
 using SnakeGame.Core.Commands;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
@@ -8,23 +9,23 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class StartScreen(Game game) : ScreenBase(game)
+public class StartScreen : ScreenBase
 {
-    private InputManager _inputs;
-    private FormsManager _formManager;
-    private StartScreenForms _forms;
-    private AssetManager _assets;
-
-    public GlobalCommands GlobalCommands { get; private set; }
-
-    public override void Initialize()
+    private readonly InputManager _inputs;
+    private readonly FormsManager _formManager;
+    private readonly StartScreenForms _forms;
+    private readonly AssetManager _assets;
+    
+    public GlobalCommands GlobalCommands { get; }
+    
+    public StartScreen(Game game, ScreenManager screenManager) : base(game)
     {
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
         _inputs = new InputManager();
         _formManager = new FormsManager(_inputs, null);
-        GlobalCommands = new GlobalCommands(Game, ScreenManager);
+        GlobalCommands = new GlobalCommands(Game, screenManager);
         _forms = new StartScreenForms(this);
         
         _formManager.Add(_forms.MainMenu);
