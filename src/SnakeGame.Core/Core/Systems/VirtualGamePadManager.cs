@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using SnakeGame.Core.Inputs;
 
-namespace SnakeGame.Core;
+namespace SnakeGame.Core.Core.Systems;
 
-public class VirtualGamePad(InputManager input) : GamePadInputHandler.IVirtualGamePad
+public class VirtualGamePadManager(InputManager input) : GamePadInputHandler.IVirtualGamePad
 {
     public class VirtualGamePadButton
     {

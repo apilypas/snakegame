@@ -1,8 +1,9 @@
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 
-public class PlayerSnake(Vector2 location, int length, SnakeDirection direction) 
-    : Snake(location, length, direction)
+public class PlayerSnake(AssetManager assets, Vector2 location, int length, SnakeDirection direction) 
+    : Snake(assets, location, length, direction)
 {
 }

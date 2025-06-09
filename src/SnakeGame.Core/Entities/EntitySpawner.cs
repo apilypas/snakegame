@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Events;
 
 namespace SnakeGame.Core.Entities;
 
-public class EntitySpawner(GameWorld gameWorld)
+public class EntitySpawner(GameWorld gameWorld, AssetManager assets)
 {
     private readonly Random _random = new();
 
@@ -50,7 +51,7 @@ public class EntitySpawner(GameWorld gameWorld)
         {
             var collectable = gameWorld.Collectables[at];
             gameWorld.Collectables.RemoveAt(at);
-            gameWorld.EventManager.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
+            gameWorld.Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
             return collectable;
         }
 
@@ -73,12 +74,13 @@ public class EntitySpawner(GameWorld gameWorld)
 
         if (location != null)
         {
-            gameWorld.Collectables.Add(new Collectable
+            var collectable = new Collectable(assets, CollectableType.Diamond)
             {
                 Id = GetNextId(),
-                Type = CollectableType.Diamond,
                 Location = location.Value
-            });
+            };
+            
+            gameWorld.Collectables.Add(collectable);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -98,12 +100,13 @@ public class EntitySpawner(GameWorld gameWorld)
 
         if (location != null)
         {
-            gameWorld.Collectables.Add(new Collectable
+            var collectable = new Collectable(assets, CollectableType.SpeedBoost)
             {
                 Id = GetNextId(),
-                Type = CollectableType.SpeedBoost,
                 Location = location.Value
-            });
+            };
+            
+            gameWorld.Collectables.Add(collectable);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
@@ -174,7 +177,7 @@ public class EntitySpawner(GameWorld gameWorld)
         var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
             SnakeDirection.Right : SnakeDirection.Left;
                 
-        playerSnake = new PlayerSnake(location.Value, 2, direction);
+        playerSnake = new PlayerSnake(assets, location.Value, 2, direction);
         playerSnake.Id = GetNextId();
         playerSnake.Initialize();
                 
@@ -205,7 +208,7 @@ public class EntitySpawner(GameWorld gameWorld)
         var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
             SnakeDirection.Right : SnakeDirection.Left;
                 
-        var enemySnake = new EnemySnake(location.Value, 2, direction, gameWorld);
+        var enemySnake = new EnemySnake(assets, location.Value, 2, direction, gameWorld);
         enemySnake.Id = GetNextId();
         enemySnake.Initialize();
                 
@@ -272,10 +275,9 @@ public class EntitySpawner(GameWorld gameWorld)
 
         if (spawnSnakePart)
         {
-            var snakePart = new Collectable
+            var snakePart = new Collectable(assets, CollectableType.SnakePart)
             {
                 Id = GetNextId(),
-                Type = CollectableType.SnakePart,
                 Location = snake.Segments[0].Location
             };
 
@@ -287,10 +289,9 @@ public class EntitySpawner(GameWorld gameWorld)
 
             if (spawnClock)
             {
-                var clock = new Collectable
+                var clock = new Collectable(assets, CollectableType.Clock)
                 {
                     Id = GetNextId(),
-                    Type = CollectableType.Clock,
                     Location = snake.Segments[0].Location
                 };
 

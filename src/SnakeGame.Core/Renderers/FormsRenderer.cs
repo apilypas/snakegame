@@ -1,23 +1,14 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Renderers;
 
-public class FormsRenderer(FormsManager formsManager) : RendererBase
+public class FormsRenderer(AssetManager assets, FormsManager formsManager) : RendererBase
 {
-    private SpriteFont _font;
-    private SpriteFont _bigFont;
-    
-    public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
-    {
-        _font = content.Load<SpriteFont>("MainFont");
-        _bigFont = content.Load<SpriteFont>("BigFont");
-    }
-
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
         var form = formsManager.GetVisibleForm();
@@ -30,7 +21,7 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
 
     private void RenderForm(SpriteBatch spriteBatch, Form form)
     {
-        var font = Globals.IsMobileDevice ? _bigFont : _font;
+        var font = Globals.IsMobileDevice ? assets.BigFont : assets.MainFont;
         
         form.UpdateSize(spriteBatch, font);
 
@@ -108,9 +99,5 @@ public class FormsRenderer(FormsManager formsManager) : RendererBase
                 0f,
                 Vector2.Zero);
         }
-    }
-
-    public override void Update(GameTime gameTime)
-    {
     }
 }

@@ -1,7 +1,18 @@
+using Microsoft.Xna.Framework.Graphics;
+using SnakeGame.Core.Core.Systems;
+
 namespace SnakeGame.Core.Entities;
 
-public class FadeOutText : EntityBase
+public class FadeOutText : Entity
 {
-    public string Text { get; set; } = string.Empty;
-    public float TimeToLive { get; set; } = 1f;
+    public string Text { get; private set; }
+    public float TimeToLive { get; set; }
+    public SpriteFont Font { get; private set; }
+
+    public FadeOutText(AssetManager assets, string text, float timeToLive = 1f)
+    {
+        Text = text;
+        TimeToLive = timeToLive;
+        Font = assets.MainFont;
+    }
 }

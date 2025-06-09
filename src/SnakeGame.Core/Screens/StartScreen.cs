@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
+using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
@@ -12,11 +13,15 @@ public class StartScreen(Game game) : ScreenBase(game)
     private InputManager _inputs;
     private FormsManager _formManager;
     private StartScreenForms _forms;
-    
+    private AssetManager _assets;
+
     public GlobalCommands GlobalCommands { get; private set; }
 
     public override void Initialize()
     {
+        _assets = new AssetManager();
+        _assets.LoadContent(Content);
+        
         _inputs = new InputManager();
         _formManager = new FormsManager(_inputs, null);
         GlobalCommands = new GlobalCommands(Game, ScreenManager);
@@ -25,7 +30,7 @@ public class StartScreen(Game game) : ScreenBase(game)
         _formManager.Add(_forms.MainMenu);
         
         AddRenderer(new StartScreenRenderer());
-        AddRenderer(new FormsRenderer(_formManager));
+        AddRenderer(new FormsRenderer(_assets, _formManager));
         
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         

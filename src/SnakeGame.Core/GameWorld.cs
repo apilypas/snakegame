@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
 
@@ -18,26 +19,30 @@ public class GameWorld
     
     private readonly EntitySpawner _entitySpawner;
     private float _timer = Constants.InitialTimer;
-    
+    private readonly AssetManager _assets;
+
     public IList<Snake> Snakes { get; } = [];
     public IList<Collectable> Collectables { get; } = [];
     public IList<FadeOutText> FadeOutTexts { get; } = [];
     
-    public EventManager EventManager { get; } = new();
+    public EventManager Events { get; } = new();
 
-    public GameWorldState State { get; private set; } = GameWorldState.Running;
+    private GameWorldState _state = GameWorldState.Running;
     
-    public GameWorld()
+    public GameWorld(AssetManager assets)
     {
-        _entitySpawner = new EntitySpawner(this);
+        _assets = assets;
+        _entitySpawner = new EntitySpawner(this, _assets);
 
         // Let's start initially with player and one enemy
         Snakes.Add(new PlayerSnake(
+            assets,
             new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up
             ));
         Snakes.Add(new EnemySnake(
+            assets,
             new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up, this
@@ -54,7 +59,7 @@ public class GameWorld
 
     public void Update(GameTime gameTime)
     {
-        if (State != GameWorldState.Running)
+        if (_state != GameWorldState.Running)
             return;
         
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -63,12 +68,12 @@ public class GameWorld
 
         if (_timer >= 0f)
         {
-            EventManager.Notify(new NotifyTimerChangedEvent(_timer));
+            Events.Notify(new NotifyTimerChangedEvent(_timer));
         }
         else
         {
-            State = GameWorldState.Ended;
-            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.GameEnded));
+            _state = GameWorldState.Ended;
+            Events.Notify(new NotifyEvent(null, null, NotifyEventType.GameEnded));
         }
         
         foreach (var snake in Snakes)
@@ -88,9 +93,8 @@ public class GameWorld
                         snake.Grow();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText
+                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.DiamondCollectScore}")
                             {
-                                Text = $"+{Constants.DiamondCollectScore}",
                                 Location = snake.Head.Location,
                             });
                         }
@@ -101,9 +105,8 @@ public class GameWorld
                         snake.Grow();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText
+                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SnakePartCollectScore}")
                             {
-                                Text = $"+{Constants.SnakePartCollectScore}",
                                 Location = snake.Head.Location,
                             });
                         }
@@ -115,9 +118,8 @@ public class GameWorld
                         snake.ResetSpeedUpTimer();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText
+                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SpeedBoostCollectScore} (Speed)")
                             {
-                                Text = $"+{Constants.SpeedBoostCollectScore} (Speed)",
                                 Location = snake.Head.Location,
                             });
                         }
@@ -131,9 +133,8 @@ public class GameWorld
                             _timer += 30;
                             _timer = Math.Min(_timer, Constants.MaxTimer);
                             
-                            FadeOutTexts.Add(new FadeOutText
+                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.ClockCollectScore} (Time)")
                             {
-                                Text = $"+{Constants.ClockCollectScore} (Time)",
                                 Location = snake.Head.Location,
                             });
                         }
@@ -145,7 +146,7 @@ public class GameWorld
                     || Snakes.Any(x => x != snake && x.Intersects(headRectangle)))
                 {
                     snake.Die();
-                    EventManager.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                    Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
                 }
             }
         }
@@ -157,7 +158,7 @@ public class GameWorld
 
     public void SpeedUp()
     {
-        if (State != GameWorldState.Running)
+        if (_state != GameWorldState.Running)
             return;
         
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
@@ -166,7 +167,7 @@ public class GameWorld
 
     public void SpeedDown()
     {
-        if (State != GameWorldState.Running)
+        if (_state != GameWorldState.Running)
             return;
         
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
@@ -185,7 +186,7 @@ public class GameWorld
 
     public void ChangeDirection(SnakeDirection direction)
     {
-        if (State != GameWorldState.Running)
+        if (_state != GameWorldState.Running)
             return;
         
         var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
@@ -194,15 +195,15 @@ public class GameWorld
 
     public void TogglePause()
     {
-        if (State == GameWorldState.Running)
+        if (_state == GameWorldState.Running)
         {
-            State = GameWorldState.Paused;
-            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Paused));
+            _state = GameWorldState.Paused;
+            Events.Notify(new NotifyEvent(null, null, NotifyEventType.Paused));
         }
-        else if (State == GameWorldState.Paused)
+        else if (_state == GameWorldState.Paused)
         {
-            State = GameWorldState.Running;
-            EventManager.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
+            _state = GameWorldState.Running;
+            Events.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
         }
     }
     

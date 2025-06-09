@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Inputs;
 
 namespace SnakeGame.Core.Forms;
 
-public class FormsManager(InputManager inputs, VirtualGamePad virtualGamePad)
+public class FormsManager(InputManager inputs, VirtualGamePadManager virtualGamePadManager)
 {
     private int _visibleFormId = -1;
     
@@ -34,8 +35,8 @@ public class FormsManager(InputManager inputs, VirtualGamePad virtualGamePad)
         if (form == null)
             throw new ArgumentException($"Unknown form id {formId}", nameof(formId));
         
-        if (virtualGamePad != null)
-            virtualGamePad.IsVisible = false;
+        if (virtualGamePadManager != null)
+            virtualGamePadManager.IsVisible = false;
     }
 
     public void Close()
@@ -49,8 +50,8 @@ public class FormsManager(InputManager inputs, VirtualGamePad virtualGamePad)
         
         _visibleFormId = -1;
         
-        if (virtualGamePad != null)
-            virtualGamePad.IsVisible = true;
+        if (virtualGamePadManager != null)
+            virtualGamePadManager.IsVisible = true;
     }
 
     public void Update()

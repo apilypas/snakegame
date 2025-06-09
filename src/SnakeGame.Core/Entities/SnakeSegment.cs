@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace SnakeGame.Core.Entities;
 
-public class SnakeSegment : EntityBase
+public class SnakeSegment : Entity
 {
     public SnakeDirection Direction { get; init; }
     public bool IsCorner { get; init; }

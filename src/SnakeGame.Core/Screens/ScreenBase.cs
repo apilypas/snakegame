@@ -26,11 +26,6 @@ public class ScreenBase(Game game) : GameScreen(game)
             GraphicsDevice,
             Globals.VirtualScreenWidth,
             Globals.VirtualScreenHeight);
-        
-        foreach (var renderer in _renderers)
-        {
-            renderer.LoadContent(GraphicsDevice, Content);
-        }
     }
 
     public override void Update(GameTime gameTime)
@@ -42,11 +37,6 @@ public class ScreenBase(Game game) : GameScreen(game)
                 GraphicsDevice,
                 Globals.VirtualScreenWidth,
                 Globals.VirtualScreenHeight);
-        }
-
-        foreach (var renderer in _renderers)
-        {
-            renderer.Update(gameTime);
         }
     }
 

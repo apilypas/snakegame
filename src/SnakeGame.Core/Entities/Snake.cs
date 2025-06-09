@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Graphics;
+using SnakeGame.Core.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 
-public class Snake : EntityBase
+public class Snake : Entity
 {
     private List<SnakeSegment> _segments;
     
@@ -25,9 +28,19 @@ public class Snake : EntityBase
     private readonly Vector2 _defaultLocation;
     private readonly int _defaultLength;
     private readonly SnakeDirection _defaultDirection;
+    
+    private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
+    private readonly AssetManager _assets;
 
-    protected Snake(Vector2 location, int length, SnakeDirection direction)
+    public Sprite SegmentSprite { get; set; }
+    public Sprite[] CornersSprites { get; } = new Sprite[5];
+    public Sprite FaceSprite { get; set; }
+    public Sprite HeadSprite { get; set; }
+    public Sprite TailSprite { get; set; }
+
+    protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
+        _assets = assets;
         _defaultLocation = location;
         _defaultLength = length;
         _defaultDirection = direction;
@@ -36,6 +49,61 @@ public class Snake : EntityBase
     public void Initialize()
     {
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
+
+        if (this is PlayerSnake)
+        {
+            CreateSprites(0);
+        }
+        else
+        {
+            var offset = 16 * (Id % 4 + 1);
+            CreateSprites(offset);
+        }
+    }
+    
+    private void CreateSprites(int textureOffsetY)
+    {
+        // Segment
+        SegmentSprite = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(16, textureOffsetY, 16, 16))
+            );
+        SegmentSprite.Origin = _origin;
+
+        // Corner
+        CornersSprites[0] = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(0, textureOffsetY, 16, 16))
+            );
+        CornersSprites[0].Origin = _origin;
+        
+        CornersSprites[1] = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(0, textureOffsetY, 16, 16))
+            );
+        CornersSprites[1].Effect = SpriteEffects.FlipVertically;
+        CornersSprites[1].Origin = _origin;
+        
+        // Head
+        FaceSprite = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(32, textureOffsetY, 16, 16))
+            );
+        FaceSprite.Origin = _origin;
+
+        HeadSprite = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(48, textureOffsetY, 16, 16))
+            );
+        HeadSprite.Effect = SpriteEffects.FlipHorizontally;
+        HeadSprite.Origin = _origin;
+
+        // Tail
+        TailSprite = new Sprite(new Texture2DRegion(
+                _assets.SnakeTexture,
+                new Rectangle(48, textureOffsetY, 16, 16))
+            );
+        TailSprite.Origin = _origin;
     }
 
     public void ChangeDirection(SnakeDirection direction)

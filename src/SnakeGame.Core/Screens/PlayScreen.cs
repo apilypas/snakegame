@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
+using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
@@ -11,11 +13,14 @@ namespace SnakeGame.Core.Screens;
 public class PlayScreen(Game game) : ScreenBase(game), IObserver
 {
     private ScoreBoard _scoreBoard;
-    private VirtualGamePad _virtualGamePad;
+    private VirtualGamePadManager _virtualGamePadManager;
     
     private InputManager _inputs;
     private FormsManager _formManager;
     private PlayScreenForms _forms;
+    private VirtualGamePad _virtualGamePad;
+    private PlayField _playField;
+    private AssetManager _assets;
 
     public GameWorld GameWorld { get; private set; }
     public PlayScreenCommands Commands { get; private set; }
@@ -24,29 +29,35 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     public override void Initialize()
     {
         base.Initialize();
+
+        _assets = new AssetManager();
+        _assets.LoadContent(Content);
         
-        GameWorld = new GameWorld();
-        _scoreBoard = new ScoreBoard();
+        GameWorld = new GameWorld(_assets);
+        
+        _scoreBoard = new ScoreBoard(_assets);
+        _virtualGamePad = new VirtualGamePad(_assets);
         _inputs = new InputManager();
         GlobalCommands = new GlobalCommands(Game, ScreenManager);
         Commands = new PlayScreenCommands(this);
         _forms = new PlayScreenForms(this);
+        _playField = new PlayField(_assets);
         
-        _virtualGamePad = new VirtualGamePad(_inputs);
-        _inputs.GamePad.AttachVirtualGamePad(_virtualGamePad);
+        _virtualGamePadManager = new VirtualGamePadManager(_inputs);
+        _inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
-        _formManager = new FormsManager(_inputs, _virtualGamePad);
+        _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
-        GameWorld.EventManager.AddObserver(this);
-        GameWorld.EventManager.AddObserver(_scoreBoard);
+        GameWorld.Events.AddObserver(this);
+        GameWorld.Events.AddObserver(_scoreBoard);
 
-        AddRenderer(new PlayFieldRenderer());
+        AddRenderer(new PlayFieldRenderer(GraphicsDevice, _playField));
         AddRenderer(new SnakeRenderer(GameWorld.Snakes));
         AddRenderer(new CollectableRenderer(GameWorld));
         AddRenderer(new FadeOutTextRenderer(GameWorld.FadeOutTexts));
         AddRenderer(new ScoreBoardRenderer(_scoreBoard));
-        AddRenderer(new FormsRenderer(_formManager));
-        AddRenderer(new VirtualGamePadRenderer(_virtualGamePad));
+        AddRenderer(new FormsRenderer(_assets, _formManager));
+        AddRenderer(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
         
         _formManager.Add(_forms.Pause);
         _formManager.Add(_forms.GameOver);
@@ -84,7 +95,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     {
         base.Update(gameTime);
         
-        _virtualGamePad.Update();
+        _virtualGamePadManager.Update();
         _inputs.Update();
         _formManager.Update();
         

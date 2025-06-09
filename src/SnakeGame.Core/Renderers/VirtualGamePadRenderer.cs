@@ -1,74 +1,43 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
+using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Entities;
 
 namespace SnakeGame.Core.Renderers;
 
-public class VirtualGamePadRenderer(VirtualGamePad gamePad) : RendererBase
+public class VirtualGamePadRenderer(VirtualGamePadManager gamePadManager, VirtualGamePad virtualGamePad) : RendererBase
 {
-    private Texture2D _texture;
-
-    private Sprite _buttonSprite;
-    private Sprite _pressedButtonSprite;
-    private Sprite _bigButtonSprite;
-    private Sprite _pressedBigButtonSprite;
-    private Sprite _upArrowSprite;
-    private Sprite _downArrowSprite;
-    private Sprite _leftArrowSprite;
-    private Sprite _rightArrowSprite;
-    private Sprite _actionSprite;
-    private Sprite _pauseSprite;
-    
-    public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
-    {
-        _texture = content.Load<Texture2D>("GamePad");
-        _buttonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 0, 64, 64)));
-        _bigButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 96, 96, 96)));
-        _pressedButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(64, 0, 64, 64)));
-        _pressedBigButtonSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(96, 96, 96, 96)));
-        _upArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(0, 64, 32, 32)));
-        _downArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(32, 64, 32, 32)));
-        _rightArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(64, 64, 32, 32)));
-        _leftArrowSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(96, 64, 32, 32)));
-        _actionSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(128, 64, 32, 32)));
-        _pauseSprite = new Sprite(new Texture2DRegion(_texture, new Rectangle(160, 64, 32, 32)));
-    }
-
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (gamePad.IsConnected && gamePad.IsVisible)
+        if (gamePadManager.IsConnected && gamePadManager.IsVisible)
         {
-            RenderButton(spriteBatch, gamePad.LeftButton, _leftArrowSprite);
-            RenderButton(spriteBatch, gamePad.RightButton, _rightArrowSprite);
-            RenderButton(spriteBatch, gamePad.UpButton, _upArrowSprite);
-            RenderButton(spriteBatch, gamePad.DownButton, _downArrowSprite);
-            RenderButton(spriteBatch, gamePad.StartButton, _pauseSprite);
-            RenderBigButton(spriteBatch, gamePad.ActionButton, _actionSprite);
+            RenderButton(spriteBatch, gamePadManager.LeftButton, virtualGamePad.LeftArrowSprite);
+            RenderButton(spriteBatch, gamePadManager.RightButton, virtualGamePad.RightArrowSprite);
+            RenderButton(spriteBatch, gamePadManager.UpButton, virtualGamePad.UpArrowSprite);
+            RenderButton(spriteBatch, gamePadManager.DownButton, virtualGamePad.DownArrowSprite);
+            RenderButton(spriteBatch, gamePadManager.StartButton, virtualGamePad.PauseSprite);
+            RenderBigButton(spriteBatch, gamePadManager.ActionButton, virtualGamePad.ActionSprite);
         }
     }
 
-    private void RenderBigButton(SpriteBatch spriteBatch, VirtualGamePad.VirtualGamePadButton button, Sprite signSprite)
+    private void RenderBigButton(SpriteBatch spriteBatch, VirtualGamePadManager.VirtualGamePadButton button, Sprite signSprite)
     {
         if (button.IsPressed)
-            _pressedBigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+            virtualGamePad.PressedBigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
         else
-            _bigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+            virtualGamePad.BigButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
         
         signSprite.Draw(spriteBatch, button.Position + new Vector2(32f, 32f), 0f, Vector2.One);
     }
 
-    private void RenderButton(SpriteBatch spriteBatch, VirtualGamePad.VirtualGamePadButton button, Sprite signSprite)
+    private void RenderButton(SpriteBatch spriteBatch, VirtualGamePadManager.VirtualGamePadButton button, Sprite signSprite)
     {
         if (button.IsPressed)
-            _pressedButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+            virtualGamePad.PressedButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
         else
-            _buttonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
+            virtualGamePad.ButtonSprite.Draw(spriteBatch, button.Position, 0f, Vector2.One);
         
         signSprite.Draw(spriteBatch, button.Position + new Vector2(16f, 16f), 0f, Vector2.One);
-    }
-
-    public override void Update(GameTime gameTime)
-    {
     }
 }
