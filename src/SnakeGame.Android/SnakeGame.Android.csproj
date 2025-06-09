@@ -8,9 +8,10 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MonoGame.Extended" Version="4.0.4" />
-        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105"/>
-        <PackageReference Include="MonoGame.Framework.Android" Version="3.8.2.1105"/>
+        <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.0-preview.5.25277.114" />
+        <PackageReference Include="MonoGame.Extended" Version="4.1.0" />
+        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4" />
+        <PackageReference Include="MonoGame.Framework.Android" Version="3.8.4" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SnakeGame.Core\SnakeGame.Core.csproj" />
