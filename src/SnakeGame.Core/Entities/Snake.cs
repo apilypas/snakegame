@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
-using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 

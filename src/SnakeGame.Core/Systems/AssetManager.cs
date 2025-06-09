@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 
-namespace SnakeGame.Core.Core.Systems;
+namespace SnakeGame.Core.Systems;
 
 public class AssetManager
 {

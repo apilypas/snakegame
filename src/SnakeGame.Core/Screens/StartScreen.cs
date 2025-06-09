@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 

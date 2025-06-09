@@ -1,8 +1,8 @@
 using System;
 using System.Text;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core;
 

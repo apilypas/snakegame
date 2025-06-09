@@ -1,5 +1,5 @@
 using MonoGame.Extended.Tiled;
-using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 

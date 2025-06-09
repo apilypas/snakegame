@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 

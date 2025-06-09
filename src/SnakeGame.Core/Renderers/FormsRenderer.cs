@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Forms;
+using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Renderers;

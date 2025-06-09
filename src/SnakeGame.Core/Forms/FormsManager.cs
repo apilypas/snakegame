@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Inputs;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Forms;
 

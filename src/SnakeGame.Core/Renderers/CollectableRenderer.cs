@@ -2,10 +2,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
 using SnakeGame.Core.Renderers.Animations;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Renderers;
 
-public class CollectableRenderer(GameWorld gameWorld) : RendererBase
+public class CollectableRenderer(GameManager gameManager) : RendererBase
 {
     private readonly JumpingAnimation _jumpingAnimation = new();
 
@@ -13,7 +14,7 @@ public class CollectableRenderer(GameWorld gameWorld) : RendererBase
     {
         _jumpingAnimation.Update(gameTime);
         
-        foreach (var collectable in gameWorld.Collectables)
+        foreach (var collectable in gameManager.Collectables)
         {
             collectable.Sprite.Draw(
                 spriteBatch,

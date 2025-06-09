@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Graphics;
-using SnakeGame.Core.Core.Systems;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 

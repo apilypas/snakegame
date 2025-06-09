@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 
 public class EnemySnakeBehavior
 {
-    private readonly GameWorld _gameWorld;
+    private readonly GameManager _gameManager;
     private readonly Snake _snake;
     private readonly Random _random;
 
@@ -19,9 +20,9 @@ public class EnemySnakeBehavior
 
     private const int ObjectScanLength = 10;
     
-    public EnemySnakeBehavior(GameWorld gameWorld, Snake snake)
+    public EnemySnakeBehavior(GameManager gameManager, Snake snake)
     {
-        _gameWorld = gameWorld;
+        _gameManager = gameManager;
         _snake = snake;
         _random = new Random(); // Let's make it less predictable (*devil smile*)
     }
@@ -98,19 +99,19 @@ public class EnemySnakeBehavior
             Constants.SegmentSize);
         
         // Wall
-        if (!GameWorld.GetRectangle().Contains(headRectangle))
+        if (!GameManager.GetRectangle().Contains(headRectangle))
         {
             return ObjectType.Unavoidable;
         }
 
         // Other snake
-        if (_gameWorld.Snakes.Any(x => x.Intersects(headRectangle)))
+        if (_gameManager.Snakes.Any(x => x.Intersects(headRectangle)))
         {
             return ObjectType.Unavoidable;
         }
 
         // Collectables
-        foreach (var collectable in _gameWorld.Collectables)
+        foreach (var collectable in _gameManager.Collectables)
         {
             if (headRectangle.Contains(collectable.Location))
                 return ObjectType.Collectable;

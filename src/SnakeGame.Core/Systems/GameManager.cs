@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
 
-namespace SnakeGame.Core;
+namespace SnakeGame.Core.Systems;
 
-public class GameWorld
+public class GameManager
 {
-    public enum GameWorldState
+    private enum GameWorldState
     {
         Running,
         Paused,
@@ -29,7 +28,7 @@ public class GameWorld
 
     private GameWorldState _state = GameWorldState.Running;
     
-    public GameWorld(AssetManager assets)
+    public GameManager(AssetManager assets)
     {
         _assets = assets;
         _entitySpawner = new EntitySpawner(this, _assets);

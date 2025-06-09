@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SnakeGame.Core.Entities;
+using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Renderers;
@@ -9,7 +10,7 @@ public class ScoreBoardRenderer(ScoreBoard scoreBoard) : RendererBase
 {
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        var displayTextPosition = new Vector2(GameWorld.GetRectangle().Width + 16f, 16f) + Globals.PlayFieldOffset;
+        var displayTextPosition = new Vector2(GameManager.GetRectangle().Width + 16f, 16f) + Globals.PlayFieldOffset;
         
         DrawLabel(spriteBatch, scoreBoard.DisplayLabel, displayTextPosition);
     }
