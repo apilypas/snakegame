@@ -1,12 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeGame.Core.Commands;
-using SnakeGame.Core.Core.Systems;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
@@ -22,7 +22,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
     private PlayField _playField;
     private AssetManager _assets;
 
-    public GameWorld GameWorld { get; private set; }
+    public GameManager GameManager { get; private set; }
     public PlayScreenCommands Commands { get; private set; }
     public GlobalCommands GlobalCommands { get; private set; }
 
@@ -33,7 +33,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
-        GameWorld = new GameWorld(_assets);
+        GameManager = new GameManager(_assets);
         
         _scoreBoard = new ScoreBoard(_assets);
         _virtualGamePad = new VirtualGamePad(_assets);
@@ -48,13 +48,13 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         
         _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
-        GameWorld.Events.AddObserver(this);
-        GameWorld.Events.AddObserver(_scoreBoard);
+        GameManager.Events.AddObserver(this);
+        GameManager.Events.AddObserver(_scoreBoard);
 
         AddRenderer(new PlayFieldRenderer(GraphicsDevice, _playField));
-        AddRenderer(new SnakeRenderer(GameWorld.Snakes));
-        AddRenderer(new CollectableRenderer(GameWorld));
-        AddRenderer(new FadeOutTextRenderer(GameWorld.FadeOutTexts));
+        AddRenderer(new SnakeRenderer(GameManager.Snakes));
+        AddRenderer(new CollectableRenderer(GameManager));
+        AddRenderer(new FadeOutTextRenderer(GameManager.FadeOutTexts));
         AddRenderer(new ScoreBoardRenderer(_scoreBoard));
         AddRenderer(new FormsRenderer(_assets, _formManager));
         AddRenderer(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
@@ -88,7 +88,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, Commands.Pause);
         _inputs.Bindings.BindGamePadButtonPressed(Buttons.Back, GlobalCommands.OpenStartScreen);
         
-        GameWorld.Initialize();
+        GameManager.Initialize();
     }
 
     public override void Update(GameTime gameTime)
@@ -99,7 +99,7 @@ public class PlayScreen(Game game) : ScreenBase(game), IObserver
         _inputs.Update();
         _formManager.Update();
         
-        GameWorld.Update(gameTime);
+        GameManager.Update(gameTime);
     }
 
     public void Notify(NotifyEvent notifyEvent)
