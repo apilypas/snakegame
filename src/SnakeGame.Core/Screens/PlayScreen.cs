@@ -11,7 +11,7 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class PlayScreen : ScreenBase, IObserver
+public class PlayScreen : GameScreen, IObserver
 {
     private readonly ScoreBoard _scoreBoard;
     private readonly VirtualGamePadManager _virtualGamePadManager;
@@ -21,6 +21,7 @@ public class PlayScreen : ScreenBase, IObserver
     private readonly VirtualGamePad _virtualGamePad;
     private readonly PlayField _playField;
     private readonly AssetManager _assets;
+    private readonly RenderSystem _renderer;
     
     public GameManager GameManager { get; }
     public PlayScreenCommands Commands { get; }
@@ -46,16 +47,18 @@ public class PlayScreen : ScreenBase, IObserver
         
         _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
+        _renderer = new RenderSystem(GraphicsDevice);
+        
         GameManager.Events.AddObserver(this);
         GameManager.Events.AddObserver(_scoreBoard);
 
-        AddRenderer(new PlayFieldRenderer(GraphicsDevice, _playField));
-        AddRenderer(new SnakeRenderer(GameManager.Snakes));
-        AddRenderer(new CollectableRenderer(GameManager));
-        AddRenderer(new FadeOutTextRenderer(GameManager.FadeOutTexts));
-        AddRenderer(new ScoreBoardRenderer(_scoreBoard));
-        AddRenderer(new FormsRenderer(_assets, _formManager));
-        AddRenderer(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
+        _renderer.Add(new PlayFieldRenderer(GraphicsDevice, _playField));
+        _renderer.Add(new SnakeRenderer(GameManager.Snakes));
+        _renderer.Add(new CollectableRenderer(GameManager));
+        _renderer.Add(new FadeOutTextRenderer(GameManager.FadeOutTexts));
+        _renderer.Add(new ScoreBoardRenderer(_scoreBoard));
+        _renderer.Add(new FormsRenderer(_assets, _formManager));
+        _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
         
         _formManager.Add(_forms.Pause);
         _formManager.Add(_forms.GameOver);
@@ -91,13 +94,18 @@ public class PlayScreen : ScreenBase, IObserver
 
     public override void Update(GameTime gameTime)
     {
-        base.Update(gameTime);
-        
         _virtualGamePadManager.Update();
         _inputs.Update();
         _formManager.Update();
         
         GameManager.Update(gameTime);
+        
+        _renderer.Update(gameTime);
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        _renderer.Render(gameTime);
     }
 
     public void Notify(NotifyEvent notifyEvent)

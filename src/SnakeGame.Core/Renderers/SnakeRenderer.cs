@@ -59,14 +59,14 @@ public class SnakeRenderer : RendererBase
             // If snake is alive - draw face, otherwise face should not be shown
             snake.FaceSprite.Draw(
                 spriteBatch,
-                snake.Head.Location + Globals.PlayFieldOffset + _origin,
+                snake.Head.Position + Globals.PlayFieldOffset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
         
         snake.HeadSprite.Draw(
             spriteBatch,
-            snake.Head.Location + Globals.PlayFieldOffset + _origin,
+            snake.Head.Position + Globals.PlayFieldOffset + _origin,
             snake.Head.Rotation,
             Vector2.One);
 
@@ -75,7 +75,7 @@ public class SnakeRenderer : RendererBase
             // If snake size is equal to 1 - draw tail line on same segment too
             snake.TailSprite.Draw(
                 spriteBatch,
-                snake.Head.Location + Globals.PlayFieldOffset + _origin,
+                snake.Head.Position + Globals.PlayFieldOffset + _origin,
                 snake.Head.Rotation,
                 Vector2.One);
         }
@@ -85,7 +85,7 @@ public class SnakeRenderer : RendererBase
     {
         snake.TailSprite.Draw(
             spriteBatch,
-            snake.Tail.Location + Globals.PlayFieldOffset + _origin,
+            snake.Tail.Position + Globals.PlayFieldOffset + _origin,
             snake.Tail.Rotation,
             Vector2.One);
     }
@@ -102,7 +102,7 @@ public class SnakeRenderer : RendererBase
     {
         snake.SegmentSprite.Draw(
             spriteBatch,
-            segment.Location + Globals.PlayFieldOffset + _origin,
+            segment.Position + Globals.PlayFieldOffset + _origin,
             segment.Rotation,
             Vector2.One);
     }
@@ -113,7 +113,7 @@ public class SnakeRenderer : RendererBase
         {
             snake.CornersSprites[0].Draw(
                 spriteBatch,
-                segment.Location + Globals.PlayFieldOffset + _origin,
+                segment.Position + Globals.PlayFieldOffset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }
@@ -121,7 +121,7 @@ public class SnakeRenderer : RendererBase
         {
             snake.CornersSprites[1].Draw(
                 spriteBatch,
-                segment.Location + Globals.PlayFieldOffset + _origin,
+                segment.Position + Globals.PlayFieldOffset + _origin,
                 segment.Rotation,
                 Vector2.One);
         }

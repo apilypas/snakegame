@@ -15,7 +15,7 @@ public class FadeOutTextRenderer(IList<FadeOutText> fadeOutTexts) : RendererBase
             spriteBatch.DrawStringWithShadow(
                 fadeOutText.Font,
                 fadeOutText.Text,
-                fadeOutText.Location + Globals.PlayFieldOffset,
+                fadeOutText.Position + Globals.PlayFieldOffset,
                 Colors.DefaultTextColor);
         }
     }

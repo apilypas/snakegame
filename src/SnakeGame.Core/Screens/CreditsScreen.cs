@@ -9,12 +9,13 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class CreditsScreen : ScreenBase
+public class CreditsScreen : GameScreen
 {
     private readonly InputManager _inputs;
     private readonly FormsManager _formManager;
     private readonly CreditsScreenForms _forms;
     private readonly AssetManager _assets;
+    private readonly RenderSystem _renderer;
 
     public GlobalCommands GlobalCommands { get; }
     
@@ -29,7 +30,9 @@ public class CreditsScreen : ScreenBase
         
         _formManager.Add(_forms.Credits);
         
-        AddRenderer(new FormsRenderer(_assets, _formManager));
+        _renderer = new RenderSystem(GraphicsDevice);
+        
+        _renderer.Add(new FormsRenderer(_assets, _formManager));
         
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
@@ -40,9 +43,14 @@ public class CreditsScreen : ScreenBase
 
     public override void Update(GameTime gameTime)
     {
-        base.Update(gameTime);
-        
         _inputs.Update();
         _formManager.Update();
+        
+        _renderer.Update(gameTime);
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        _renderer.Render(gameTime);
     }
 }

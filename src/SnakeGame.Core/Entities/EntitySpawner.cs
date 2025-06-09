@@ -35,8 +35,8 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             var collectable = gameManager.Collectables[i];
 
             var rectangle = new Rectangle(
-                (int)collectable.Location.X,
-                (int)collectable.Location.Y,
+                (int)collectable.Position.X,
+                (int)collectable.Position.Y,
                 Constants.SegmentSize,
                 Constants.SegmentSize);
 
@@ -77,7 +77,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             var collectable = new Collectable(assets, CollectableType.Diamond)
             {
                 Id = GetNextId(),
-                Location = location.Value
+                Position = location.Value
             };
             
             gameManager.Collectables.Add(collectable);
@@ -103,7 +103,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             var collectable = new Collectable(assets, CollectableType.SpeedBoost)
             {
                 Id = GetNextId(),
-                Location = location.Value
+                Position = location.Value
             };
             
             gameManager.Collectables.Add(collectable);
@@ -155,7 +155,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         if (gameManager.Snakes.Any(x => x.Intersects(rectangle)))
             return false;
         
-        if (gameManager.Collectables.Any(x => x.Location == location))
+        if (gameManager.Collectables.Any(x => x.Position == location))
             return false;
         
         return true;
@@ -278,7 +278,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             var snakePart = new Collectable(assets, CollectableType.SnakePart)
             {
                 Id = GetNextId(),
-                Location = snake.Segments[0].Location
+                Position = snake.Segments[0].Position
             };
 
             gameManager.Collectables.Add(snakePart);
@@ -292,7 +292,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
                 var clock = new Collectable(assets, CollectableType.Clock)
                 {
                     Id = GetNextId(),
-                    Location = snake.Segments[0].Location
+                    Position = snake.Segments[0].Position
                 };
 
                 gameManager.Collectables.Add(clock);

@@ -18,7 +18,7 @@ public class CollectableRenderer(GameManager gameManager) : RendererBase
         {
             collectable.Sprite.Draw(
                 spriteBatch,
-                collectable.Location + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
+                collectable.Position + Globals.PlayFieldOffset + _jumpingAnimation.AdjustVector,
                 collectable.Rotation,
                 Vector2.One);
         }

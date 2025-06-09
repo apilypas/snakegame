@@ -9,13 +9,14 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class StartScreen : ScreenBase
+public class StartScreen : GameScreen
 {
     private readonly InputManager _inputs;
     private readonly FormsManager _formManager;
     private readonly StartScreenForms _forms;
     private readonly AssetManager _assets;
-    
+    private readonly RenderSystem _renderer;
+
     public GlobalCommands GlobalCommands { get; }
     
     public StartScreen(Game game, ScreenManager screenManager) : base(game)
@@ -30,8 +31,10 @@ public class StartScreen : ScreenBase
         
         _formManager.Add(_forms.MainMenu);
         
-        AddRenderer(new StartScreenRenderer());
-        AddRenderer(new FormsRenderer(_assets, _formManager));
+        _renderer = new RenderSystem(GraphicsDevice);
+        
+        _renderer.Add(new StartScreenRenderer());
+        _renderer.Add(new FormsRenderer(_assets, _formManager));
         
         _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
@@ -42,9 +45,14 @@ public class StartScreen : ScreenBase
 
     public override void Update(GameTime gameTime)
     {
-        base.Update(gameTime);
-        
         _inputs.Update();
         _formManager.Update();
+        
+        _renderer.Update(gameTime);
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        _renderer.Render(gameTime);
     }
 }

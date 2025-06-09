@@ -29,7 +29,7 @@ public class EnemySnakeBehavior
 
     public SnakeDirection GetDirection()
     {
-        var head = _snake.Segments[0].Location;
+        var head = _snake.Segments[0].Position;
         
         var follow = _snake.Head.Direction;
         var left = follow.GetCounterClockwise();
@@ -113,7 +113,7 @@ public class EnemySnakeBehavior
         // Collectables
         foreach (var collectable in _gameManager.Collectables)
         {
-            if (headRectangle.Contains(collectable.Location))
+            if (headRectangle.Contains(collectable.Position))
                 return ObjectType.Collectable;
         }
 

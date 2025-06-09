@@ -140,19 +140,19 @@ public class Snake : Entity
         var head = _segments[0];
         var tail = _segments[^1];
 
-        Head.Location = MoveByDirection(Head.Location, _direction, movementSize);
+        Head.Position = MoveByDirection(Head.Position, _direction, movementSize);
 
         if (_segmentsToGrow <= 0)
-            Tail.Location = MoveByDirection(Tail.Location, tail.Direction, movementSize);
+            Tail.Position = MoveByDirection(Tail.Position, tail.Direction, movementSize);
 
         if (Head.GetRectangle().Intersects(head.GetRectangle()))
             return;
     
-        var newLocation = MoveByDirection(head.Location, _direction, Constants.SegmentSize);
+        var newLocation = MoveByDirection(head.Position, _direction, Constants.SegmentSize);
 
         var newHead = new SnakeSegment
         {
-            Location = newLocation,
+            Position = newLocation,
             Direction = _nextDirection,
             Rotation = GetRotation(_nextDirection),
             IsCorner = _nextDirection != head.Direction,
@@ -254,7 +254,7 @@ public class Snake : Entity
         {
             var segment = new SnakeSegment
             {
-                Location = location,
+                Position = location,
                 Direction = direction,
                 Rotation = GetRotation(direction)
             };

@@ -10,14 +10,14 @@ public class SnakeSegment : Entity
 
     public Rectangle GetRectangle()
     {
-        return new Rectangle((int)Location.X, (int)Location.Y, Constants.SegmentSize, Constants.SegmentSize);
+        return new Rectangle((int)Position.X, (int)Position.Y, Constants.SegmentSize, Constants.SegmentSize);
     }
 
     public SnakeSegment Clone()
     {
         return new SnakeSegment
         {
-            Location = Location,
+            Position = Position,
             Rotation = Rotation,
             Direction = Direction,
             IsCorner = IsCorner,

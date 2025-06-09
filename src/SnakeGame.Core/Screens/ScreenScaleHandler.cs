@@ -1,24 +1,21 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Screens;
-using SnakeGame.Core.Renderers;
 
 namespace SnakeGame.Core.Screens;
 
-public class ScreenScaleHandler(GameScreen screen)
+public class ScreenScaleHandler(GraphicsDevice graphics)
 {
     private int _screenWidth;
     private int _screenHeight;
     
     public bool UpdateScreenScaling()
     {
-        if (_screenWidth == screen.GraphicsDevice.Viewport.Width && _screenHeight == screen.GraphicsDevice.Viewport.Height)
+        if (_screenWidth == graphics.Viewport.Width && _screenHeight == graphics.Viewport.Height)
             return false;
 
-        _screenWidth = screen.GraphicsDevice.Viewport.Width;
-        _screenHeight = screen.GraphicsDevice.Viewport.Height;
+        _screenWidth = graphics.Viewport.Width;
+        _screenHeight = graphics.Viewport.Height;
         
         var screenRatio = _screenWidth / (float)_screenHeight;
         var width = (int) (Constants.ScreenHeight * screenRatio);

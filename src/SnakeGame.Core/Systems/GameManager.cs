@@ -94,7 +94,7 @@ public class GameManager
                         {
                             FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.DiamondCollectScore}")
                             {
-                                Location = snake.Head.Location,
+                                Position = snake.Head.Position,
                             });
                         }
                     }
@@ -106,7 +106,7 @@ public class GameManager
                         {
                             FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SnakePartCollectScore}")
                             {
-                                Location = snake.Head.Location,
+                                Position = snake.Head.Position,
                             });
                         }
                     }
@@ -119,7 +119,7 @@ public class GameManager
                         {
                             FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SpeedBoostCollectScore} (Speed)")
                             {
-                                Location = snake.Head.Location,
+                                Position = snake.Head.Position,
                             });
                         }
                     }
@@ -134,7 +134,7 @@ public class GameManager
                             
                             FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.ClockCollectScore} (Time)")
                             {
-                                Location = snake.Head.Location,
+                                Position = snake.Head.Position,
                             });
                         }
                     }
@@ -213,7 +213,7 @@ public class GameManager
         foreach (var fadeOutText in FadeOutTexts)
         {
             fadeOutText.TimeToLive -= elapsed;
-            fadeOutText.Location += new Vector2(0f, -elapsed * 30f);
+            fadeOutText.Position += new Vector2(0f, -elapsed * 30f);
         }
         
         var oldTexts = FadeOutTexts.Where(x => x.TimeToLive <= 0f).ToList();

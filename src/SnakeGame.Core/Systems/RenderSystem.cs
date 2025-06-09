@@ -1,48 +1,43 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Screens;
 using SnakeGame.Core.Renderers;
+using SnakeGame.Core.Screens;
 
-namespace SnakeGame.Core.Screens;
+namespace SnakeGame.Core.Systems;
 
-public class ScreenBase(Game game) : GameScreen(game)
+public class RenderSystem
 {
+    private readonly IList<RendererBase> _renderers = [];
+    private readonly GraphicsDevice _graphics;
     private SpriteBatch _spriteBatch;
     private RenderTarget2D _renderTarget;
     private ScreenScaleHandler _screenScaleHandler;
-    private readonly IList<RendererBase> _renderers = [];
 
-    public override void Initialize()
+    public RenderSystem(GraphicsDevice graphics)
     {
-        _screenScaleHandler = new ScreenScaleHandler(this);
+        _graphics = graphics;
+        _screenScaleHandler = new ScreenScaleHandler(graphics);
         _screenScaleHandler.UpdateScreenScaling();
         
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        _spriteBatch = new SpriteBatch(graphics);
         
         _renderTarget = new RenderTarget2D(
-            GraphicsDevice,
+            graphics,
             Globals.VirtualScreenWidth,
             Globals.VirtualScreenHeight);
     }
 
-    public override void Update(GameTime gameTime)
+    public void Add(RendererBase renderer)
     {
-        if (_screenScaleHandler.UpdateScreenScaling())
-        {
-            _renderTarget?.Dispose();
-            _renderTarget = new RenderTarget2D(
-                GraphicsDevice,
-                Globals.VirtualScreenWidth,
-                Globals.VirtualScreenHeight);
-        }
+        _renderers.Add(renderer);
     }
 
-    public override void Draw(GameTime gameTime)
+    public void Render(GameTime gameTime)
     {
-        GraphicsDevice.SetRenderTarget(_renderTarget);
+        _graphics.SetRenderTarget(_renderTarget);
         
-        GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
+        _graphics.Clear(Colors.DefaultBackgroundColor);
 
         _spriteBatch.Begin(
             SpriteSortMode.Deferred,
@@ -57,7 +52,7 @@ public class ScreenBase(Game game) : GameScreen(game)
         
         _spriteBatch.End();
         
-        GraphicsDevice.SetRenderTarget(null);
+        _graphics.SetRenderTarget(null);
 
         _spriteBatch.Begin(
             SpriteSortMode.Deferred,
@@ -78,9 +73,16 @@ public class ScreenBase(Game game) : GameScreen(game)
         
         _spriteBatch.End();
     }
-    
-    protected void AddRenderer(RendererBase renderer)
+
+    public void Update(GameTime gameTime)
     {
-        _renderers.Add(renderer);
+        if (_screenScaleHandler.UpdateScreenScaling())
+        {
+            _renderTarget?.Dispose();
+            _renderTarget = new RenderTarget2D(
+                _graphics,
+                Globals.VirtualScreenWidth,
+                Globals.VirtualScreenHeight);
+        }
     }
 }
