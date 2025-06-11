@@ -309,12 +309,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
                 if (snake.Segments.Count == 0)
                     _despawnSnakes.Add(snake);
-                
             }
         }
-        
+
         foreach (var snake in _despawnSnakes)
+        {
             gameManager.Snakes.Remove(snake);
+            snake.QueueRemove = true;
+        }
     }
     
     private void SpawnSnakePart(Snake snake)

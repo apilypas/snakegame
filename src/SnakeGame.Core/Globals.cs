@@ -9,4 +9,5 @@ public static class Globals
     public static int VirtualScreenHeight { get; set; }
     public static Vector2 ScreenScale { get; set; }
     public static Vector2 PlayFieldOffset { get; set; }
+    public static Vector2 SnakeSegmentOrigin { get; } = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
 }

@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace SnakeGame.Core.Entities;
 
@@ -12,9 +11,9 @@ public class Collectable : Entity
     private const float MoveByY = 1f;
     private const float Duration = .1f;
         
-    private float _timer = 0f;
-    private float _offsetY = 0f;
-    private bool _isInverted = false;
+    private float _timer;
+    private float _offsetY;
+    private bool _isInverted;
 
     public CollectableType Type { get; }
     public Sprite Sprite { get; }
@@ -52,13 +51,6 @@ public class Collectable : Entity
 
             _timer -= Duration;
         }
-    }
-
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-    {
-        spriteBatch.DrawRectangle(
-            new RectangleF(GlobalPosition, new SizeF(16, 16)),
-            Color.Blue);
     }
 
     private Sprite CreateSprite(CollectableType type)

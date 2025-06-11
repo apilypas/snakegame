@@ -19,25 +19,25 @@ public class Snake : Entity
     private float _deathAnimationTimer;
     private bool _hasSpeed;
     private float _speedTimer;
-
-    public IList<SnakeSegment> Segments => _segments;
-    public SnakeSegment Head { get; private set; }
-    public SnakeSegment Tail { get; private set; }
-    public SnakeState State { get; private set; } = SnakeState.Alive;
     
     private readonly Vector2 _defaultLocation;
     private readonly int _defaultLength;
     private readonly SnakeDirection _defaultDirection;
     
-    public Vector2 SegmentOrigin { get; } = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
-    
     private readonly SnakeRenderer _renderer;
+
+    public IList<SnakeSegment> Segments => _segments;
+    public SnakeSegment Head { get; private set; }
+    public SnakeSegment Tail { get; private set; }
+    
+    public SnakeState State { get; private set; } = SnakeState.Alive;
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
         _defaultLocation = location;
         _defaultLength = length;
         _defaultDirection = direction;
+        
         _renderer = new SnakeRenderer(this, assets);
     }
 
@@ -190,7 +190,7 @@ public class Snake : Entity
         return reduced;
     }
 
-    public void Reset(Vector2 location, int length, SnakeDirection direction)
+    private void Reset(Vector2 location, int length, SnakeDirection direction)
     {
         _segments = [];
 
