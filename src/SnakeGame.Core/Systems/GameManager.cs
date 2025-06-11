@@ -67,6 +67,8 @@ public class GameManager
     {
         UpdateEntities(World, gameTime);
         
+        World.IsPaused = _state == GameWorldState.Paused;
+        
         if (_state != GameWorldState.Running)
             return;
         
@@ -88,8 +90,6 @@ public class GameManager
         {
             if (snake.State == SnakeState.Alive)
             {
-                snake.Update(deltaTime);
-                
                 var collectable = _entitySpawner.RemoveCollectable(snake);
 
                 if (collectable != null)
@@ -186,6 +186,8 @@ public class GameManager
 
     private void UpdateEntities(Entity entity, GameTime gameTime)
     {
+        if (entity.IsPaused) return;
+        
         entity.Update(gameTime);
 
         foreach (var child in entity.Children)

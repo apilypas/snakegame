@@ -10,6 +10,7 @@ public class Entity
     public Vector2 Position { get; set; }
     public float Rotation { get; set; }
     public bool QueueRemove { get; set; }
+    public bool IsPaused { get; set; }
     
     public HashSet<Entity> Children { get; } = [];
 

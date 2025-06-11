@@ -132,8 +132,12 @@ public class Snake : Entity
         _nextDirection = direction;
     }
 
-    public virtual void Update(float deltaTime)
+    public override void Update(GameTime gameTime)
     {
+        if (State != SnakeState.Alive) return;
+        
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
         var speed = (_hasSpeed || _speedTimer > 0f) ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
 
         if (_speedTimer > 0f)

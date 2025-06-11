@@ -13,12 +13,15 @@ public class EnemySnake : Snake
         _behavior = new EnemySnakeBehavior(gameManager, this);
     }
 
-    public override void Update(float deltaTime)
+    public override void Update(GameTime gameTime)
     {
-        var direction = _behavior.GetDirection();
-        
-        ChangeDirection(direction);
+        if (State == SnakeState.Alive)
+        {
+            var direction = _behavior.GetDirection();
 
-        base.Update(deltaTime);
+            ChangeDirection(direction);
+        }
+
+        base.Update(gameTime);
     }
 }
