@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Systems;
+using Sprite = MonoGame.Extended.Graphics.Sprite;
 
 namespace SnakeGame.Core.Renderers;
 

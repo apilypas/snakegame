@@ -278,6 +278,6 @@ public class Snake : Entity
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        _renderer.Render(spriteBatch, gameTime);
+        _renderer.Render(spriteBatch);
     }
 }

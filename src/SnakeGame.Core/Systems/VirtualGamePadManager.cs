@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -38,14 +37,12 @@ public class VirtualGamePadManager(InputManager input) : GamePadInputHandler.IVi
         ActionButton.Position = new Vector2(Globals.VirtualScreenWidth - 180, Globals.VirtualScreenHeight - 180);
         StartButton.Position = new Vector2(70, 70);
 
-        var pressedPoints = input.Touch.GetTouchedPoints().ToList();
-        
-        HandleButton(LeftButton, pressedPoints);
-        HandleButton(RightButton, pressedPoints);
-        HandleButton(UpButton, pressedPoints);
-        HandleButton(DownButton, pressedPoints);
-        HandleButton(ActionButton, pressedPoints);
-        HandleButton(StartButton, pressedPoints);
+        HandleButton(LeftButton, input.Touch.GetTouchedPoints());
+        HandleButton(RightButton, input.Touch.GetTouchedPoints());
+        HandleButton(UpButton, input.Touch.GetTouchedPoints());
+        HandleButton(DownButton, input.Touch.GetTouchedPoints());
+        HandleButton(ActionButton, input.Touch.GetTouchedPoints());
+        HandleButton(StartButton, input.Touch.GetTouchedPoints());
     }
 
     public GamePadState GetState(GamePadState gamePadState)
@@ -77,7 +74,7 @@ public class VirtualGamePadManager(InputManager input) : GamePadInputHandler.IVi
         return Buttons.None;
     }
 
-    private void HandleButton(VirtualGamePadButton button, IList<Vector2> touchPoints)
+    private void HandleButton(VirtualGamePadButton button, IEnumerable<Vector2> touchPoints)
     {
         var isPressed = false;
         

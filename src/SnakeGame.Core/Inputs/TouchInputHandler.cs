@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 
@@ -37,6 +36,12 @@ public class TouchInputHandler
 
     private bool GetIsPressedAnywhere()
     {
-        return _touches.Any(x => x.State is TouchLocationState.Pressed);
+        foreach (var touch in _touches)
+        {
+            if (touch.State is TouchLocationState.Pressed)
+                return true;
+        }
+        
+        return false;
     }
 }

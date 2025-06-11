@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Events;
 using SnakeGame.Core.Systems;
@@ -10,11 +10,11 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 {
     private readonly Random _random = new();
 
-    private float _diamondSpawnTimer = 0f;
-    private float _speedBoostSpawnTimer = 0f;
-    private float _enemySpawnTimer = 0f;
+    private float _diamondSpawnTimer;
+    private float _speedBoostSpawnTimer;
+    private float _enemySpawnTimer;
     
-    private int _lastEntityId = 0;
+    private int _lastEntityId;
 
     public void Update(float deltaTime)
     {
@@ -63,7 +63,13 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
     {
         _diamondSpawnTimer += deltaTime;
         
-        var diamondCount = gameManager.Collectables.Count(x => x.Type == CollectableType.Diamond);
+        var diamondCount = 0;
+        
+        foreach (var collectable in gameManager.Collectables)
+        {
+            if (collectable.Type == CollectableType.Diamond)
+                diamondCount++;
+        }
         
         if (diamondCount > 0 && _diamondSpawnTimer < Constants.DiamondSpawnRate)
             return;
@@ -95,7 +101,15 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         if (_speedBoostSpawnTimer < Constants.SpeedBoostSpawnRate)
             return;
         
-        if (gameManager.Collectables.Count(x => x.Type == CollectableType.SpeedBoost) >= Constants.MaxSpeedBoostLimit)
+        var speedBoostCount = 0;
+
+        foreach (var collectable in gameManager.Collectables)
+        {
+            if (collectable.Type == CollectableType.SpeedBoost)
+                speedBoostCount++;
+        }
+        
+        if (speedBoostCount >= Constants.MaxSpeedBoostLimit)
             return;
 
         var location = FindFreeLocation();
@@ -170,8 +184,17 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
     private void SpawnPlayerSnake()
     {
-        var playerSnake = gameManager.Snakes.SingleOrDefault(x => x is PlayerSnake);
+        Snake playerSnake = null;
 
+        foreach (var snake in gameManager.Snakes)
+        {
+            if (snake is PlayerSnake)
+            {
+                playerSnake = snake;
+                break;
+            }
+        }
+        
         if (playerSnake != null)
             return;
 
@@ -196,7 +219,15 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
     {
         _enemySpawnTimer += deltaTime;
         
-        var count = gameManager.Snakes.Count(x => x is EnemySnake);
+        var count = 0;
+
+        foreach (var snake in gameManager.Snakes)
+        {
+            if (snake is EnemySnake)
+            {
+                count++;
+            }
+        }
         
         if (count > 0 && _enemySpawnTimer < Constants.EnemySpawnRate)
             return;
@@ -262,20 +293,28 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         return location;
     }
 
+    private readonly HashSet<Snake> _despawnSnakes = [];
     private void DespawnSnake(float deltaTime)
     {
-        var deadSnakes = gameManager.Snakes.Where(x => x.State == SnakeState.Dead).ToList();
+        _despawnSnakes.Clear();
         
-        foreach (var snake in deadSnakes)
+        foreach (var snake in gameManager.Snakes)
         {
-            if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
+            if (snake.State == SnakeState.Dead)
             {
-                SpawnSnakePart(snake);
-            }
+                if (snake.Reduce(deltaTime) && snake.Segments.Count > 0)
+                {
+                    SpawnSnakePart(snake);
+                }
 
-            if (snake.Segments.Count == 0)
-                gameManager.Snakes.Remove(snake);
+                if (snake.Segments.Count == 0)
+                    _despawnSnakes.Add(snake);
+                
+            }
         }
+        
+        foreach (var snake in _despawnSnakes)
+            gameManager.Snakes.Remove(snake);
     }
     
     private void SpawnSnakePart(Snake snake)

@@ -5,133 +5,133 @@ using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Renderers;
 
-public class SnakeRenderer : RendererBase
+public class SnakeRenderer
 {
-    private readonly Snake _snake;
-    private readonly AssetManager _assets;
     private readonly int _textureOffset;
+    private readonly Texture2D _texture;
+    private readonly Snake _snake;
 
     public SnakeRenderer(Snake snake, AssetManager assets)
     {
         _snake = snake;
-        _assets = assets;
+        _texture = assets.SnakeTexture;
         _textureOffset = _snake is PlayerSnake ? 0 : 16 * (_snake.Id % 4 + 1);
     }
 
-    public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
+    public void Render(SpriteBatch spriteBatch)
     {
-        RenderSnake(spriteBatch);
+        DrawSnake(spriteBatch, _texture, _textureOffset, _snake);
     }
 
-    private void RenderSnake(SpriteBatch spriteBatch)
+    private static void DrawSnake(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, Snake snake)
     {
-        if (_snake.Segments.Count == 0)
+        if (snake.Segments.Count == 0)
             return;
 
-        DrawSegment(spriteBatch, _snake.Head);
+        DrawSegment(spriteBatch, texture, textureOffset, snake.Head, snake);
 
-        if (_snake.Segments.Count > 1)
+        if (snake.Segments.Count > 1)
         {
             // Head & face drawing logic will cover this when length is equal to 1
-            DrawSegment(spriteBatch, _snake.Tail);
+            DrawSegment(spriteBatch, texture, textureOffset, snake.Tail, snake);
         }
         
-        for (var i = 0; i < _snake.Segments.Count - 1; i++)
+        for (var i = 0; i < snake.Segments.Count - 1; i++)
         {
-            DrawBody(spriteBatch, _snake.Segments[i]);
+            DrawBody(spriteBatch, texture, textureOffset, snake.Segments[i], snake);
         }
         
-        DrawHead(spriteBatch);
+        DrawHead(spriteBatch, texture, textureOffset, snake);
 
-        if (_snake.Segments.Count > 1)
+        if (snake.Segments.Count > 1)
         {
             // Head & face drawing logic will cover this when length is equal to 1
-            DrawTail(spriteBatch);
+            DrawTail(spriteBatch, texture, textureOffset, snake);
         }
     }
 
-    private void DrawHead(SpriteBatch spriteBatch)
+    private static void DrawHead(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, Snake snake)
     {
-        if (_snake.State == SnakeState.Alive)
+        if (snake.State == SnakeState.Alive)
         {
-            spriteBatch.Draw(_assets.SnakeTexture,
-                _snake.GlobalPosition + _snake.Head.Position + _snake.SegmentOrigin,
-                new Rectangle(32, _textureOffset, 16, 16),
+            spriteBatch.Draw(texture,
+                snake.GlobalPosition + snake.Head.Position + snake.SegmentOrigin,
+                new Rectangle(32, textureOffset, 16, 16),
                 Color.White,
-                _snake.Head.Rotation,
-                _snake.SegmentOrigin,
+                snake.Head.Rotation,
+                snake.SegmentOrigin,
                 Vector2.One,
                 SpriteEffects.None,
                 1f);
         }
         
-        spriteBatch.Draw(_assets.SnakeTexture,
-            _snake.GlobalPosition + _snake.Head.Position + _snake.SegmentOrigin,
-            new Rectangle(48, _textureOffset, 16, 16),
+        spriteBatch.Draw(texture,
+            snake.GlobalPosition + snake.Head.Position + snake.SegmentOrigin,
+            new Rectangle(48, textureOffset, 16, 16),
             Color.White,
-            _snake.Head.Rotation,
-            _snake.SegmentOrigin,
+            snake.Head.Rotation,
+            snake.SegmentOrigin,
             Vector2.One,
             SpriteEffects.FlipHorizontally,
             1f);
 
-        if (_snake.Segments.Count == 1)
+        if (snake.Segments.Count == 1)
         {
             // If snake size is equal to 1 - draw tail line on same segment too
-            spriteBatch.Draw(_assets.SnakeTexture,
-                _snake.GlobalPosition + _snake.Head.Position + _snake.SegmentOrigin,
-                new Rectangle(48, _textureOffset, 16, 16),
+            spriteBatch.Draw(texture,
+                snake.GlobalPosition + snake.Head.Position + snake.SegmentOrigin,
+                new Rectangle(48, textureOffset, 16, 16),
                 Color.White,
-                _snake.Head.Rotation,
-                _snake.SegmentOrigin,
+                snake.Head.Rotation,
+                snake.SegmentOrigin,
                 Vector2.One,
                 SpriteEffects.None,
                 1f);
         }
     }
 
-    private void DrawTail(SpriteBatch spriteBatch)
+    private static void DrawTail(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, Snake snake)
     {
-        spriteBatch.Draw(_assets.SnakeTexture,
-            _snake.GlobalPosition + _snake.Tail.Position + _snake.SegmentOrigin,
-            new Rectangle(48, _textureOffset, 16, 16),
+        spriteBatch.Draw(texture,
+            snake.GlobalPosition + snake.Tail.Position + snake.SegmentOrigin,
+            new Rectangle(48, textureOffset, 16, 16),
             Color.White,
-            _snake.Tail.Rotation,
-            _snake.SegmentOrigin,
+            snake.Tail.Rotation,
+            snake.SegmentOrigin,
             Vector2.One,
             SpriteEffects.None,
             1f);
     }
 
-    private void DrawBody(SpriteBatch spriteBatch, SnakeSegment segment)
+    private static void DrawBody(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, SnakeSegment segment, Snake snake)
     {
         if (segment.IsCorner)
-            DrawCorner(spriteBatch, segment);
+            DrawCorner(spriteBatch, texture, textureOffset, segment, snake);
         else
-            DrawSegment(spriteBatch, segment);
+            DrawSegment(spriteBatch, texture, textureOffset, segment, snake);
     }
 
-    private void DrawSegment(SpriteBatch spriteBatch, SnakeSegment segment)
+    private static void DrawSegment(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, SnakeSegment segment, Snake snake)
     {
-        spriteBatch.Draw(_assets.SnakeTexture,
-            _snake.GlobalPosition + segment.Position + _snake.SegmentOrigin,
-            new Rectangle(16, _textureOffset, 16, 16),
+        spriteBatch.Draw(texture,
+            snake.GlobalPosition + segment.Position + snake.SegmentOrigin,
+            new Rectangle(16, textureOffset, 16, 16),
             Color.White,
             segment.Rotation,
-            _snake.SegmentOrigin,
+            snake.SegmentOrigin,
             Vector2.One,
             SpriteEffects.None,
             1f);
     }
 
-    private void DrawCorner(SpriteBatch spriteBatch, SnakeSegment segment)
+    private static void DrawCorner(SpriteBatch spriteBatch, Texture2D texture, int textureOffset, SnakeSegment segment, Snake snake)
     {
-        spriteBatch.Draw(_assets.SnakeTexture,
-            _snake.GlobalPosition + segment.Position + _snake.SegmentOrigin,
-            new Rectangle(0, _textureOffset, 16, 16),
+        spriteBatch.Draw(texture,
+            snake.GlobalPosition + segment.Position + snake.SegmentOrigin,
+            new Rectangle(0, textureOffset, 16, 16),
             Color.White,
             segment.Rotation,
-            _snake.SegmentOrigin,
+            snake.SegmentOrigin,
             Vector2.One,
             segment.IsClockwise ? SpriteEffects.None : SpriteEffects.FlipVertically,
             1f);

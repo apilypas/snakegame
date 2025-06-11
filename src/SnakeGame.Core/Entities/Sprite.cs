@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Core.Entities;
 
-public class Sprite2 : Entity
+public class Sprite : Entity
 {
     public Texture2D Texture { get; set; }
     public Color Color { get; set; } = Color.White;

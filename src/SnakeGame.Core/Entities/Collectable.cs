@@ -17,7 +17,7 @@ public class Collectable : Entity
     private bool _isInverted = false;
 
     public CollectableType Type { get; }
-    public Sprite2 Sprite { get; }
+    public Sprite Sprite { get; }
 
     public Collectable(Texture2D texture, CollectableType type)
     {
@@ -61,26 +61,26 @@ public class Collectable : Entity
             Color.Blue);
     }
 
-    private Sprite2 CreateSprite(CollectableType type)
+    private Sprite CreateSprite(CollectableType type)
     {
         return type switch
         {
-            CollectableType.Diamond => new Sprite2
+            CollectableType.Diamond => new Sprite
             {
                 Texture = _texture,
                 SourceRectangle = new Rectangle(0, 32, 16, 16)
             },
-            CollectableType.SnakePart => new Sprite2
+            CollectableType.SnakePart => new Sprite
             {
                 Texture = _texture,
                 SourceRectangle = new Rectangle(0, 16, 16, 16)
             },
-            CollectableType.SpeedBoost => new Sprite2
+            CollectableType.SpeedBoost => new Sprite
             {
                 Texture = _texture,
                 SourceRectangle = new Rectangle(0, 0, 16, 16)
             },
-            CollectableType.Clock => new Sprite2
+            CollectableType.Clock => new Sprite
             {
                 Texture = _texture,
                 SourceRectangle = new Rectangle(16, 0, 16, 16)

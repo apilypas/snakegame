@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Systems;
 
@@ -105,9 +104,12 @@ public class EnemySnakeBehavior
         }
 
         // Other snake
-        if (_gameManager.Snakes.Any(x => x.Intersects(headRectangle)))
+        foreach (var snake in _gameManager.Snakes)
         {
-            return ObjectType.Unavoidable;
+            if (snake.Intersects(headRectangle))
+            {
+                return ObjectType.Unavoidable;
+            }
         }
 
         // Collectables
