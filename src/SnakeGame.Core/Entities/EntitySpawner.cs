@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using SnakeGame.Core.Events;
 using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
@@ -23,40 +22,6 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         SpawnRandomDiamond(deltaTime);
         SpawnRandomSpeedBoost(deltaTime);
         DespawnSnake(deltaTime);
-    }
-
-    public Collectable RemoveCollectable(Snake snake)
-    {
-        var targetRectangle = snake.Head.GetRectangle();
-        var at = -1;
-        
-        for (var i = 0; i < gameManager.Collectables.Count; i++)
-        {
-            var collectable = gameManager.Collectables[i];
-
-            var rectangle = new Rectangle(
-                (int)collectable.Position.X,
-                (int)collectable.Position.Y,
-                Constants.SegmentSize,
-                Constants.SegmentSize);
-
-            if (rectangle.Intersects(targetRectangle))
-            {
-                at = i;
-                break;
-            }
-        }
-
-        if (at >= 0)
-        {
-            var collectable = gameManager.Collectables[at];
-            collectable.QueueRemove = true;
-            gameManager.Collectables.RemoveAt(at);
-            gameManager.Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
-            return collectable;
-        }
-
-        return null;
     }
 
     private void SpawnRandomDiamond(float deltaTime)

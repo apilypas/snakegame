@@ -23,4 +23,5 @@ public static class Constants
     public const int ScreenWidth = 960;
     public const int ScreenHeight = 540;
     public const int InitialSnakeSize = 3;
+    public const float ClockBonus = 30f; // Seconds
 }

@@ -34,10 +34,13 @@ public class GameManager
         _entitySpawner = new EntitySpawner(this, _assets);
         
         World = new World(_assets);
+    }
 
+    public void Initialize()
+    {
         // Let's start initially with player and one enemy
         var playerSnake = new PlayerSnake(
-            assets,
+            _assets,
             new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up
@@ -46,17 +49,14 @@ public class GameManager
         World.PlayField.Add(playerSnake);
         
         var enemySnake = new EnemySnake(
-            assets,
+            _assets,
             new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up, this
             );
         Snakes.Add(enemySnake);
         World.PlayField.Add(enemySnake);
-    }
-
-    public void Initialize()
-    {
+        
         foreach (var snake in Snakes)
         {
             snake.Initialize();
@@ -65,9 +65,9 @@ public class GameManager
 
     public void Update(GameTime gameTime)
     {
-        UpdateEntities(World, Vector2.Zero, gameTime);
-        
         World.IsPaused = _state == GameWorldState.Paused;
+        
+        UpdateEntities(World, Vector2.Zero, gameTime);
         
         if (_state != GameWorldState.Running)
             return;
@@ -88,95 +88,44 @@ public class GameManager
         
         foreach (var snake in Snakes)
         {
-            if (snake.State == SnakeState.Alive)
+            if (snake.State != SnakeState.Alive)
+                continue;
+
+            var headRectangle = snake.Head.GetRectangle();
+            
+            // Handle collectables
+            
+            var collectable = GetCollectableAt(headRectangle);
+
+            if (collectable != null)
             {
-                var collectable = _entitySpawner.RemoveCollectable(snake);
+                HandleCollectableBonus(collectable, snake);
 
-                if (collectable != null)
+                collectable.QueueRemove = true;
+                Collectables.Remove(collectable);
+                Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
+            }
+            
+            // Handle collisions
+
+            if (snake.CollidesWithSelf())
+            {
+                snake.Die();
+                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+            }
+            else if (!GetRectangle().Contains(headRectangle))
+            {
+                snake.Die();
+                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+            }
+            else
+            {
+                foreach (var otherSnake in Snakes)
                 {
-                    if (collectable.Type == CollectableType.Diamond)
+                    if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
                     {
-                        snake.Grow();
-                        if (snake is PlayerSnake)
-                        {
-                            var fadingText = new FadingText($"+{Constants.DiamondCollectScore}", _assets.MainFont)
-                            {
-                                Position = snake.Head.Position
-                            };
-
-                            World.PlayField.Add(fadingText);
-                        }
-                    }
-
-                    if (collectable.Type == CollectableType.SnakePart)
-                    {
-                        snake.Grow();
-                        if (snake is PlayerSnake)
-                        {
-                            var fadingText = new FadingText($"+{Constants.SnakePartCollectScore}", _assets.MainFont)
-                            {
-                                Position = snake.Head.Position
-                            };
-
-                            World.PlayField.Add(fadingText);
-                        }
-                    }
-
-                    if (collectable.Type == CollectableType.SpeedBoost)
-                    {
-                        snake.Grow();
-                        snake.SpeedBoost(Constants.SpeedUpTimer);
-                        
-                        if (snake is PlayerSnake)
-                        {
-                            var fadingText = new FadingText($"+{Constants.SpeedBoostCollectScore} (Speed)", _assets.MainFont)
-                            {
-                                Position = snake.Head.Position
-                            };
-
-                            World.PlayField.Add(fadingText);
-                        }
-                    }
-
-                    if (collectable.Type == CollectableType.Clock)
-                    {
-                        snake.Grow();
-                        if (snake is PlayerSnake)
-                        {
-                            _timer += 30;
-                            _timer = Math.Min(_timer, Constants.MaxTimer);
-                            
-                            var fadingText = new FadingText($"+{Constants.ClockCollectScore} (Time)", _assets.MainFont)
-                            {
-                                Position = snake.Head.Position
-                            };
-
-                            World.PlayField.Add(fadingText);
-                        }
-                    }
-                }
-
-                var headRectangle = snake.Head.GetRectangle();
-
-                if (snake.CollidesWithSelf())
-                {
-                    snake.Die();
-                    Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
-                }
-                else if (!GetRectangle().Contains(headRectangle))
-                {
-                    snake.Die();
-                    Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
-                }
-                else
-                {
-                    foreach (var otherSnake in Snakes)
-                    {
-                        if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
-                        {
-                            snake.Die();
-                            Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
-                        }
+                        snake.Die();
+                        Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
                     }
                 }
             }
@@ -184,28 +133,7 @@ public class GameManager
 
         _entitySpawner.Update(deltaTime);
     }
-
-    private void UpdateEntities(Entity entity, Vector2 basePosition, GameTime gameTime)
-    {
-        if (entity.IsPaused) return;
-
-        entity.IsUpdated = false;
-        entity.Update(gameTime);
-        entity.GlobalPosition = basePosition + entity.Position;
-        entity.IsUpdated = true;
-
-        foreach (var child in entity.Children)
-        {
-            if (child.QueueRemove)
-            {
-                entity.Remove(child);
-                continue;
-            }
-            
-            UpdateEntities(child, entity.GlobalPosition, gameTime);
-        }
-    }
-
+    
     public void Faster()
     {
         if (_state != GameWorldState.Running)
@@ -270,5 +198,106 @@ public class GameManager
             _state = GameWorldState.Running;
             Events.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
         }
+    }
+
+    private void HandleCollectableBonus(Collectable collectable, Snake snake)
+    {
+        if (collectable.Type == CollectableType.Diamond)
+        {
+            snake.Grow();
+            if (snake is PlayerSnake)
+            {
+                var fadingText = new FadingText($"+{Constants.DiamondCollectScore}", _assets.MainFont)
+                {
+                    Position = snake.Head.Position
+                };
+
+                World.PlayField.Add(fadingText);
+            }
+        }
+        else if (collectable.Type == CollectableType.SnakePart)
+        {
+            snake.Grow();
+            if (snake is PlayerSnake)
+            {
+                var fadingText = new FadingText($"+{Constants.SnakePartCollectScore}", _assets.MainFont)
+                {
+                    Position = snake.Head.Position
+                };
+
+                World.PlayField.Add(fadingText);
+            }
+        }
+        else if (collectable.Type == CollectableType.SpeedBoost)
+        {
+            snake.Grow();
+            snake.SpeedBoost(Constants.SpeedUpTimer);
+                        
+            if (snake is PlayerSnake)
+            {
+                var fadingText = new FadingText($"+{Constants.SpeedBoostCollectScore} (Speed)", _assets.MainFont)
+                {
+                    Position = snake.Head.Position
+                };
+
+                World.PlayField.Add(fadingText);
+            }
+        }
+        else if (collectable.Type == CollectableType.Clock)
+        {
+            snake.Grow();
+            if (snake is PlayerSnake)
+            {
+                _timer += Constants.ClockBonus;
+                _timer = Math.Min(_timer, Constants.MaxTimer);
+                            
+                var fadingText = new FadingText($"+{Constants.ClockCollectScore} (Time)", _assets.MainFont)
+                {
+                    Position = snake.Head.Position
+                };
+
+                World.PlayField.Add(fadingText);
+            }
+        }
+    }
+
+    private void UpdateEntities(Entity entity, Vector2 basePosition, GameTime gameTime)
+    {
+        if (entity.IsPaused) return;
+
+        entity.IsUpdated = false;
+        entity.Update(gameTime);
+        entity.GlobalPosition = basePosition + entity.Position;
+        entity.IsUpdated = true;
+
+        foreach (var child in entity.Children)
+        {
+            if (child.QueueRemove)
+            {
+                entity.Remove(child);
+                continue;
+            }
+            
+            UpdateEntities(child, entity.GlobalPosition, gameTime);
+        }
+    }
+    
+    private Collectable GetCollectableAt(Rectangle targetRectangle)
+    {
+        foreach (var collectable in Collectables)
+        {
+            var rectangle = new Rectangle(
+                (int)collectable.Position.X,
+                (int)collectable.Position.Y,
+                Constants.SegmentSize,
+                Constants.SegmentSize);
+
+            if (rectangle.Intersects(targetRectangle))
+            {
+                return collectable;
+            }
+        }
+
+        return null;
     }
 }
