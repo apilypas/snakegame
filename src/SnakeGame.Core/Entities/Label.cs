@@ -10,12 +10,12 @@ public class Label : Entity
     public string Text { get; set; }
     public Color Color { get; set; } = Color.White;
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         spriteBatch.DrawStringWithShadow(
             Font,
             Text,
-            position,
+            GlobalPosition,
             Color,
             Rotation,
             Vector2.Zero);

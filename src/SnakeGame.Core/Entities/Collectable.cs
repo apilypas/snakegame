@@ -54,12 +54,11 @@ public class Collectable : Entity
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         spriteBatch.DrawRectangle(
-            new RectangleF(position, new SizeF(16, 16)),
-            Color.Blue,
-            1f);
+            new RectangleF(GlobalPosition, new SizeF(16, 16)),
+            Color.Blue);
     }
 
     private Sprite2 CreateSprite(CollectableType type)

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Graphics;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
 
@@ -33,11 +32,11 @@ public class Snake : Entity
     private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     private readonly AssetManager _assets;
 
-    public Sprite SegmentSprite { get; set; }
-    public Sprite[] CornersSprites { get; } = new Sprite[5];
-    public Sprite FaceSprite { get; set; }
-    public Sprite HeadSprite { get; set; }
-    public Sprite TailSprite { get; set; }
+    public Sprite2 SegmentSprite { get; set; }
+    public Sprite2[] CornersSprites { get; } = new Sprite2[5];
+    public Sprite2 FaceSprite { get; set; }
+    public Sprite2 HeadSprite { get; set; }
+    public Sprite2 TailSprite { get; set; }
     
     private readonly SnakeRenderer _renderer;
 
@@ -68,46 +67,52 @@ public class Snake : Entity
     private void CreateSprites(int textureOffsetY)
     {
         // Segment
-        SegmentSprite = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(16, textureOffsetY, 16, 16))
-            );
-        SegmentSprite.Origin = _origin;
+        SegmentSprite = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(16, textureOffsetY, 16, 16),
+            Origin = _origin
+        };
 
         // Corner
-        CornersSprites[0] = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(0, textureOffsetY, 16, 16))
-            );
-        CornersSprites[0].Origin = _origin;
-        
-        CornersSprites[1] = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(0, textureOffsetY, 16, 16))
-            );
-        CornersSprites[1].Effect = SpriteEffects.FlipVertically;
-        CornersSprites[1].Origin = _origin;
+        CornersSprites[0] = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(0, textureOffsetY, 16, 16),
+            Origin = _origin
+        };
+
+        CornersSprites[1] = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(0, textureOffsetY, 16, 16),
+            Effects = SpriteEffects.FlipVertically,
+            Origin = _origin
+        };
         
         // Head
-        FaceSprite = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(32, textureOffsetY, 16, 16))
-            );
-        FaceSprite.Origin = _origin;
+        FaceSprite = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(32, textureOffsetY, 16, 16),
+            Origin = _origin
+        };
 
-        HeadSprite = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(48, textureOffsetY, 16, 16))
-            );
-        HeadSprite.Effect = SpriteEffects.FlipHorizontally;
-        HeadSprite.Origin = _origin;
+        HeadSprite = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(48, textureOffsetY, 16, 16),
+            Effects = SpriteEffects.FlipHorizontally,
+            Origin = _origin
+        };
 
         // Tail
-        TailSprite = new Sprite(new Texture2DRegion(
-                _assets.SnakeTexture,
-                new Rectangle(48, textureOffsetY, 16, 16))
-            );
-        TailSprite.Origin = _origin;
+        TailSprite = new Sprite2
+        {
+            Texture = _assets.SnakeTexture,
+            SourceRectangle = new Rectangle(48, textureOffsetY, 16, 16),
+            Origin = _origin
+        };
     }
 
     public void ChangeDirection(SnakeDirection direction)
@@ -340,7 +345,7 @@ public class Snake : Entity
         return 0f;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         _renderer.Render(spriteBatch, gameTime);
     }

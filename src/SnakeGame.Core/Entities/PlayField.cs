@@ -18,20 +18,20 @@ public class PlayField : Entity
             _tiledMapRenderer.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         if (_tiledMapRenderer == null)
             _tiledMapRenderer = new TiledMapRenderer(spriteBatch.GraphicsDevice, TiledMap);
         
         _tiledMapRenderer.Draw(
             Matrix.CreateTranslation(
-                position.X,
-                position.Y,
+                GlobalPosition.X,
+                GlobalPosition.Y,
                 0.0f));
             
         spriteBatch.DrawRectangle(
-            position.X,
-            position.Y,
+            GlobalPosition.X,
+            GlobalPosition.Y,
             TiledMap.WidthInPixels,
             TiledMap.WidthInPixels,
             Colors.DefaultTextColor);

@@ -11,11 +11,11 @@ public class Sprite2 : Entity
     public Vector2 Origin { get; set; }
     public SpriteEffects Effects { get; set; } = SpriteEffects.None;
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         spriteBatch.Draw(
             Texture,
-            new Rectangle((int)position.X, (int)position.Y, SourceRectangle.Width, SourceRectangle.Height),
+            new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, SourceRectangle.Width, SourceRectangle.Height),
             SourceRectangle,
             Color,
             Rotation,

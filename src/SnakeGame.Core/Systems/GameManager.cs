@@ -65,7 +65,7 @@ public class GameManager
 
     public void Update(GameTime gameTime)
     {
-        UpdateEntities(World, gameTime);
+        UpdateEntities(World, Vector2.Zero, gameTime);
         
         World.IsPaused = _state == GameWorldState.Paused;
         
@@ -184,11 +184,14 @@ public class GameManager
         _entitySpawner.Update(deltaTime);
     }
 
-    private void UpdateEntities(Entity entity, GameTime gameTime)
+    private void UpdateEntities(Entity entity, Vector2 basePosition, GameTime gameTime)
     {
         if (entity.IsPaused) return;
-        
+
+        entity.IsUpdated = false;
         entity.Update(gameTime);
+        entity.GlobalPosition = basePosition + entity.Position;
+        entity.IsUpdated = true;
 
         foreach (var child in entity.Children)
         {
@@ -198,7 +201,7 @@ public class GameManager
                 continue;
             }
             
-            UpdateEntities(child, gameTime);
+            UpdateEntities(child, entity.GlobalPosition, gameTime);
         }
     }
 

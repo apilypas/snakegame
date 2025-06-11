@@ -15,16 +15,17 @@ public class EntityRenderer : RendererBase
     
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        Render(spriteBatch, _entity.Position, _entity, gameTime);
+        Render(spriteBatch, _entity, gameTime);
     }
 
-    private void Render(SpriteBatch spriteBatch, Vector2 position, Entity entity, GameTime gameTime)
+    private void Render(SpriteBatch spriteBatch, Entity entity, GameTime gameTime)
     {
-        entity.Draw(spriteBatch, position, gameTime);
+        if (entity.IsUpdated)
+            entity.Draw(spriteBatch, gameTime);
         
         foreach (var child in entity.Children)
         {
-            Render(spriteBatch, position + child.Position, child, gameTime);
+            Render(spriteBatch, child, gameTime);
         }
     }
 }
