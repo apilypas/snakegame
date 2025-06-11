@@ -41,7 +41,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.SpeedUp();
+            playScreen.Faster();
         }
     }
     
@@ -49,7 +49,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.SpeedDown();
+            playScreen.Slower();
         }
     }
     

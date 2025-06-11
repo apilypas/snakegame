@@ -19,7 +19,7 @@ public class EnemySnake : Snake
         {
             var direction = _behavior.GetDirection();
 
-            ChangeDirection(direction);
+            UpdateDirection(direction);
         }
 
         base.Update(gameTime);

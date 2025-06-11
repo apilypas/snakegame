@@ -125,7 +125,8 @@ public class GameManager
                     if (collectable.Type == CollectableType.SpeedBoost)
                     {
                         snake.Grow();
-                        snake.ResetSpeedUpTimer();
+                        snake.SpeedBoost(Constants.SpeedUpTimer);
+                        
                         if (snake is PlayerSnake)
                         {
                             var fadingText = new FadingText($"+{Constants.SpeedBoostCollectScore} (Speed)", _assets.MainFont)
@@ -157,7 +158,7 @@ public class GameManager
 
                 var headRectangle = snake.Head.GetRectangle();
 
-                if (snake.IntersectsWithHead())
+                if (snake.CollidesWithSelf())
                 {
                     snake.Die();
                     Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
@@ -171,7 +172,7 @@ public class GameManager
                 {
                     foreach (var otherSnake in Snakes)
                     {
-                        if (snake != otherSnake && otherSnake.Intersects(headRectangle))
+                        if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
                         {
                             snake.Die();
                             Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
@@ -205,7 +206,7 @@ public class GameManager
         }
     }
 
-    public void SpeedUp()
+    public void Faster()
     {
         if (_state != GameWorldState.Running)
             return;
@@ -214,12 +215,12 @@ public class GameManager
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
-                playerSnake.SpeedUp();
+                playerSnake.Faster();
             }
         }
     }
 
-    public void SpeedDown()
+    public void Slower()
     {
         if (_state != GameWorldState.Running)
             return;
@@ -228,7 +229,7 @@ public class GameManager
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
-                playerSnake.SpeedDown();
+                playerSnake.Slower();
             }
         }
     }
@@ -252,7 +253,7 @@ public class GameManager
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
-                playerSnake.ChangeDirection(direction);
+                playerSnake.UpdateDirection(direction);
             }
         }
     }

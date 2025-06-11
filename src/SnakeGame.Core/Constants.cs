@@ -17,7 +17,7 @@ public static class Constants
     public const int ClockCollectScore = 3; // Points
     public const float DefaultSnakeSpeed = 100f;
     public const float IncreasedSnakeSpeed = 200f;
-    public const float SpeedUpRate = 10f; // Seconds
+    public const float SpeedUpTimer = 10f; // Seconds
     public const float InitialTimer = 60f; // Seconds
     public const float MaxTimer = 300f; // Seconds
     public const int ScreenWidth = 960;

@@ -171,7 +171,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         foreach (var snake in gameManager.Snakes)
         {
-            if (snake.Intersects(rectangle)) return false;
+            if (snake.CollidesWith(rectangle)) return false;
         }
 
         foreach (var collectable in gameManager.Collectables)

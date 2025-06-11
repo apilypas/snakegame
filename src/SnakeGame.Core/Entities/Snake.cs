@@ -1,23 +1,21 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Entities;
 
 public class Snake : Entity
 {
-    private List<SnakeSegment> _segments;
-    
     private int _segmentsToGrow;
 
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
 
     private float _deathAnimationTimer;
-    private bool _hasSpeed;
+    private bool _isFaster;
     private float _speedTimer;
     
     private readonly Vector2 _defaultLocation;
@@ -26,9 +24,9 @@ public class Snake : Entity
     
     private readonly SnakeRenderer _renderer;
 
-    public IList<SnakeSegment> Segments => _segments;
-    public SnakeSegment Head { get; private set; }
-    public SnakeSegment Tail { get; private set; }
+    public List<SnakeSegment> Segments { get; } = [];
+    public SnakeSegment Head { get; private set; } // Used for partial head
+    public SnakeSegment Tail { get; private set; } // User for partial tail
     
     public SnakeState State { get; private set; } = SnakeState.Alive;
 
@@ -46,9 +44,9 @@ public class Snake : Entity
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
     }
 
-    public void ChangeDirection(SnakeDirection direction)
+    public void UpdateDirection(SnakeDirection direction)
     {
-        var head = _segments[0];
+        var head = Segments[0];
 
         if (head.Direction == direction)
             return;
@@ -74,38 +72,33 @@ public class Snake : Entity
         
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
-        var speed = (_hasSpeed || _speedTimer > 0f) ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
+        var movementSize = deltaTime * GetSpeed(deltaTime);
 
-        if (_speedTimer > 0f)
-            _speedTimer -= deltaTime;
+        var head = Segments[0];
+        var tail = Segments[^1];
 
-        var movementSize = deltaTime * speed;
-
-        var head = _segments[0];
-        var tail = _segments[^1];
-
-        Head.Position = MoveByDirection(Head.Position, _direction, movementSize);
+        Head.Position = _direction.FindNextPoint(Head.Position, movementSize);
 
         if (_segmentsToGrow <= 0)
-            Tail.Position = MoveByDirection(Tail.Position, tail.Direction, movementSize);
+            Tail.Position = tail.Direction.FindNextPoint(Tail.Position, movementSize);
 
+        // Check if partial head is still connected to body, otherwise - create new head
         if (Head.GetRectangle().Intersects(head.GetRectangle()))
             return;
     
-        var newLocation = MoveByDirection(head.Position, _direction, Constants.SegmentSize);
+        var newLocation = _direction.FindNextPoint(head.Position, Constants.SegmentSize);
 
         var newHead = new SnakeSegment
         {
             Position = newLocation,
             Direction = _nextDirection,
-            Rotation = GetRotation(_nextDirection),
+            Rotation = _nextDirection.ToAngle(),
             IsCorner = _nextDirection != head.Direction,
             IsClockwise = head.Direction.IsClockwise(_nextDirection)
         };
-
-        _direction = _nextDirection;
-
-        _segments.Insert(0, newHead);
+        
+        Segments.Insert(0, newHead);
+        
         Head = newHead.Clone();
 
         if (_segmentsToGrow > 0)
@@ -115,9 +108,13 @@ public class Snake : Entity
         }
         else
         {
-            _segments.Remove(tail);
-            Tail = _segments[^1].Clone();
+            // If head was added then tail must be removed to simulate snake movement
+            Segments.Remove(tail);
+            Tail = Segments[^1].Clone();
         }
+        
+        // Fixate direction that should be followed
+        _direction = _nextDirection;
     }
 
     public void Grow()
@@ -125,20 +122,20 @@ public class Snake : Entity
         _segmentsToGrow++;
     }
 
-    public bool IntersectsWithHead()
+    public bool CollidesWithSelf()
     {
         var headRectangle = Head.GetRectangle();
 
-        for (var i = 1; i < _segments.Count; i++)
+        for (var i = 1; i < Segments.Count; i++)
         {
-            if (_segments[i].GetRectangle().Intersects(headRectangle))
+            if (Segments[i].GetRectangle().Intersects(headRectangle))
                 return true;
         }
 
         return false;
     }
 
-    public bool Intersects(Rectangle rectangle)
+    public bool CollidesWith(Rectangle rectangle)
     {
         if (Head.GetRectangle().Intersects(rectangle))
             return true;
@@ -146,7 +143,7 @@ public class Snake : Entity
         if (Tail.GetRectangle().Intersects(rectangle))
             return true;
 
-        foreach (var segment in _segments)
+        foreach (var segment in Segments)
         {
             if (segment.GetRectangle().Intersects(rectangle))
                 return true;
@@ -165,18 +162,18 @@ public class Snake : Entity
         const float reduceByMs = .03f;
         var reduced = false;
 
-        if (_segments.Count > 0)
+        if (Segments.Count > 0)
         {
             _deathAnimationTimer += deltaTime;
             
             if (_deathAnimationTimer >= reduceByMs)
             {
-                _segments.RemoveAt(0);
+                Segments.RemoveAt(0);
                 reduced = true;
 
-                if (_segments.Count > 0)
+                if (Segments.Count > 0)
                 {
-                    Head = _segments[0].Clone();
+                    Head = Segments[0].Clone();
                     _deathAnimationTimer -= reduceByMs;
                 }
                 else
@@ -190,9 +187,29 @@ public class Snake : Entity
         return reduced;
     }
 
+    public void Faster()
+    {
+        _isFaster = true;
+    }
+
+    public void Slower()
+    {
+        _isFaster = false;
+    }
+
+    public void SpeedBoost(float seconds)
+    {
+        _speedTimer = seconds;
+    }
+
+    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        _renderer.Render(spriteBatch);
+    }
+    
     private void Reset(Vector2 location, int length, SnakeDirection direction)
     {
-        _segments = [];
+        Segments.Clear();
 
         for (var i = 0; i < length; i++)
         {
@@ -200,84 +217,32 @@ public class Snake : Entity
             {
                 Position = location,
                 Direction = direction,
-                Rotation = GetRotation(direction)
+                Rotation = direction.ToAngle()
             };
 
-            _segments.Add(segment);
+            Segments.Add(segment);
 
-            location = MoveByDirection(location, direction.GetOpposite(), Constants.SegmentSize);
+            location = direction.GetOpposite().FindNextPoint(location, Constants.SegmentSize);
         }
 
         _direction = direction;
         _nextDirection = direction;
 
-        Head = _segments[0].Clone();
-        Tail = _segments[^1].Clone();
+        Head = Segments[0].Clone();
+        Tail = Segments[^1].Clone();
         
         State = SnakeState.Alive;
         _speedTimer = 0f;
-        _hasSpeed = false;
+        _isFaster = false;
     }
-
-    public void SpeedUp()
+    
+    private float GetSpeed(float deltaTime)
     {
-        _hasSpeed = true;
-    }
+        var speed = (_isFaster || _speedTimer > 0f) ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
 
-    public void SpeedDown()
-    {
-        _hasSpeed = false;
-    }
-
-    public void ResetSpeedUpTimer()
-    {
-        _speedTimer = Constants.SpeedUpRate;
-    }
-
-    private Vector2 MoveByDirection(Vector2 location, SnakeDirection direction, float size)
-    {
-        if (direction == SnakeDirection.Right)
-        {
-            location += new Vector2(size, 0f);
-        }
-
-        if (direction == SnakeDirection.Left)
-        {
-            location -= new Vector2(size, 0f);
-        }
-
-        if (direction == SnakeDirection.Down)
-        {
-            location += new Vector2(0f, size);
-        }
-
-        if (direction == SnakeDirection.Up)
-        {
-            location -= new Vector2(0f, size);
-        }
-
-        return location;
-    }
-
-    private float GetRotation(SnakeDirection direction)
-    {
-        if (direction == SnakeDirection.Right)
-            return 0f;
-
-        if (direction == SnakeDirection.Left)
-            return MathF.PI;
-
-        if (direction == SnakeDirection.Down)
-            return MathF.PI / 2f;
-
-        if (direction == SnakeDirection.Up)
-            return -MathF.PI / 2f;
-
-        return 0f;
-    }
-
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-    {
-        _renderer.Render(spriteBatch);
+        if (_speedTimer > 0f)
+            _speedTimer -= deltaTime;
+        
+        return speed;
     }
 }

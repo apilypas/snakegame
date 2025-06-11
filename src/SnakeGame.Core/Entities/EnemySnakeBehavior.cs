@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Systems;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Entities;
 
@@ -106,7 +107,7 @@ public class EnemySnakeBehavior
         // Other snake
         foreach (var snake in _gameManager.Snakes)
         {
-            if (snake.Intersects(headRectangle))
+            if (snake.CollidesWith(headRectangle))
             {
                 return ObjectType.Unavoidable;
             }

@@ -128,14 +128,14 @@ public class PlayScreen : GameScreen, IObserver
         _gameManager.ChangeDirection(direction);
     }
 
-    public void SpeedUp()
+    public void Faster()
     {
-        _gameManager.SpeedUp();
+        _gameManager.Faster();
     }
 
-    public void SpeedDown()
+    public void Slower()
     {
-        _gameManager.SpeedDown();
+        _gameManager.Slower();
     }
 
     public void TogglePause()
