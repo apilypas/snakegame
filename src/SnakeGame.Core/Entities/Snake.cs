@@ -16,9 +16,9 @@ public class Snake : Entity
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
 
-    private float _deathAnimationTimer = 0f;
-    private bool _hasSpeed = false;
-    private float _speedTimer = 0f;
+    private float _deathAnimationTimer;
+    private bool _hasSpeed;
+    private float _speedTimer;
 
     public IList<SnakeSegment> Segments => _segments;
     public SnakeSegment Head { get; private set; }
@@ -29,90 +29,21 @@ public class Snake : Entity
     private readonly int _defaultLength;
     private readonly SnakeDirection _defaultDirection;
     
-    private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
-    private readonly AssetManager _assets;
-
-    public Sprite2 SegmentSprite { get; set; }
-    public Sprite2[] CornersSprites { get; } = new Sprite2[5];
-    public Sprite2 FaceSprite { get; set; }
-    public Sprite2 HeadSprite { get; set; }
-    public Sprite2 TailSprite { get; set; }
+    public Vector2 SegmentOrigin { get; } = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     
     private readonly SnakeRenderer _renderer;
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
-        _assets = assets;
         _defaultLocation = location;
         _defaultLength = length;
         _defaultDirection = direction;
-        _renderer = new SnakeRenderer(this);
+        _renderer = new SnakeRenderer(this, assets);
     }
 
     public void Initialize()
     {
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
-
-        if (this is PlayerSnake)
-        {
-            CreateSprites(0);
-        }
-        else
-        {
-            var offset = 16 * (Id % 4 + 1);
-            CreateSprites(offset);
-        }
-    }
-    
-    private void CreateSprites(int textureOffsetY)
-    {
-        // Segment
-        SegmentSprite = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(16, textureOffsetY, 16, 16),
-            Origin = _origin
-        };
-
-        // Corner
-        CornersSprites[0] = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(0, textureOffsetY, 16, 16),
-            Origin = _origin
-        };
-
-        CornersSprites[1] = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(0, textureOffsetY, 16, 16),
-            Effects = SpriteEffects.FlipVertically,
-            Origin = _origin
-        };
-        
-        // Head
-        FaceSprite = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(32, textureOffsetY, 16, 16),
-            Origin = _origin
-        };
-
-        HeadSprite = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(48, textureOffsetY, 16, 16),
-            Effects = SpriteEffects.FlipHorizontally,
-            Origin = _origin
-        };
-
-        // Tail
-        TailSprite = new Sprite2
-        {
-            Texture = _assets.SnakeTexture,
-            SourceRectangle = new Rectangle(48, textureOffsetY, 16, 16),
-            Origin = _origin
-        };
     }
 
     public void ChangeDirection(SnakeDirection direction)
