@@ -13,17 +13,16 @@ namespace SnakeGame.Core.Screens;
 
 public class PlayScreen : GameScreen, IObserver
 {
-    private readonly ScoreBoard _scoreBoard;
+    private readonly ScoreBoardManager _scoreBoardManager;
     private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly InputManager _inputs;
     private readonly FormsManager _formManager;
     private readonly PlayScreenForms _forms;
     private readonly VirtualGamePad _virtualGamePad;
-    private readonly PlayField _playField;
     private readonly AssetManager _assets;
     private readonly RenderSystem _renderer;
-    
-    public GameManager GameManager { get; }
+    private readonly GameManager _gameManager;
+
     public PlayScreenCommands Commands { get; }
     public GlobalCommands GlobalCommands { get; }
 
@@ -32,31 +31,25 @@ public class PlayScreen : GameScreen, IObserver
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
-        GameManager = new GameManager(_assets);
+        _gameManager = new GameManager(_assets);
         
-        _scoreBoard = new ScoreBoard(_assets);
+        _scoreBoardManager = new ScoreBoardManager(_gameManager.World);
         _virtualGamePad = new VirtualGamePad(_assets);
         _inputs = new InputManager();
         GlobalCommands = new GlobalCommands(Game, screenManager);
         Commands = new PlayScreenCommands(this);
         _forms = new PlayScreenForms(this);
-        _playField = new PlayField(_assets);
         
         _virtualGamePadManager = new VirtualGamePadManager(_inputs);
         _inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
         _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
-        _renderer = new RenderSystem(GraphicsDevice);
-        
-        GameManager.Events.AddObserver(this);
-        GameManager.Events.AddObserver(_scoreBoard);
+        _gameManager.Events.AddObserver(this);
+        _gameManager.Events.AddObserver(_scoreBoardManager);
 
-        _renderer.Add(new PlayFieldRenderer(GraphicsDevice, _playField));
-        _renderer.Add(new SnakeRenderer(GameManager.Snakes));
-        _renderer.Add(new CollectableRenderer(GameManager));
-        _renderer.Add(new FadeOutTextRenderer(GameManager.FadeOutTexts));
-        _renderer.Add(new ScoreBoardRenderer(_scoreBoard));
+        _renderer = new RenderSystem(GraphicsDevice);
+        _renderer.Add(new EntityRenderer(_gameManager.World));
         _renderer.Add(new FormsRenderer(_assets, _formManager));
         _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
         
@@ -89,7 +82,7 @@ public class PlayScreen : GameScreen, IObserver
         _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, Commands.Pause);
         _inputs.Bindings.BindGamePadButtonPressed(Buttons.Back, GlobalCommands.OpenStartScreen);
         
-        GameManager.Initialize();
+        _gameManager.Initialize();
     }
 
     public override void Update(GameTime gameTime)
@@ -98,7 +91,7 @@ public class PlayScreen : GameScreen, IObserver
         _inputs.Update();
         _formManager.Update();
         
-        GameManager.Update(gameTime);
+        _gameManager.Update(gameTime);
         
         _renderer.Update(gameTime);
     }
@@ -113,9 +106,9 @@ public class PlayScreen : GameScreen, IObserver
         if (notifyEvent.EventType == NotifyEventType.GameEnded)
         {
             _forms.GameOver.UpdateResultsText(
-                _scoreBoard.Score,
-                _scoreBoard.Deaths,
-                _scoreBoard.LongestSnake);
+                _scoreBoardManager.Score,
+                _scoreBoardManager.Deaths,
+                _scoreBoardManager.LongestSnake);
             _formManager.Show(PlayScreenForms.GameOverFormId);
         }
 
@@ -128,5 +121,25 @@ public class PlayScreen : GameScreen, IObserver
         {
             _formManager.Close();
         }
+    }
+
+    public void ChangeDirection(SnakeDirection direction)
+    {
+        _gameManager.ChangeDirection(direction);
+    }
+
+    public void SpeedUp()
+    {
+        _gameManager.SpeedUp();
+    }
+
+    public void SpeedDown()
+    {
+        _gameManager.SpeedDown();
+    }
+
+    public void TogglePause()
+    {
+        _gameManager.TogglePause();
     }
 }

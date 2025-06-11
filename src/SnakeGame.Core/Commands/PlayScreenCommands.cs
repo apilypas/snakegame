@@ -9,7 +9,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.ChangeDirection(SnakeDirection.Up);
+            playScreen.ChangeDirection(SnakeDirection.Up);
         }
     }
 
@@ -17,7 +17,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.ChangeDirection(SnakeDirection.Left);
+            playScreen.ChangeDirection(SnakeDirection.Left);
         }
     }
 
@@ -25,7 +25,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.ChangeDirection(SnakeDirection.Right);
+            playScreen.ChangeDirection(SnakeDirection.Right);
         }
     }
 
@@ -33,7 +33,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.ChangeDirection(SnakeDirection.Down);
+            playScreen.ChangeDirection(SnakeDirection.Down);
         }
     }
     
@@ -41,7 +41,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.SpeedUp();
+            playScreen.SpeedUp();
         }
     }
     
@@ -49,7 +49,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.SpeedDown();
+            playScreen.SpeedDown();
         }
     }
     
@@ -57,7 +57,7 @@ public class PlayScreenCommands(PlayScreen playScreen)
     {
         public void Execute()
         {
-            playScreen.GameManager.TogglePause();
+            playScreen.TogglePause();
         }
     }
 

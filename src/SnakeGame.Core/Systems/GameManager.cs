@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
@@ -22,30 +21,38 @@ public class GameManager
 
     public IList<Snake> Snakes { get; } = [];
     public IList<Collectable> Collectables { get; } = [];
-    public IList<FadeOutText> FadeOutTexts { get; } = [];
     
     public EventManager Events { get; } = new();
 
     private GameWorldState _state = GameWorldState.Running;
     
+    public World World { get; }
+
     public GameManager(AssetManager assets)
     {
         _assets = assets;
         _entitySpawner = new EntitySpawner(this, _assets);
+        
+        World = new World(_assets);
 
         // Let's start initially with player and one enemy
-        Snakes.Add(new PlayerSnake(
+        var playerSnake = new PlayerSnake(
             assets,
             new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up
-            ));
-        Snakes.Add(new EnemySnake(
+            );
+        Snakes.Add(playerSnake);
+        World.PlayField.Add(playerSnake);
+        
+        var enemySnake = new EnemySnake(
             assets,
             new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
             SnakeDirection.Up, this
-            ));
+            );
+        Snakes.Add(enemySnake);
+        World.PlayField.Add(enemySnake);
     }
 
     public void Initialize()
@@ -58,6 +65,8 @@ public class GameManager
 
     public void Update(GameTime gameTime)
     {
+        UpdateEntities(World, gameTime);
+        
         if (_state != GameWorldState.Running)
             return;
         
@@ -80,9 +89,7 @@ public class GameManager
             if (snake.State == SnakeState.Alive)
             {
                 snake.Update(deltaTime);
-
-                var headRectangle = snake.Head.GetRectangle();
-
+                
                 var collectable = _entitySpawner.RemoveCollectable(snake);
 
                 if (collectable != null)
@@ -92,10 +99,12 @@ public class GameManager
                         snake.Grow();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.DiamondCollectScore}")
+                            var fadingText = new FadingText($"+{Constants.DiamondCollectScore}", _assets.MainFont)
                             {
-                                Position = snake.Head.Position,
-                            });
+                                Position = snake.Head.Position
+                            };
+
+                            World.PlayField.Add(fadingText);
                         }
                     }
 
@@ -104,10 +113,12 @@ public class GameManager
                         snake.Grow();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SnakePartCollectScore}")
+                            var fadingText = new FadingText($"+{Constants.SnakePartCollectScore}", _assets.MainFont)
                             {
-                                Position = snake.Head.Position,
-                            });
+                                Position = snake.Head.Position
+                            };
+
+                            World.PlayField.Add(fadingText);
                         }
                     }
 
@@ -117,10 +128,12 @@ public class GameManager
                         snake.ResetSpeedUpTimer();
                         if (snake is PlayerSnake)
                         {
-                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.SpeedBoostCollectScore} (Speed)")
+                            var fadingText = new FadingText($"+{Constants.SpeedBoostCollectScore} (Speed)", _assets.MainFont)
                             {
-                                Position = snake.Head.Position,
-                            });
+                                Position = snake.Head.Position
+                            };
+
+                            World.PlayField.Add(fadingText);
                         }
                     }
 
@@ -132,45 +145,87 @@ public class GameManager
                             _timer += 30;
                             _timer = Math.Min(_timer, Constants.MaxTimer);
                             
-                            FadeOutTexts.Add(new FadeOutText(_assets, $"+{Constants.ClockCollectScore} (Time)")
+                            var fadingText = new FadingText($"+{Constants.ClockCollectScore} (Time)", _assets.MainFont)
                             {
-                                Position = snake.Head.Position,
-                            });
+                                Position = snake.Head.Position
+                            };
+
+                            World.PlayField.Add(fadingText);
                         }
                     }
                 }
 
-                if (snake.IntersectsWithHead()
-                    || !GetRectangle().Contains(headRectangle)
-                    || Snakes.Any(x => x != snake && x.Intersects(headRectangle)))
+                var headRectangle = snake.Head.GetRectangle();
+
+                if (snake.IntersectsWithHead())
                 {
                     snake.Die();
                     Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
                 }
+                else if (!GetRectangle().Contains(headRectangle))
+                {
+                    snake.Die();
+                    Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                }
+                else
+                {
+                    foreach (var otherSnake in Snakes)
+                    {
+                        if (snake != otherSnake && otherSnake.Intersects(headRectangle))
+                        {
+                            snake.Die();
+                            Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                        }
+                    }
+                }
             }
         }
-        
-        UpdateFadeOutTexts(gameTime);
 
         _entitySpawner.Update(deltaTime);
+    }
+
+    private void UpdateEntities(Entity entity, GameTime gameTime)
+    {
+        entity.Update(gameTime);
+
+        foreach (var child in entity.Children)
+        {
+            if (child.QueueRemove)
+            {
+                entity.Remove(child);
+                continue;
+            }
+            
+            UpdateEntities(child, gameTime);
+        }
     }
 
     public void SpeedUp()
     {
         if (_state != GameWorldState.Running)
             return;
-        
-        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
-        playerSnake?.SpeedUp();
+
+        foreach (var snake in Snakes)
+        {
+            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
+            {
+                playerSnake.SpeedUp();
+            }
+        }
     }
 
     public void SpeedDown()
     {
         if (_state != GameWorldState.Running)
             return;
-        
-        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
-        playerSnake?.SpeedDown();
+
+        foreach (var snake in Snakes)
+        {
+            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
+            {
+                playerSnake.SpeedDown();
+            }
+        }
     }
 
     public static Rectangle GetRectangle()
@@ -187,9 +242,14 @@ public class GameManager
     {
         if (_state != GameWorldState.Running)
             return;
-        
-        var playerSnake = Snakes.SingleOrDefault(x => x is PlayerSnake && x.State == SnakeState.Alive);
-        playerSnake?.ChangeDirection(direction);
+
+        foreach (var snake in Snakes)
+        {
+            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
+            {
+                playerSnake.ChangeDirection(direction);
+            }
+        }
     }
 
     public void TogglePause()
@@ -203,24 +263,6 @@ public class GameManager
         {
             _state = GameWorldState.Running;
             Events.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
-        }
-    }
-    
-    private void UpdateFadeOutTexts(GameTime gameTime)
-    {
-        var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        foreach (var fadeOutText in FadeOutTexts)
-        {
-            fadeOutText.TimeToLive -= elapsed;
-            fadeOutText.Position += new Vector2(0f, -elapsed * 30f);
-        }
-        
-        var oldTexts = FadeOutTexts.Where(x => x.TimeToLive <= 0f).ToList();
-
-        foreach (var fadeOutText in oldTexts)
-        {
-            FadeOutTexts.Remove(fadeOutText);
         }
     }
 }

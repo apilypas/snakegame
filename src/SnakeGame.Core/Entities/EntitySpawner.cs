@@ -50,6 +50,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         if (at >= 0)
         {
             var collectable = gameManager.Collectables[at];
+            collectable.QueueRemove = true;
             gameManager.Collectables.RemoveAt(at);
             gameManager.Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
             return collectable;
@@ -74,13 +75,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         if (location != null)
         {
-            var collectable = new Collectable(assets, CollectableType.Diamond)
+            var collectable = new Collectable(assets.CollectableTexture, CollectableType.Diamond)
             {
                 Id = GetNextId(),
                 Position = location.Value
             };
             
             gameManager.Collectables.Add(collectable);
+            gameManager.World.PlayField.Add(collectable);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -100,13 +102,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         if (location != null)
         {
-            var collectable = new Collectable(assets, CollectableType.SpeedBoost)
+            var collectable = new Collectable(assets.CollectableTexture, CollectableType.SpeedBoost)
             {
                 Id = GetNextId(),
                 Position = location.Value
             };
             
             gameManager.Collectables.Add(collectable);
+            gameManager.World.PlayField.Add(collectable);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
@@ -152,11 +155,15 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             Constants.SegmentSize,
             Constants.SegmentSize);
 
-        if (gameManager.Snakes.Any(x => x.Intersects(rectangle)))
-            return false;
-        
-        if (gameManager.Collectables.Any(x => x.Position == location))
-            return false;
+        foreach (var snake in gameManager.Snakes)
+        {
+            if (snake.Intersects(rectangle)) return false;
+        }
+
+        foreach (var collectable in gameManager.Collectables)
+        {
+            if (collectable.Position == location) return false;
+        }
         
         return true;
     }
@@ -182,6 +189,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         playerSnake.Initialize();
                 
         gameManager.Snakes.Add(playerSnake);
+        gameManager.World.PlayField.Add(playerSnake);
     }
 
     private void SpawnEnemySnake(float deltaTime)
@@ -213,6 +221,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         enemySnake.Initialize();
                 
         gameManager.Snakes.Add(enemySnake);
+        gameManager.World.PlayField.Add(enemySnake);
 
         _enemySpawnTimer -= Constants.EnemySpawnRate;
     }
@@ -275,13 +284,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         if (spawnSnakePart)
         {
-            var snakePart = new Collectable(assets, CollectableType.SnakePart)
+            var snakePart = new Collectable(assets.CollectableTexture, CollectableType.SnakePart)
             {
                 Id = GetNextId(),
                 Position = snake.Segments[0].Position
             };
 
             gameManager.Collectables.Add(snakePart);
+            gameManager.World.PlayField.Add(snakePart);
         }
         else if (snake is EnemySnake) // Only enemies can spawn clocks
         {
@@ -289,13 +299,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
             if (spawnClock)
             {
-                var clock = new Collectable(assets, CollectableType.Clock)
+                var clock = new Collectable(assets.CollectableTexture, CollectableType.Clock)
                 {
                     Id = GetNextId(),
                     Position = snake.Segments[0].Position
                 };
 
                 gameManager.Collectables.Add(clock);
+                gameManager.World.PlayField.Add(clock);
             }
         }
     }

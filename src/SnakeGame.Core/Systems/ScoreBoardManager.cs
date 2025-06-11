@@ -2,27 +2,21 @@ using System;
 using System.Text;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
-using SnakeGame.Core.Systems;
 
-namespace SnakeGame.Core;
+namespace SnakeGame.Core.Systems;
 
-public class ScoreBoard : IObserver
+public class ScoreBoardManager : IObserver
 {
     private float _timer = Constants.InitialTimer;
+    private readonly World _world;
 
-    public Label DisplayLabel { get; }
     public int Score { get; private set; }
     public int Deaths { get; private set; }
     public int LongestSnake { get; private set; } = Constants.InitialSnakeSize;
 
-    public ScoreBoard(AssetManager assets)
+    public ScoreBoardManager(World world)
     {
-        DisplayLabel = new Label
-        {
-            Font = assets.MainFont,
-            Text = ""
-        };
-        
+        _world = world;
         UpdateTexts();
     }
 
@@ -84,7 +78,7 @@ public class ScoreBoard : IObserver
 
     private void UpdateTexts()
     {
-        DisplayLabel.Text = new StringBuilder()
+        _world.Score.Text = new StringBuilder()
             .AppendLine($"Score: {Score}")
             .AppendLine($"Timer: {(int)(_timer / 60):00}:{(int)(_timer % 60):00}")
             .AppendLine($"Deaths: {Deaths}")

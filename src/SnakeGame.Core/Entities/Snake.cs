@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
+using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
@@ -37,6 +38,8 @@ public class Snake : Entity
     public Sprite FaceSprite { get; set; }
     public Sprite HeadSprite { get; set; }
     public Sprite TailSprite { get; set; }
+    
+    private readonly SnakeRenderer _renderer;
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
@@ -44,6 +47,7 @@ public class Snake : Entity
         _defaultLocation = location;
         _defaultLength = length;
         _defaultDirection = direction;
+        _renderer = new SnakeRenderer(this);
     }
 
     public void Initialize()
@@ -330,5 +334,10 @@ public class Snake : Entity
             return -MathF.PI / 2f;
 
         return 0f;
+    }
+
+    public override void Draw(SpriteBatch spriteBatch, Vector2 position, GameTime gameTime)
+    {
+        _renderer.Render(spriteBatch, gameTime);
     }
 }

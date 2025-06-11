@@ -10,9 +10,9 @@ public class RenderSystem
 {
     private readonly IList<RendererBase> _renderers = [];
     private readonly GraphicsDevice _graphics;
-    private SpriteBatch _spriteBatch;
+    private readonly SpriteBatch _spriteBatch;
+    private readonly ScreenScaleHandler _screenScaleHandler;
     private RenderTarget2D _renderTarget;
-    private ScreenScaleHandler _screenScaleHandler;
 
     public RenderSystem(GraphicsDevice graphics)
     {

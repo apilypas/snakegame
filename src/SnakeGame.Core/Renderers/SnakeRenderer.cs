@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Graphics;
@@ -10,19 +9,16 @@ public class SnakeRenderer : RendererBase
 {
     private readonly Vector2 _origin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     
-    private readonly IList<Snake> _snakes;
+    private readonly Snake _snake;
     
-    public SnakeRenderer(IList<Snake> snakes)
+    public SnakeRenderer(Snake snake)
     {
-        _snakes = snakes;
+        _snake = snake;
     }
 
     public override void Render(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        foreach (var snake in _snakes)
-        {
-            RenderSnake(snake, spriteBatch);
-        }
+        RenderSnake(_snake, spriteBatch);
     }
 
     private void RenderSnake(Snake snake, SpriteBatch spriteBatch)
