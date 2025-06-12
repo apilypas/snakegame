@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
+using SnakeGame.Core.StateMachines;
 
 namespace SnakeGame.Core.Systems;
 

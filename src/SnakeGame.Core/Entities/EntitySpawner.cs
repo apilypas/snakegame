@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.StateMachines;
 using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;

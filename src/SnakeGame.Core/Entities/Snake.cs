@@ -14,6 +14,8 @@ public class Snake : Entity
     private SnakeDirection _direction;
     private SnakeDirection _nextDirection;
 
+    private CharacterState _state;
+
     private float _deathAnimationTimer;
     private bool _isFaster;
     private float _speedTimer;
@@ -68,7 +70,11 @@ public class Snake : Entity
 
     public override void Update(GameTime gameTime)
     {
-        if (State != SnakeState.Alive) return;
+        if (State != SnakeState.Alive)
+            return;
+        
+        if (_state != null)
+            _state.Update(gameTime);
         
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
@@ -205,6 +211,11 @@ public class Snake : Entity
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         _renderer.Render(spriteBatch);
+    }
+
+    public void ChangeState(CharacterState newState)
+    {
+        _state = newState;
     }
     
     private void Reset(Vector2 location, int length, SnakeDirection direction)

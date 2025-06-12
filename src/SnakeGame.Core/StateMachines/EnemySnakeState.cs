@@ -1,11 +1,12 @@
 using System;
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Entities;
 using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 
-namespace SnakeGame.Core.Entities;
+namespace SnakeGame.Core.StateMachines;
 
-public class EnemySnakeBehavior
+public class EnemySnakeState : CharacterState
 {
     private readonly GameManager _gameManager;
     private readonly Snake _snake;
@@ -20,14 +21,25 @@ public class EnemySnakeBehavior
 
     private const int ObjectScanLength = 10;
     
-    public EnemySnakeBehavior(GameManager gameManager, Snake snake)
+    public EnemySnakeState(GameManager gameManager, Snake snake)
     {
         _gameManager = gameManager;
         _snake = snake;
         _random = new Random(); // Let's make it less predictable (*devil smile*)
     }
+    
+    
+    public override void Update(GameTime gameTime)
+    {
+        if (_snake.State != SnakeState.Alive)
+            return;
 
-    public SnakeDirection GetDirection()
+        var direction = GetDirection();
+
+        _snake.UpdateDirection(direction);
+    }
+
+    private SnakeDirection GetDirection()
     {
         var head = _snake.Segments[0].Position;
         
