@@ -25,7 +25,8 @@ public class Snake : Entity
     private readonly int _defaultLength;
     private readonly SnakeDirection _defaultDirection;
     
-    private readonly SnakeRenderer _renderer;
+    private SnakeRenderer _renderer;
+    private readonly AssetManager _assets;
 
     public List<SnakeSegment> Segments { get; } = [];
     public SnakeSegment Head { get; private set; } // Used for partial head
@@ -35,15 +36,15 @@ public class Snake : Entity
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
+        _assets = assets;
         _defaultLocation = location;
         _defaultLength = length;
         _defaultDirection = direction;
-        
-        _renderer = new SnakeRenderer(this, assets);
     }
 
     public void Initialize()
     {
+        _renderer = new SnakeRenderer(this, _assets);
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
     }
 

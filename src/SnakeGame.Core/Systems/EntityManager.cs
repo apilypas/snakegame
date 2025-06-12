@@ -29,13 +29,48 @@ public class EntityManager
         _assets = assets;
     }
 
-    public void Update(float deltaTime)
+    public void Update(GameTime gameTime)
     {
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
         SpawnPlayerSnake();
         SpawnEnemySnake(deltaTime);
         SpawnRandomDiamond(deltaTime);
         SpawnRandomSpeedBoost(deltaTime);
         DespawnSnake(deltaTime);
+    }
+    
+    public void SpawnPlayerSnake(Vector2 at, int length, SnakeDirection direction)
+    {
+        var playerSnake = new PlayerSnake(_assets, at, length, direction);
+        
+        Snakes.Add(playerSnake);
+        _world.PlayField.Add(playerSnake);
+        
+        playerSnake.Initialize();
+    }
+
+    public void SpawnEnemySnake(Vector2 at, int length, SnakeDirection direction)
+    {
+        var enemySnake = new EnemySnake(_assets, at, length, direction, this)
+        {
+            Id = GetNextId()
+        };
+
+        Snakes.Add(enemySnake);
+        _world.PlayField.Add(enemySnake);
+        
+        enemySnake.Initialize();
+    }
+
+    public void SpawnFadingText(Vector2 at, string text)
+    {
+        var fadingText = new FadingText(text, _assets.MainFont)
+        {
+            Position = at
+        };
+
+        _world.PlayField.Add(fadingText);
     }
 
     private void SpawnRandomDiamond(float deltaTime)
@@ -163,20 +198,14 @@ public class EntityManager
 
     private void SpawnPlayerSnake()
     {
-        Snake playerSnake = null;
-
         foreach (var snake in Snakes)
         {
             if (snake is PlayerSnake)
             {
-                playerSnake = snake;
-                break;
+                return;
             }
         }
         
-        if (playerSnake != null)
-            return;
-
         // Find best location
         var location = FindBestLocationForSnake();
         
@@ -185,13 +214,8 @@ public class EntityManager
 
         var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
             SnakeDirection.Right : SnakeDirection.Left;
-                
-        playerSnake = new PlayerSnake(_assets, location.Value, 2, direction);
-        playerSnake.Id = GetNextId();
-        playerSnake.Initialize();
-                
-        Snakes.Add(playerSnake);
-        _world.PlayField.Add(playerSnake);
+
+        SpawnPlayerSnake(location.Value, 2, direction);
     }
 
     private void SpawnEnemySnake(float deltaTime)
@@ -223,15 +247,11 @@ public class EntityManager
         if (location == null)
             return;
 
-        var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
-            SnakeDirection.Right : SnakeDirection.Left;
-                
-        var enemySnake = new EnemySnake(_assets, location.Value, 2, direction, this);
-        enemySnake.Id = GetNextId();
-        enemySnake.Initialize();
-                
-        Snakes.Add(enemySnake);
-        _world.PlayField.Add(enemySnake);
+        var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f
+            ? SnakeDirection.Right
+            : SnakeDirection.Left;
+        
+        SpawnEnemySnake(location.Value, 2, direction);
 
         _enemySpawnTimer -= Constants.EnemySpawnRate;
     }
