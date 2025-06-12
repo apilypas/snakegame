@@ -53,6 +53,15 @@ public class Collectable : Entity
         }
     }
 
+    public Rectangle GetRectangle()
+    {
+        return new Rectangle(
+            (int)Position.X,
+            (int)Position.Y,
+            Constants.SegmentSize,
+            Constants.SegmentSize);
+    }
+
     private Sprite CreateSprite(CollectableType type)
     {
         return type switch

@@ -111,7 +111,7 @@ public class EnemySnakeState : CharacterState
             Constants.SegmentSize);
         
         // Wall
-        if (!GameManager.GetRectangle().Contains(headRectangle))
+        if (!Globals.PlayFieldRectangle.Contains(headRectangle))
         {
             return ObjectType.Unavoidable;
         }

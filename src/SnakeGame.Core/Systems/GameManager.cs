@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Systems;
 
@@ -53,8 +54,7 @@ public class GameManager
     public void Update(GameTime gameTime)
     {
         World.IsPaused = _state == GameWorldState.Paused;
-        
-        UpdateEntities(World, Vector2.Zero, gameTime);
+        World.UpdateEntityTree(gameTime);
         
         if (_state != GameWorldState.Running)
             return;
@@ -71,13 +71,8 @@ public class GameManager
         if (_state != GameWorldState.Running)
             return;
 
-        foreach (var snake in _entities.Snakes)
-        {
-            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
-            {
-                playerSnake.Faster();
-            }
-        }
+        if (World.PlayerSnake is { State: SnakeState.Alive })
+            World.PlayerSnake.Faster();
     }
 
     public void Slower()
@@ -85,37 +80,17 @@ public class GameManager
         if (_state != GameWorldState.Running)
             return;
 
-        foreach (var snake in _entities.Snakes)
-        {
-            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
-            {
-                playerSnake.Slower();
-            }
-        }
-    }
-
-    public static Rectangle GetRectangle()
-    {
-        return new Rectangle(
-            0,
-            0,
-            Constants.WallWidth * Constants.SegmentSize,
-            Constants.WallHeight * Constants.SegmentSize
-            );
+        if (World.PlayerSnake is { State: SnakeState.Alive })
+            World.PlayerSnake.Slower();
     }
 
     public void ChangeDirection(SnakeDirection direction)
     {
         if (_state != GameWorldState.Running)
             return;
-
-        foreach (var snake in _entities.Snakes)
-        {
-            if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
-            {
-                playerSnake.UpdateDirection(direction);
-            }
-        }
+        
+        if (World.PlayerSnake is { State: SnakeState.Alive })
+            World.PlayerSnake.UpdateDirection(direction);
     }
 
     public void TogglePause()
@@ -156,19 +131,12 @@ public class GameManager
             if (snake.State != SnakeState.Alive)
                 continue;
 
+            var isDead = false;
             var headRectangle = snake.Head.GetRectangle();
-            
-            // Handle collisions
 
-            if (snake.CollidesWithSelf())
+            if (snake.CollidesWithSelf() || !Globals.PlayFieldRectangle.Contains(headRectangle))
             {
-                snake.Die();
-                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
-            }
-            else if (!GetRectangle().Contains(headRectangle))
-            {
-                snake.Die();
-                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                isDead = true;
             }
             else
             {
@@ -176,10 +144,16 @@ public class GameManager
                 {
                     if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
                     {
-                        snake.Die();
-                        Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                        isDead = true;
+                        break;
                     }
                 }
+            }
+
+            if (isDead)
+            {
+                snake.Die();
+                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
             }
         }
     }
@@ -192,10 +166,7 @@ public class GameManager
                 continue;
 
             var headRectangle = snake.Head.GetRectangle();
-
-            // Handle collectables
-
-            var collectable = GetCollectableAt(headRectangle);
+            var collectable = _entities.GetCollectableAt(headRectangle);
 
             if (collectable != null)
             {
@@ -207,7 +178,6 @@ public class GameManager
             }
         }
     }
-
 
     private void HandleCollectableBonus(Collectable collectable, Snake snake)
     {
@@ -247,45 +217,5 @@ public class GameManager
                 _entities.SpawnFadingText(snake.Head.Position, $"+{Constants.ClockCollectScore} (Time)");
             }
         }
-    }
-
-    private void UpdateEntities(Entity entity, Vector2 basePosition, GameTime gameTime)
-    {
-        if (entity.IsPaused) return;
-
-        entity.IsUpdated = false;
-        entity.Update(gameTime);
-        entity.GlobalPosition = basePosition + entity.Position;
-        entity.IsUpdated = true;
-
-        foreach (var child in entity.Children)
-        {
-            if (child.QueueRemove)
-            {
-                entity.Remove(child);
-                continue;
-            }
-            
-            UpdateEntities(child, entity.GlobalPosition, gameTime);
-        }
-    }
-    
-    private Collectable GetCollectableAt(Rectangle targetRectangle)
-    {
-        foreach (var collectable in _entities.Collectables)
-        {
-            var rectangle = new Rectangle(
-                (int)collectable.Position.X,
-                (int)collectable.Position.Y,
-                Constants.SegmentSize,
-                Constants.SegmentSize);
-
-            if (rectangle.Intersects(targetRectangle))
-            {
-                return collectable;
-            }
-        }
-
-        return null;
     }
 }

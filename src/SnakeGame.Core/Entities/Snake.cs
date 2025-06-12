@@ -215,7 +215,7 @@ public class Snake : Entity
         _renderer.Render(spriteBatch);
     }
 
-    public void ChangeState(CharacterState newState)
+    protected void ChangeState(CharacterState newState)
     {
         _state = newState;
     }

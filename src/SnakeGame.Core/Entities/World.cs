@@ -7,6 +7,7 @@ public class World : Entity
 {
     public ScoreDisplay Score { get; }
     public PlayField PlayField { get; }
+    public PlayerSnake PlayerSnake { get; set; }
     
     public World(AssetManager assets)
     {
@@ -20,7 +21,7 @@ public class World : Entity
         
         Score = new ScoreDisplay(assets)
         {
-            Position = new Vector2(GameManager.GetRectangle().Width + 16f, 16f) 
+            Position = new Vector2(Globals.PlayFieldRectangle.Width + 16f, 16f) 
                        + Globals.PlayFieldOffset
         };
         

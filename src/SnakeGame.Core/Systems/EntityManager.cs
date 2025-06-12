@@ -46,6 +46,7 @@ public class EntityManager
         
         Snakes.Add(playerSnake);
         _world.PlayField.Add(playerSnake);
+        _world.PlayerSnake = playerSnake;
         
         playerSnake.Initialize();
     }
@@ -71,6 +72,19 @@ public class EntityManager
         };
 
         _world.PlayField.Add(fadingText);
+    }
+    
+    public Collectable GetCollectableAt(Rectangle targetRectangle)
+    {
+        foreach (var collectable in Collectables)
+        {
+            if (collectable.GetRectangle().Intersects(targetRectangle))
+            {
+                return collectable;
+            }
+        }
+
+        return null;
     }
 
     private void SpawnRandomDiamond(float deltaTime)
@@ -198,13 +212,8 @@ public class EntityManager
 
     private void SpawnPlayerSnake()
     {
-        foreach (var snake in Snakes)
-        {
-            if (snake is PlayerSnake)
-            {
-                return;
-            }
-        }
+        if (_world.PlayerSnake != null)
+            return;
         
         // Find best location
         var location = FindBestLocationForSnake();
@@ -314,6 +323,9 @@ public class EntityManager
         {
             Snakes.Remove(snake);
             snake.QueueRemove = true;
+
+            if (snake is PlayerSnake)
+                _world.PlayerSnake = null;
         }
     }
     
