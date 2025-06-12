@@ -8,7 +8,7 @@ namespace SnakeGame.Core.StateMachines;
 
 public class EnemySnakeState : CharacterState
 {
-    private readonly GameManager _gameManager;
+    private readonly EntityManager _entities;
     private readonly Snake _snake;
     private readonly Random _random;
 
@@ -21,9 +21,9 @@ public class EnemySnakeState : CharacterState
 
     private const int ObjectScanLength = 10;
     
-    public EnemySnakeState(GameManager gameManager, Snake snake)
+    public EnemySnakeState(EntityManager entities, Snake snake)
     {
-        _gameManager = gameManager;
+        _entities = entities;
         _snake = snake;
         _random = new Random(); // Let's make it less predictable (*devil smile*)
     }
@@ -117,7 +117,7 @@ public class EnemySnakeState : CharacterState
         }
 
         // Other snake
-        foreach (var snake in _gameManager.Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             if (snake.CollidesWith(headRectangle))
             {
@@ -126,7 +126,7 @@ public class EnemySnakeState : CharacterState
         }
 
         // Collectables
-        foreach (var collectable in _gameManager.Collectables)
+        foreach (var collectable in _entities.Collectables)
         {
             if (headRectangle.Contains(collectable.Position))
                 return ObjectType.Collectable;

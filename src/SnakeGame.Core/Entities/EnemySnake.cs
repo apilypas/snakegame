@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
-using SnakeGame.Core.Entities;
+using SnakeGame.Core.StateMachines;
 using SnakeGame.Core.Systems;
 
-namespace SnakeGame.Core.StateMachines;
+namespace SnakeGame.Core.Entities;
 
 public class EnemySnake : Snake
 {
@@ -11,9 +11,9 @@ public class EnemySnake : Snake
         Vector2 location,
         int length,
         SnakeDirection direction,
-        GameManager gameManager)
+        EntityManager entities)
         : base(assets, location, length, direction)
     {
-        ChangeState(new EnemySnakeState(gameManager, this));
+        ChangeState(new EnemySnakeState(entities, this));
     }
 }

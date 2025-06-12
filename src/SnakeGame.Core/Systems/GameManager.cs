@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
-using SnakeGame.Core.StateMachines;
 
 namespace SnakeGame.Core.Systems;
 
@@ -16,12 +14,10 @@ public class GameManager
         Ended
     }
     
-    private readonly EntitySpawner _entitySpawner;
-    private float _timer = Constants.InitialTimer;
+    private readonly EntityManager _entities;
     private readonly AssetManager _assets;
-
-    public IList<Snake> Snakes { get; } = [];
-    public IList<Collectable> Collectables { get; } = [];
+    
+    private float _timer = Constants.InitialTimer;
     
     public EventManager Events { get; } = new();
 
@@ -32,7 +28,7 @@ public class GameManager
     public GameManager(AssetManager assets)
     {
         _assets = assets;
-        _entitySpawner = new EntitySpawner(this, _assets);
+        _entities = new EntityManager(this, _assets);
         
         World = new World(_assets);
     }
@@ -46,19 +42,19 @@ public class GameManager
             Constants.InitialSnakeSize,
             SnakeDirection.Up
             );
-        Snakes.Add(playerSnake);
+        _entities.Snakes.Add(playerSnake);
         World.PlayField.Add(playerSnake);
         
         var enemySnake = new EnemySnake(
             _assets,
             new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize),
             Constants.InitialSnakeSize,
-            SnakeDirection.Up, this
+            SnakeDirection.Up, _entities
             );
-        Snakes.Add(enemySnake);
+        _entities.Snakes.Add(enemySnake);
         World.PlayField.Add(enemySnake);
         
-        foreach (var snake in Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             snake.Initialize();
         }
@@ -87,7 +83,7 @@ public class GameManager
             Events.Notify(new NotifyEvent(null, null, NotifyEventType.GameEnded));
         }
         
-        foreach (var snake in Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             if (snake.State != SnakeState.Alive)
                 continue;
@@ -103,7 +99,7 @@ public class GameManager
                 HandleCollectableBonus(collectable, snake);
 
                 collectable.QueueRemove = true;
-                Collectables.Remove(collectable);
+                _entities.Collectables.Remove(collectable);
                 Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
             }
             
@@ -121,7 +117,7 @@ public class GameManager
             }
             else
             {
-                foreach (var otherSnake in Snakes)
+                foreach (var otherSnake in _entities.Snakes)
                 {
                     if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
                     {
@@ -132,7 +128,7 @@ public class GameManager
             }
         }
 
-        _entitySpawner.Update(deltaTime);
+        _entities.Update(deltaTime);
     }
     
     public void Faster()
@@ -140,7 +136,7 @@ public class GameManager
         if (_state != GameWorldState.Running)
             return;
 
-        foreach (var snake in Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
@@ -154,7 +150,7 @@ public class GameManager
         if (_state != GameWorldState.Running)
             return;
 
-        foreach (var snake in Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
@@ -178,7 +174,7 @@ public class GameManager
         if (_state != GameWorldState.Running)
             return;
 
-        foreach (var snake in Snakes)
+        foreach (var snake in _entities.Snakes)
         {
             if (snake is PlayerSnake playerSnake && snake.State == SnakeState.Alive)
             {
@@ -285,7 +281,7 @@ public class GameManager
     
     private Collectable GetCollectableAt(Rectangle targetRectangle)
     {
-        foreach (var collectable in Collectables)
+        foreach (var collectable in _entities.Collectables)
         {
             var rectangle = new Rectangle(
                 (int)collectable.Position.X,

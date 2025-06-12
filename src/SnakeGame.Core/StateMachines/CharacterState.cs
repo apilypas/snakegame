@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace SnakeGame.Core.Entities;
+namespace SnakeGame.Core.StateMachines;
 
 public abstract class CharacterState
 {

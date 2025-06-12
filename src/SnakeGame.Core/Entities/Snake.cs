@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SnakeGame.Core.Renderers;
+using SnakeGame.Core.StateMachines;
 using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 

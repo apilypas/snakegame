@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using SnakeGame.Core.StateMachines;
-using SnakeGame.Core.Systems;
+using SnakeGame.Core.Entities;
 
-namespace SnakeGame.Core.Entities;
+namespace SnakeGame.Core.Systems;
 
-public class EntitySpawner(GameManager gameManager, AssetManager assets)
+public class EntityManager
 {
     private readonly Random _random = new();
 
@@ -15,6 +14,19 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
     private float _enemySpawnTimer;
     
     private int _lastEntityId;
+    
+    private readonly HashSet<Snake> _despawnSnakes = [];
+    private readonly GameManager _gameManager;
+    private readonly AssetManager _assets;
+    
+    public IList<Snake> Snakes { get; } = [];
+    public IList<Collectable> Collectables { get; } = [];
+
+    public EntityManager(GameManager gameManager, AssetManager assets)
+    {
+        _gameManager = gameManager;
+        _assets = assets;
+    }
 
     public void Update(float deltaTime)
     {
@@ -31,7 +43,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         
         var diamondCount = 0;
         
-        foreach (var collectable in gameManager.Collectables)
+        foreach (var collectable in Collectables)
         {
             if (collectable.Type == CollectableType.Diamond)
                 diamondCount++;
@@ -43,18 +55,18 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         if (diamondCount >= Constants.MaxDiamondLimit)
             return;
 
-        var location = FindFreeLocation();
+        var location = FindEmptyLocation();
 
         if (location != null)
         {
-            var collectable = new Collectable(assets.CollectableTexture, CollectableType.Diamond)
+            var collectable = new Collectable(_assets.CollectableTexture, CollectableType.Diamond)
             {
                 Id = GetNextId(),
                 Position = location.Value
             };
             
-            gameManager.Collectables.Add(collectable);
-            gameManager.World.PlayField.Add(collectable);
+            Collectables.Add(collectable);
+            _gameManager.World.PlayField.Add(collectable);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -69,7 +81,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         
         var speedBoostCount = 0;
 
-        foreach (var collectable in gameManager.Collectables)
+        foreach (var collectable in Collectables)
         {
             if (collectable.Type == CollectableType.SpeedBoost)
                 speedBoostCount++;
@@ -78,24 +90,24 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         if (speedBoostCount >= Constants.MaxSpeedBoostLimit)
             return;
 
-        var location = FindFreeLocation();
+        var location = FindEmptyLocation();
 
         if (location != null)
         {
-            var collectable = new Collectable(assets.CollectableTexture, CollectableType.SpeedBoost)
+            var collectable = new Collectable(_assets.CollectableTexture, CollectableType.SpeedBoost)
             {
                 Id = GetNextId(),
                 Position = location.Value
             };
             
-            gameManager.Collectables.Add(collectable);
-            gameManager.World.PlayField.Add(collectable);
+            Collectables.Add(collectable);
+            _gameManager.World.PlayField.Add(collectable);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
     }
 
-    private Vector2? FindFreeLocation()
+    private Vector2? FindEmptyLocation()
     {
         var random = _random.Next() % (Constants.WallWidth * Constants.WallHeight);
 
@@ -109,7 +121,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
                 {
                     var location = new Vector2(j * Constants.SegmentSize, i * Constants.SegmentSize);
 
-                    if (IsLocationFree(location))
+                    if (IsLocationEmpty(location))
                     {
                         if (random <= 0)
                             return location;
@@ -127,7 +139,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         return null;
     }
 
-    private bool IsLocationFree(Vector2 location)
+    private bool IsLocationEmpty(Vector2 location)
     {
         var rectangle = new Rectangle(
             (int)location.X,
@@ -135,12 +147,12 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
             Constants.SegmentSize,
             Constants.SegmentSize);
 
-        foreach (var snake in gameManager.Snakes)
+        foreach (var snake in Snakes)
         {
             if (snake.CollidesWith(rectangle)) return false;
         }
 
-        foreach (var collectable in gameManager.Collectables)
+        foreach (var collectable in Collectables)
         {
             if (collectable.Position == location) return false;
         }
@@ -152,7 +164,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
     {
         Snake playerSnake = null;
 
-        foreach (var snake in gameManager.Snakes)
+        foreach (var snake in Snakes)
         {
             if (snake is PlayerSnake)
             {
@@ -173,12 +185,12 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
             SnakeDirection.Right : SnakeDirection.Left;
                 
-        playerSnake = new PlayerSnake(assets, location.Value, 2, direction);
+        playerSnake = new PlayerSnake(_assets, location.Value, 2, direction);
         playerSnake.Id = GetNextId();
         playerSnake.Initialize();
                 
-        gameManager.Snakes.Add(playerSnake);
-        gameManager.World.PlayField.Add(playerSnake);
+        Snakes.Add(playerSnake);
+        _gameManager.World.PlayField.Add(playerSnake);
     }
 
     private void SpawnEnemySnake(float deltaTime)
@@ -187,7 +199,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         
         var count = 0;
 
-        foreach (var snake in gameManager.Snakes)
+        foreach (var snake in Snakes)
         {
             if (snake is EnemySnake)
             {
@@ -213,19 +225,19 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         var direction = location.Value.X < (Constants.WallWidth * Constants.SegmentSize) / 2f ?
             SnakeDirection.Right : SnakeDirection.Left;
                 
-        var enemySnake = new EnemySnake(assets, location.Value, 2, direction, gameManager);
+        var enemySnake = new EnemySnake(_assets, location.Value, 2, direction, this);
         enemySnake.Id = GetNextId();
         enemySnake.Initialize();
                 
-        gameManager.Snakes.Add(enemySnake);
-        gameManager.World.PlayField.Add(enemySnake);
+        Snakes.Add(enemySnake);
+        _gameManager.World.PlayField.Add(enemySnake);
 
         _enemySpawnTimer -= Constants.EnemySpawnRate;
     }
 
     private Vector2? FindBestLocationForSnake()
     {
-        var location = FindFreeLocation();
+        var location = FindEmptyLocation();
 
         if (location == null)
             return null;
@@ -251,7 +263,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         {
             for (var y = fromY; y <= toY; y++)
             {
-                if (!IsLocationFree(new Vector2(x, y)))
+                if (!IsLocationEmpty(new Vector2(x, y)))
                     return null;
             }
         }
@@ -259,12 +271,11 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
         return location;
     }
 
-    private readonly HashSet<Snake> _despawnSnakes = [];
     private void DespawnSnake(float deltaTime)
     {
         _despawnSnakes.Clear();
         
-        foreach (var snake in gameManager.Snakes)
+        foreach (var snake in Snakes)
         {
             if (snake.State == SnakeState.Dead)
             {
@@ -280,7 +291,7 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         foreach (var snake in _despawnSnakes)
         {
-            gameManager.Snakes.Remove(snake);
+            Snakes.Remove(snake);
             snake.QueueRemove = true;
         }
     }
@@ -291,14 +302,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
         if (spawnSnakePart)
         {
-            var snakePart = new Collectable(assets.CollectableTexture, CollectableType.SnakePart)
+            var snakePart = new Collectable(_assets.CollectableTexture, CollectableType.SnakePart)
             {
                 Id = GetNextId(),
                 Position = snake.Segments[0].Position
             };
 
-            gameManager.Collectables.Add(snakePart);
-            gameManager.World.PlayField.Add(snakePart);
+            Collectables.Add(snakePart);
+            _gameManager.World.PlayField.Add(snakePart);
         }
         else if (snake is EnemySnake) // Only enemies can spawn clocks
         {
@@ -306,14 +317,14 @@ public class EntitySpawner(GameManager gameManager, AssetManager assets)
 
             if (spawnClock)
             {
-                var clock = new Collectable(assets.CollectableTexture, CollectableType.Clock)
+                var clock = new Collectable(_assets.CollectableTexture, CollectableType.Clock)
                 {
                     Id = GetNextId(),
                     Position = snake.Segments[0].Position
                 };
 
-                gameManager.Collectables.Add(clock);
-                gameManager.World.PlayField.Add(clock);
+                Collectables.Add(clock);
+                _gameManager.World.PlayField.Add(clock);
             }
         }
     }
