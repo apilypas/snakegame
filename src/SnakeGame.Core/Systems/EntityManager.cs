@@ -15,13 +15,11 @@ public class EntityManager
     
     private int _lastEntityId;
     
-    private readonly HashSet<Snake> _despawnSnakes = [];
-    
     private readonly World _world;
     private readonly AssetManager _assets;
     
-    public IList<Snake> Snakes { get; } = [];
-    public IList<Collectable> Collectables { get; } = [];
+    public HashSet<Snake> Snakes { get; } = [];
+    public HashSet<Collectable> Collectables { get; } = [];
 
     public EntityManager(World world, AssetManager assets)
     {
@@ -303,8 +301,6 @@ public class EntityManager
 
     private void DespawnSnake(float deltaTime)
     {
-        _despawnSnakes.Clear();
-        
         foreach (var snake in Snakes)
         {
             if (snake.State == SnakeState.Dead)
@@ -315,17 +311,14 @@ public class EntityManager
                 }
 
                 if (snake.Segments.Count == 0)
-                    _despawnSnakes.Add(snake);
+                {
+                    Snakes.Remove(snake);
+                    snake.QueueRemove = true;
+                    
+                    if (snake is PlayerSnake)
+                        _world.PlayerSnake = null;
+                }
             }
-        }
-
-        foreach (var snake in _despawnSnakes)
-        {
-            Snakes.Remove(snake);
-            snake.QueueRemove = true;
-
-            if (snake is PlayerSnake)
-                _world.PlayerSnake = null;
         }
     }
     
