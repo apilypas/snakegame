@@ -28,9 +28,11 @@ public class GameManager
     public GameManager(AssetManager assets)
     {
         _assets = assets;
-        _entities = new EntityManager(this, _assets);
         
         World = new World(_assets);
+        _entities = new EntityManager(World, _assets);
+        
+        Events.AddObserver(World.Score);
     }
 
     public void Initialize()

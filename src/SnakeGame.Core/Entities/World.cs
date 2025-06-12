@@ -5,7 +5,7 @@ namespace SnakeGame.Core.Entities;
 
 public class World : Entity
 {
-    public Label Score { get; }
+    public ScoreDisplay Score { get; }
     public PlayField PlayField { get; }
     
     public World(AssetManager assets)
@@ -18,11 +18,10 @@ public class World : Entity
         
         Children.Add(PlayField);
         
-        Score = new Label
+        Score = new ScoreDisplay(assets)
         {
-            Font = assets.MainFont,
-            Color = Colors.DefaultTextColor,
-            Position = new Vector2(GameManager.GetRectangle().Width + 16f, 16f) + Globals.PlayFieldOffset
+            Position = new Vector2(GameManager.GetRectangle().Width + 16f, 16f) 
+                       + Globals.PlayFieldOffset
         };
         
         Children.Add(Score);

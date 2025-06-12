@@ -16,15 +16,16 @@ public class EntityManager
     private int _lastEntityId;
     
     private readonly HashSet<Snake> _despawnSnakes = [];
-    private readonly GameManager _gameManager;
+    
+    private readonly World _world;
     private readonly AssetManager _assets;
     
     public IList<Snake> Snakes { get; } = [];
     public IList<Collectable> Collectables { get; } = [];
 
-    public EntityManager(GameManager gameManager, AssetManager assets)
+    public EntityManager(World world, AssetManager assets)
     {
-        _gameManager = gameManager;
+        _world = world;
         _assets = assets;
     }
 
@@ -66,7 +67,7 @@ public class EntityManager
             };
             
             Collectables.Add(collectable);
-            _gameManager.World.PlayField.Add(collectable);
+            _world.PlayField.Add(collectable);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -101,7 +102,7 @@ public class EntityManager
             };
             
             Collectables.Add(collectable);
-            _gameManager.World.PlayField.Add(collectable);
+            _world.PlayField.Add(collectable);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
@@ -190,7 +191,7 @@ public class EntityManager
         playerSnake.Initialize();
                 
         Snakes.Add(playerSnake);
-        _gameManager.World.PlayField.Add(playerSnake);
+        _world.PlayField.Add(playerSnake);
     }
 
     private void SpawnEnemySnake(float deltaTime)
@@ -230,7 +231,7 @@ public class EntityManager
         enemySnake.Initialize();
                 
         Snakes.Add(enemySnake);
-        _gameManager.World.PlayField.Add(enemySnake);
+        _world.PlayField.Add(enemySnake);
 
         _enemySpawnTimer -= Constants.EnemySpawnRate;
     }
@@ -309,7 +310,7 @@ public class EntityManager
             };
 
             Collectables.Add(snakePart);
-            _gameManager.World.PlayField.Add(snakePart);
+            _world.PlayField.Add(snakePart);
         }
         else if (snake is EnemySnake) // Only enemies can spawn clocks
         {
@@ -324,7 +325,7 @@ public class EntityManager
                 };
 
                 Collectables.Add(clock);
-                _gameManager.World.PlayField.Add(clock);
+                _world.PlayField.Add(clock);
             }
         }
     }

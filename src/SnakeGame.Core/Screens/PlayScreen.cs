@@ -13,7 +13,6 @@ namespace SnakeGame.Core.Screens;
 
 public class PlayScreen : GameScreen, IObserver
 {
-    private readonly ScoreBoardManager _scoreBoardManager;
     private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly InputManager _inputs;
     private readonly FormsManager _formManager;
@@ -33,7 +32,6 @@ public class PlayScreen : GameScreen, IObserver
         
         _gameManager = new GameManager(_assets);
         
-        _scoreBoardManager = new ScoreBoardManager(_gameManager.World);
         _virtualGamePad = new VirtualGamePad(_assets);
         _inputs = new InputManager();
         GlobalCommands = new GlobalCommands(Game, screenManager);
@@ -46,7 +44,6 @@ public class PlayScreen : GameScreen, IObserver
         _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
         _gameManager.Events.AddObserver(this);
-        _gameManager.Events.AddObserver(_scoreBoardManager);
 
         _renderer = new RenderSystem(GraphicsDevice);
         _renderer.Add(new EntityRenderer(_gameManager.World));
@@ -106,9 +103,9 @@ public class PlayScreen : GameScreen, IObserver
         if (notifyEvent.EventType == NotifyEventType.GameEnded)
         {
             _forms.GameOver.UpdateResultsText(
-                _scoreBoardManager.Score,
-                _scoreBoardManager.Deaths,
-                _scoreBoardManager.LongestSnake);
+                _gameManager.World.Score.Score,
+                _gameManager.World.Score.Deaths,
+                _gameManager.World.Score.LongestSnake);
             _formManager.Show(PlayScreenForms.GameOverFormId);
         }
 
