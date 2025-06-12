@@ -124,6 +124,8 @@ public class Snake : Entity
         
         // Fixate direction that should be followed
         _direction = _nextDirection;
+
+        UpdateSegmentColors();
     }
 
     public void Grow()
@@ -258,5 +260,25 @@ public class Snake : Entity
             _speedTimer -= deltaTime;
         
         return speed;
+    }
+    
+    private void UpdateSegmentColors()
+    {
+        Head.Color = GetColor(Color, 0);
+        Tail.Color = GetColor(Color, Segments.Count - 1);
+
+        for (var i = 0; i < Segments.Count; i++)
+        {
+            Segments[i].Color = GetColor(Color, i);
+        }
+    }
+    
+    private static Color GetColor(Color color, int index)
+    {
+        var r = MathHelper.Clamp(color.R + 5*index, 0, 255);
+        var g = MathHelper.Clamp(color.G + 5*index, 0, 255);
+        var b = MathHelper.Clamp(color.B + 5*index, 0, 255);
+
+        return new Color(r, g, b);
     }
 }

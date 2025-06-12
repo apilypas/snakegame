@@ -7,6 +7,7 @@ public class SnakeSegment : Entity
     public SnakeDirection Direction { get; init; }
     public bool IsCorner { get; init; }
     public bool IsClockwise { get; init; }
+    public Color Color { get; set; }
 
     public Rectangle GetRectangle()
     {
