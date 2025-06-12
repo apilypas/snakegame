@@ -10,12 +10,12 @@ public class SnakeRenderer
     private readonly int _textureOffset;
     private readonly Texture2D _texture;
     private readonly Snake _snake;
-
+    
     public SnakeRenderer(Snake snake, AssetManager assets)
     {
         _snake = snake;
         _texture = assets.SnakeTexture;
-        _textureOffset = _snake is PlayerSnake ? 0 : 16 * (_snake.Id % 4 + 1);
+        _textureOffset = _snake is PlayerSnake ? 0 : 16;
     }
 
     public void Render(SpriteBatch spriteBatch)
@@ -68,7 +68,7 @@ public class SnakeRenderer
         spriteBatch.Draw(texture,
             snake.GlobalPosition + snake.Head.Position + Globals.SnakeSegmentOrigin,
             new Rectangle(48, textureOffset, 16, 16),
-            Color.White,
+            snake.Color,
             snake.Head.Rotation,
             Globals.SnakeSegmentOrigin,
             Vector2.One,
@@ -81,7 +81,7 @@ public class SnakeRenderer
             spriteBatch.Draw(texture,
                 snake.GlobalPosition + snake.Head.Position + Globals.SnakeSegmentOrigin,
                 new Rectangle(48, textureOffset, 16, 16),
-                Color.White,
+                snake.Color,
                 snake.Head.Rotation,
                 Globals.SnakeSegmentOrigin,
                 Vector2.One,
@@ -95,7 +95,7 @@ public class SnakeRenderer
         spriteBatch.Draw(texture,
             snake.GlobalPosition + snake.Tail.Position + Globals.SnakeSegmentOrigin,
             new Rectangle(48, textureOffset, 16, 16),
-            Color.White,
+            snake.Color,
             snake.Tail.Rotation,
             Globals.SnakeSegmentOrigin,
             Vector2.One,
@@ -116,7 +116,7 @@ public class SnakeRenderer
         spriteBatch.Draw(texture,
             snake.GlobalPosition + segment.Position + Globals.SnakeSegmentOrigin,
             new Rectangle(16, textureOffset, 16, 16),
-            Color.White,
+            snake.Color,
             segment.Rotation,
             Globals.SnakeSegmentOrigin,
             Vector2.One,
@@ -129,7 +129,7 @@ public class SnakeRenderer
         spriteBatch.Draw(texture,
             snake.GlobalPosition + segment.Position + Globals.SnakeSegmentOrigin,
             new Rectangle(0, textureOffset, 16, 16),
-            Color.White,
+            snake.Color,
             segment.Rotation,
             Globals.SnakeSegmentOrigin,
             Vector2.One,

@@ -53,7 +53,7 @@ public class GameManager
 
     public void Update(GameTime gameTime)
     {
-        World.IsPaused = _state == GameWorldState.Paused;
+        World.IsPaused = _state != GameWorldState.Running;
         World.UpdateEntityTree(gameTime);
         
         if (_state != GameWorldState.Running)

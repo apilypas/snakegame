@@ -12,5 +12,6 @@ public class PlayerSnake : Snake
         SnakeDirection direction) 
         : base(assets, location, length, direction)
     {
+        Color = Color.Orange;
     }
 }

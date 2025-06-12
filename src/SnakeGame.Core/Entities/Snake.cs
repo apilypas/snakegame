@@ -33,6 +33,7 @@ public class Snake : Entity
     public SnakeSegment Tail { get; private set; } // User for partial tail
     
     public SnakeState State { get; private set; } = SnakeState.Alive;
+    public Color Color { get; set; } = Color.White;
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
@@ -42,7 +43,7 @@ public class Snake : Entity
         _defaultDirection = direction;
     }
 
-    public void Initialize()
+    public virtual void Initialize()
     {
         _renderer = new SnakeRenderer(this, _assets);
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
