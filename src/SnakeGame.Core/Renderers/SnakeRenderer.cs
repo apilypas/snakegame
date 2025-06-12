@@ -57,7 +57,7 @@ public class SnakeRenderer
             spriteBatch.Draw(texture,
                 snake.GlobalPosition + snake.Head.Position + Globals.SnakeSegmentOrigin,
                 new Rectangle(32, textureOffset, 16, 16),
-                snake.Head.Color,
+                Color.White,
                 snake.Head.Rotation,
                 Globals.SnakeSegmentOrigin,
                 Vector2.One,
