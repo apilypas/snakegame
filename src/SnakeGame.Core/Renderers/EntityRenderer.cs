@@ -18,7 +18,7 @@ public class EntityRenderer : RendererBase
         Render(spriteBatch, _entity, gameTime);
     }
 
-    private void Render(SpriteBatch spriteBatch, Entity entity, GameTime gameTime)
+    private static void Render(SpriteBatch spriteBatch, Entity entity, GameTime gameTime)
     {
         if (entity.IsUpdated)
             entity.Draw(spriteBatch, gameTime);

@@ -7,6 +7,7 @@ public class World : Entity
 {
     public ScoreDisplay Score { get; }
     public PlayField PlayField { get; }
+    public Entity FadingTextLayer { get; }
     public PlayerSnake PlayerSnake { get; set; }
     
     public World(AssetManager assets)
@@ -18,6 +19,13 @@ public class World : Entity
         };
         
         Children.Add(PlayField);
+
+        FadingTextLayer = new Entity
+        {
+            Position = Globals.PlayFieldOffset
+        };
+        
+        Children.Add(FadingTextLayer);
         
         Score = new ScoreDisplay(assets)
         {

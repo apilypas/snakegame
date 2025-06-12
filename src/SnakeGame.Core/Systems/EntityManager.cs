@@ -71,7 +71,7 @@ public class EntityManager
             Position = at
         };
 
-        _world.PlayField.Add(fadingText);
+        _world.FadingTextLayer.Add(fadingText);
     }
     
     public Collectable GetCollectableAt(Rectangle targetRectangle)
@@ -204,7 +204,7 @@ public class EntityManager
 
         foreach (var collectable in Collectables)
         {
-            if (collectable.Position == location) return false;
+            if (collectable.GetRectangle().Intersects(rectangle)) return false;
         }
         
         return true;
