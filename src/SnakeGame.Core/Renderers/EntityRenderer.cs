@@ -20,10 +20,15 @@ public class EntityRenderer : RendererBase
 
     private static void Render(SpriteBatch spriteBatch, Entity entity, GameTime gameTime)
     {
-        if (entity.IsUpdated)
-            entity.Draw(spriteBatch, gameTime);
-        
-        foreach (var child in entity.Children)
+        if (!entity.IsUpdated)
+            return;
+
+        if (!entity.IsVisible)
+            return;
+
+        entity.Draw(spriteBatch, gameTime);
+
+        foreach (var child in entity.GetChildren())
         {
             Render(spriteBatch, child, gameTime);
         }

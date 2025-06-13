@@ -15,12 +15,12 @@ public class PlayScreen : GameScreen, IObserver
 {
     private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly InputManager _inputs;
-    private readonly FormsManager _formManager;
     private readonly PlayScreenForms _forms;
     private readonly VirtualGamePad _virtualGamePad;
     private readonly AssetManager _assets;
     private readonly RenderSystem _renderer;
     private readonly GameManager _gameManager;
+    private readonly ThemeManager _theme;
 
     public PlayScreenCommands Commands { get; }
     public GlobalCommands GlobalCommands { get; }
@@ -30,28 +30,26 @@ public class PlayScreen : GameScreen, IObserver
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
+        _inputs = new InputManager();
+        
         _gameManager = new GameManager(_assets);
         
         _virtualGamePad = new VirtualGamePad(_assets);
-        _inputs = new InputManager();
         GlobalCommands = new GlobalCommands(Game, screenManager);
         Commands = new PlayScreenCommands(this);
-        _forms = new PlayScreenForms(this);
+        _forms = new PlayScreenForms(this, _gameManager.World, _inputs);
         
         _virtualGamePadManager = new VirtualGamePadManager(_inputs);
         _inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
-        
-        _formManager = new FormsManager(_inputs, _virtualGamePadManager);
         
         _gameManager.Events.AddObserver(this);
 
         _renderer = new RenderSystem(GraphicsDevice);
         _renderer.Add(new EntityRenderer(_gameManager.World));
-        _renderer.Add(new FormsRenderer(_assets, _formManager));
         _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
         
-        _formManager.Add(_forms.Pause);
-        _formManager.Add(_forms.GameOver);
+        _theme = new ThemeManager(_assets);
+        _theme.Apply(_gameManager.World);
         
         _inputs.Bindings.BindKeyboardKeyDown(Keys.Up, Commands.MoveUp);
         _inputs.Bindings.BindKeyboardKeyDown(Keys.Left, Commands.MoveLeft);
@@ -86,7 +84,6 @@ public class PlayScreen : GameScreen, IObserver
     {
         _virtualGamePadManager.Update();
         _inputs.Update();
-        _formManager.Update();
         
         _gameManager.Update(gameTime);
         
@@ -102,21 +99,23 @@ public class PlayScreen : GameScreen, IObserver
     {
         if (notifyEvent.EventType == NotifyEventType.GameEnded)
         {
-            _forms.GameOver.UpdateResultsText(
+            _forms.GameOver.UpdateResults(
                 _gameManager.World.Score.Score,
                 _gameManager.World.Score.Deaths,
                 _gameManager.World.Score.LongestSnake);
-            _formManager.Show(PlayScreenForms.GameOverFormId);
+
+            _forms.GameOver.IsVisible = true;
         }
 
         if (notifyEvent.EventType == NotifyEventType.Paused)
         {
-            _formManager.Show(PlayScreenForms.PauseFormId);
+            _forms.Pause.IsVisible = true;
         }
 
         if (notifyEvent.EventType == NotifyEventType.Resume)
         {
-            _formManager.Close();
+            if (_forms.Pause.IsVisible)
+                _forms.Pause.IsVisible = false;
         }
     }
 

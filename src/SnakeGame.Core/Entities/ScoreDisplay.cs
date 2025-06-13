@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using SnakeGame.Core.Events;
-using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 
@@ -15,15 +14,11 @@ public class ScoreDisplay : Entity, IObserver
     public int Deaths { get; private set; }
     public int LongestSnake { get; private set; } = Constants.InitialSnakeSize;
 
-    public ScoreDisplay(AssetManager assets)
+    public ScoreDisplay()
     {
-        _scoreLabel = new Label
-        {
-            Font = assets.MainFont,
-            Color = Colors.DefaultTextColor
-        };
+        _scoreLabel = new Label();
 
-        Children.Add(_scoreLabel);
+        AddChild(_scoreLabel);
         
         UpdateTexts();
     }

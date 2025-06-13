@@ -8,6 +8,7 @@ public class World : Entity
     public ScoreDisplay Score { get; }
     public PlayField PlayField { get; }
     public Entity FadingTextLayer { get; }
+    public Entity FormLayer { get; }
     public PlayerSnake PlayerSnake { get; set; }
     
     public World(AssetManager assets)
@@ -18,21 +19,24 @@ public class World : Entity
             Position = Globals.PlayFieldOffset
         };
         
-        Children.Add(PlayField);
+        AddChild(PlayField);
 
         FadingTextLayer = new Entity
         {
             Position = Globals.PlayFieldOffset
         };
         
-        Children.Add(FadingTextLayer);
+        AddChild(FadingTextLayer);
         
-        Score = new ScoreDisplay(assets)
+        Score = new ScoreDisplay
         {
             Position = new Vector2(Globals.PlayFieldRectangle.Width + 16f, 16f) 
                        + Globals.PlayFieldOffset
         };
         
-        Children.Add(Score);
+        AddChild(Score);
+
+        FormLayer = new Entity();
+        AddChild(FormLayer);
     }
 }

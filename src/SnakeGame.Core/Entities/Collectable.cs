@@ -24,7 +24,7 @@ public class Collectable : Entity
         Type = type;
         Sprite = CreateSprite(Type);
         
-        Children.Add(Sprite);
+        AddChild(Sprite);
     }
 
     public override void Update(GameTime gameTime)

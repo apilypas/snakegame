@@ -9,19 +9,21 @@ public static class EntityExtensions
     {
         if (entity.IsPaused) return;
 
-        if (basePosition == null)
+        if (!entity.IsVisible) return;
+
+        if (null == basePosition)
             basePosition = Vector2.Zero;
-        
+
         entity.IsUpdated = false;
         entity.Update(gameTime);
         entity.GlobalPosition = basePosition.Value + entity.Position;
         entity.IsUpdated = true;
 
-        foreach (var child in entity.Children)
+        foreach (var child in entity.GetChildren())
         {
             if (child.QueueRemove)
             {
-                entity.Remove(child);
+                entity.RemoveChild(child);
                 continue;
             }
             

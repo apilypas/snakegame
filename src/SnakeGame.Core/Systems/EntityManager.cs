@@ -43,7 +43,7 @@ public class EntityManager
         var playerSnake = new PlayerSnake(_assets, at, length, direction);
         
         Snakes.Add(playerSnake);
-        _world.PlayField.Add(playerSnake);
+        _world.PlayField.AddChild(playerSnake);
         _world.PlayerSnake = playerSnake;
         
         playerSnake.Initialize();
@@ -57,19 +57,19 @@ public class EntityManager
         };
 
         Snakes.Add(enemySnake);
-        _world.PlayField.Add(enemySnake);
+        _world.PlayField.AddChild(enemySnake);
         
         enemySnake.Initialize();
     }
 
     public void SpawnFadingText(Vector2 at, string text)
     {
-        var fadingText = new FadingText(text, _assets.MainFont)
+        var fadingText = new FadingText(text)
         {
             Position = at
         };
 
-        _world.FadingTextLayer.Add(fadingText);
+        _world.FadingTextLayer.AddChild(fadingText);
     }
     
     public Collectable GetCollectableAt(Rectangle targetRectangle)
@@ -114,7 +114,7 @@ public class EntityManager
             };
             
             Collectables.Add(collectable);
-            _world.PlayField.Add(collectable);
+            _world.PlayField.AddChild(collectable);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -149,7 +149,7 @@ public class EntityManager
             };
             
             Collectables.Add(collectable);
-            _world.PlayField.Add(collectable);
+            _world.PlayField.AddChild(collectable);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
@@ -335,7 +335,7 @@ public class EntityManager
             };
 
             Collectables.Add(snakePart);
-            _world.PlayField.Add(snakePart);
+            _world.PlayField.AddChild(snakePart);
         }
         else if (snake is EnemySnake) // Only enemies can spawn clocks
         {
@@ -350,7 +350,7 @@ public class EntityManager
                 };
 
                 Collectables.Add(clock);
-                _world.PlayField.Add(clock);
+                _world.PlayField.AddChild(clock);
             }
         }
     }

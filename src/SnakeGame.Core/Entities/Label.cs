@@ -8,7 +8,7 @@ public class Label : Entity
 {
     public SpriteFont Font { get; set; }
     public string Text { get; set; }
-    public Color Color { get; set; } = Color.White;
+    public Color Color { get; set; }
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {

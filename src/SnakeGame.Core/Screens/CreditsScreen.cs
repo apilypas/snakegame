@@ -2,20 +2,24 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Commands;
+using SnakeGame.Core.Entities;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Screens;
 
 public class CreditsScreen : GameScreen
 {
-    private readonly InputManager _inputs;
-    private readonly FormsManager _formManager;
     private readonly CreditsScreenForms _forms;
     private readonly AssetManager _assets;
     private readonly RenderSystem _renderer;
+    private readonly ThemeManager _theme;
+
+    public Entity World { get; }
+    public InputManager Inputs { get; }
 
     public GlobalCommands GlobalCommands { get; }
     
@@ -23,28 +27,30 @@ public class CreditsScreen : GameScreen
     {
         _assets = new AssetManager();
         _assets.LoadContent(Content);
-        _inputs = new InputManager();
-        _formManager = new FormsManager(_inputs, null);
+        
+        Inputs = new InputManager();
+        
+        World = new Entity();
+        
         GlobalCommands = new GlobalCommands(Game, screenManager);
         _forms = new CreditsScreenForms(this);
         
-        _formManager.Add(_forms.Credits);
-        
         _renderer = new RenderSystem(GraphicsDevice);
         
-        _renderer.Add(new FormsRenderer(_assets, _formManager));
+        _renderer.Add(new EntityRenderer(World));
         
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
+        _theme = new ThemeManager(_assets);
+        _theme.Apply(World);
         
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, GlobalCommands.OpenStartScreen);
+        Inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
-        _formManager.Show(CreditsScreenForms.CreditsFormId);
+        Inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, GlobalCommands.OpenStartScreen);
     }
 
     public override void Update(GameTime gameTime)
     {
-        _inputs.Update();
-        _formManager.Update();
+        Inputs.Update();
+        World.UpdateEntityTree(gameTime);
         
         _renderer.Update(gameTime);
     }

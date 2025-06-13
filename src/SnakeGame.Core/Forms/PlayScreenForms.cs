@@ -1,37 +1,103 @@
 using System.Text;
+using Microsoft.Xna.Framework;
+using SnakeGame.Core.Commands;
+using SnakeGame.Core.Entities;
+using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Forms;
 
-public class PlayScreenForms(PlayScreen playScreen)
+public class PlayScreenForms(PlayScreen playScreen, World world, InputManager inputs)
 {
-    public const int PauseFormId = 1;
-    public const int GameOverFormId = 2;
-
-    public class PauseForm : Form
+    public class PauseForm : Entity
     {
-        public PauseForm(PlayScreen playScreen) : base(PauseFormId)
+        public PauseForm(PlayScreenCommands playScreenCommands, GlobalCommands globalCommands, World world, InputManager inputs)
         {
-            Add(new FormText("Game is paused"));
+            Position = new Vector2(60, 60);
+            IsVisible = false;
             
-            Add(new FormAction("Resume", playScreen.Commands.Pause));
-            Add(new FormAction("Exit", playScreen.GlobalCommands.OpenStartScreen));
+            var panel = new Panel
+            {
+                Size = new Vector2(230, 130),
+            };
+            AddChild(panel);
+        
+            var label = new Label
+            {
+                Text = "Game is paused",
+                Position = new Vector2(10f, 10f)
+            };
+            panel.AddChild(label);
+        
+            var resumeButton = new Button
+            {
+                Input = inputs,
+                Text = "Resume",
+                Position = new Vector2(10f, 80f),
+                Size = new Vector2(100, 40),
+                Command = playScreenCommands.Pause
+            };
+            panel.AddChild(resumeButton);
+            
+            var exitButton = new Button
+            {
+                Input = inputs,
+                Text = "Exit",
+                Position = new Vector2(120f, 80f),
+                Size = new Vector2(100, 40),
+                Command = globalCommands.OpenStartScreen
+            };
+            panel.AddChild(exitButton);
+            
+            world.FormLayer.AddChild(this);
         }
     }
 
-    public class GameOverForm : Form
+    public class GameOverForm : Entity
     {
-        public GameOverForm(PlayScreen playScreen) : base(GameOverFormId)
-        {
-            Add(new FormText("Game is over"));
-            Add(new FormText("[Placeholder]"));
-            Add(new FormAction("Exit", playScreen.GlobalCommands.OpenStartScreen));
-        }
+        private readonly Label _resultsLabel;
         
-        public void UpdateResultsText(int score, int deaths, int longest)
+        public GameOverForm(GlobalCommands globalCommands, World world, InputManager inputs)
         {
-            var formText = (FormText) Elements[1];
-            formText.Text = new StringBuilder()
+            Position = new Vector2(60, 60);
+            IsVisible = false;
+            
+            var panel = new Panel
+            {
+                Size = new Vector2(230, 200),
+            };
+            AddChild(panel);
+            
+            var label = new Label
+            {
+                Text = "Game is over",
+                Position = new Vector2(10f, 10f)
+            };
+            panel.AddChild(label);
+            
+            _resultsLabel = new Label
+            {
+                Text = "-",
+                Position = new Vector2(10f, 30f)
+            };
+            panel.AddChild(_resultsLabel);
+            
+            var exitButton = new Button
+            {
+                Input = inputs,
+                Text = "Exit",
+                Position = new Vector2(60f, 150f),
+                Size = new Vector2(100, 40),
+                Command = globalCommands.OpenStartScreen
+            };
+            panel.AddChild(exitButton);
+            
+            world.FormLayer.AddChild(this);
+        }
+
+        public void UpdateResults(int score, int deaths, int longest)
+        {
+            _resultsLabel.Text = new StringBuilder()
                 .AppendLine("Your results:")
                 .AppendLine($"Score: {score}")
                 .AppendLine($"Deaths: {deaths}")
@@ -40,6 +106,6 @@ public class PlayScreenForms(PlayScreen playScreen)
         }
     }
     
-    public PauseForm Pause { get; } = new(playScreen);
-    public GameOverForm GameOver { get; } = new(playScreen);
+    public PauseForm Pause { get; } = new(playScreen.Commands, playScreen.GlobalCommands, world, inputs);
+    public GameOverForm GameOver { get; } = new(playScreen.GlobalCommands, world, inputs);
 }

@@ -9,6 +9,7 @@ public class AssetManager
     public Texture2D CollectableTexture { get; private set; }
     public Texture2D GamePadTexture { get; private set; }
     public Texture2D SnakeTexture { get; set; }
+    public Texture2D UserInterfaceTexture { get; set; }
     public SpriteFont MainFont { get; private set; }
     public SpriteFont BigFont { get; set; }
     public TiledMap TiledMap { get; set; }
@@ -18,6 +19,7 @@ public class AssetManager
         CollectableTexture = content.Load<Texture2D>("Collectables");
         GamePadTexture = content.Load<Texture2D>("GamePad");
         SnakeTexture = content.Load<Texture2D>("Snake");
+        UserInterfaceTexture = content.Load<Texture2D>("UserInterface");
         MainFont = content.Load<SpriteFont>("MainFont");
         BigFont = content.Load<SpriteFont>("BigFont");
         TiledMap = content.Load<TiledMap>("Map");

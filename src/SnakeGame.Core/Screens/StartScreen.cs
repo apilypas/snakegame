@@ -2,20 +2,24 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Commands;
+using SnakeGame.Core.Entities;
 using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Screens;
 
 public class StartScreen : GameScreen
 {
-    private readonly InputManager _inputs;
-    private readonly FormsManager _formManager;
     private readonly StartScreenForms _forms;
     private readonly AssetManager _assets;
     private readonly RenderSystem _renderer;
+    private readonly ThemeManager _theme;
+    
+    public Entity World { get; }
+    public InputManager Input { get; }
 
     public GlobalCommands GlobalCommands { get; }
     
@@ -24,29 +28,30 @@ public class StartScreen : GameScreen
         _assets = new AssetManager();
         _assets.LoadContent(Content);
         
-        _inputs = new InputManager();
-        _formManager = new FormsManager(_inputs, null);
+        Input = new InputManager();
+
+        World = new Entity();
+        
         GlobalCommands = new GlobalCommands(Game, screenManager);
         _forms = new StartScreenForms(this);
-        
-        _formManager.Add(_forms.MainMenu);
         
         _renderer = new RenderSystem(GraphicsDevice);
         
         _renderer.Add(new StartScreenRenderer());
-        _renderer.Add(new FormsRenderer(_assets, _formManager));
+        _renderer.Add(new EntityRenderer(World));
         
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
+        _theme = new ThemeManager(_assets);
+        _theme.Apply(World);
         
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, GlobalCommands.OpenPlayScreen);
+        Input.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
         
-        _formManager.Show(StartScreenForms.MainMenuFormId);
+        Input.Bindings.BindGamePadButtonPressed(Buttons.Start, GlobalCommands.OpenPlayScreen);
     }
 
     public override void Update(GameTime gameTime)
     {
-        _inputs.Update();
-        _formManager.Update();
+        Input.Update();
+        World.UpdateEntityTree(gameTime);
         
         _renderer.Update(gameTime);
     }
