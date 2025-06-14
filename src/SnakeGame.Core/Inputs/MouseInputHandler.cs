@@ -22,8 +22,8 @@ public class MouseInputHandler
     private Vector2 GetPosition()
     {
         return new Vector2(
-            _currentState.X / Globals.ScreenScale.X,
-            _currentState.Y / Globals.ScreenScale.Y);
+            _currentState.X,
+            _currentState.Y);
     }
 
     private bool GetIsLeftButtonPressed()

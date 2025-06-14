@@ -30,11 +30,11 @@ public class VirtualGamePadManager(InputManager input) : GamePadInputHandler.IVi
         if (!IsConnected || !IsVisible)
             return;
         
-        LeftButton.Position = new Vector2(10, Globals.VirtualScreenHeight - 150);
-        RightButton.Position = new Vector2(130, Globals.VirtualScreenHeight - 150);
-        UpButton.Position = new Vector2(70, Globals.VirtualScreenHeight - 210);
-        DownButton.Position = new Vector2(70, Globals.VirtualScreenHeight - 90);
-        ActionButton.Position = new Vector2(Globals.VirtualScreenWidth - 180, Globals.VirtualScreenHeight - 180);
+        LeftButton.Position = new Vector2(10, Constants.ScreenHeight - 150);
+        RightButton.Position = new Vector2(130, Constants.ScreenHeight - 150);
+        UpButton.Position = new Vector2(70, Constants.ScreenHeight - 210);
+        DownButton.Position = new Vector2(70, Constants.ScreenHeight - 90);
+        ActionButton.Position = new Vector2(Constants.ScreenWidth - 180, Constants.ScreenHeight- 180);
         StartButton.Position = new Vector2(70, 70);
 
         HandleButton(LeftButton, input.Touch.GetTouchedPoints());

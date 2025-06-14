@@ -1,18 +1,16 @@
 using System;
 using System.Text;
-using SnakeGame.Core.Events;
 
 namespace SnakeGame.Core.Entities;
 
-public class ScoreDisplay : Entity, IObserver
+public class ScoreDisplay : Entity
 {
     private readonly Label _scoreLabel;
-    
-    private float _timer = Constants.InitialTimer;
     
     public int Score { get; private set; }
     public int Deaths { get; private set; }
     public int LongestSnake { get; private set; } = Constants.InitialSnakeSize;
+    public int Timer { get; private set; } = (int)Constants.InitialTimer;
 
     public ScoreDisplay()
     {
@@ -22,40 +20,28 @@ public class ScoreDisplay : Entity, IObserver
         
         UpdateTexts();
     }
-
-    public void Notify(NotifyEvent notifyEvent)
+    
+    public void UpdateDeaths(Snake snake)
     {
-        if (notifyEvent.EventType == NotifyEventType.CollectableRemoved)
-            OnCollectableRemoved(notifyEvent);
-
-        if (notifyEvent.EventType == NotifyEventType.TimerChanged)
-            OnTimerChanged((NotifyTimerChangedEvent)notifyEvent);
-
-        if (notifyEvent.EventType == NotifyEventType.SnakeDied)
-            OnDeathsChanged(notifyEvent);
-    }
-
-    private void OnDeathsChanged(NotifyEvent notifyEvent)
-    {
-        if (notifyEvent.Target is not PlayerSnake)
+        if (snake is not PlayerSnake)
             return;
 
         Deaths++;
         UpdateTexts();
     }
-
-    private void OnTimerChanged(NotifyTimerChangedEvent notifyEvent)
+    
+    public void UpdateTimer(int timer)
     {
-        _timer = notifyEvent.Timer;
-        UpdateTexts();
-    }
-
-    private void OnCollectableRemoved(NotifyEvent notifyEvent)
-    {
-        if (notifyEvent.Target is not Collectable collectable)
+        if (Timer == timer)
             return;
 
-        if (notifyEvent.TriggeredBy is not PlayerSnake playerSnake)
+        Timer = timer;
+        UpdateTexts();
+    }
+    
+    public void UpdateScore(Collectable collectable, Snake snake)
+    {
+        if (snake is not PlayerSnake playerSnake)
             return;
         
         switch (collectable.Type)
@@ -83,7 +69,7 @@ public class ScoreDisplay : Entity, IObserver
     {
         _scoreLabel.Text = new StringBuilder()
             .AppendLine($"Score: {Score}")
-            .AppendLine($"Timer: {(int)(_timer / 60):00}:{(int)(_timer % 60):00}")
+            .AppendLine($"Timer: {Timer / 60:00}:{Timer % 60:00}")
             .AppendLine($"Deaths: {Deaths}")
             .ToString();
     }

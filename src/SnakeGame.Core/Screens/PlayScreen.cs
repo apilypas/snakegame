@@ -1,93 +1,86 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
-using SnakeGame.Core.Commands;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Events;
-using SnakeGame.Core.Forms;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Screens;
 
-public class PlayScreen : GameScreen, IObserver
+public class PlayScreen : GameScreen
 {
     private readonly VirtualGamePadManager _virtualGamePadManager;
-    private readonly InputManager _inputs;
-    private readonly PlayScreenForms _forms;
-    private readonly VirtualGamePad _virtualGamePad;
-    private readonly AssetManager _assets;
+    private readonly DialogManager _dialogs;
     private readonly RenderSystem _renderer;
     private readonly GameManager _gameManager;
-    private readonly ThemeManager _theme;
 
-    public PlayScreenCommands Commands { get; }
-    public GlobalCommands GlobalCommands { get; }
+    public InputManager Inputs { get; }
 
-    public PlayScreen(Game game, ScreenManager screenManager) : base(game)
+    public PlayScreen(Game game) : base(game)
     {
-        _assets = new AssetManager();
-        _assets.LoadContent(Content);
+        var assets = new AssetManager();
+        assets.LoadContent(Content);
         
-        _inputs = new InputManager();
+        Inputs = new InputManager();
+        Inputs.BindKey(InputActions.Up, Keys.W, Keys.Up);
+        Inputs.BindKey(InputActions.Down, Keys.S, Keys.Down);
+        Inputs.BindKey(InputActions.Left, Keys.A, Keys.Left);
+        Inputs.BindKey(InputActions.Right, Keys.D, Keys.Right);
+        Inputs.BindKey(InputActions.Faster, Keys.Space);
+        Inputs.BindKey(InputActions.Pause, Keys.Escape);
         
-        _gameManager = new GameManager(_assets);
+        _gameManager = new GameManager(assets);
         
-        _virtualGamePad = new VirtualGamePad(_assets);
-        GlobalCommands = new GlobalCommands(Game, screenManager);
-        Commands = new PlayScreenCommands(this);
-        _forms = new PlayScreenForms(this, _gameManager.World, _inputs);
+        var virtualGamePad = new VirtualGamePad(assets);
+        _dialogs = new DialogManager(this, _gameManager.World.DialogLayer);
         
-        _virtualGamePadManager = new VirtualGamePadManager(_inputs);
-        _inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
+        _virtualGamePadManager = new VirtualGamePadManager(Inputs);
+        Inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
-        _gameManager.Events.AddObserver(this);
+        _gameManager.Events.Subscribe<PausedEvent>(OnPaused);
+        _gameManager.Events.Subscribe<ResumeEvent>(OnResume);
+        _gameManager.Events.Subscribe<GameEndedEvent>(OnGameEnded);
 
         _renderer = new RenderSystem(GraphicsDevice);
         _renderer.Add(new EntityRenderer(_gameManager.World));
-        _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, _virtualGamePad));
+        _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, virtualGamePad));
         
-        _theme = new ThemeManager(_assets);
-        _theme.Apply(_gameManager.World);
-        
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.Up, Commands.MoveUp);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.Left, Commands.MoveLeft);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.Right, Commands.MoveRight);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.Down, Commands.MoveDown);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.W, Commands.MoveUp);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.A, Commands.MoveLeft);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.D, Commands.MoveRight);
-        _inputs.Bindings.BindKeyboardKeyDown(Keys.S, Commands.MoveDown);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Space, Commands.SpeedUp);
-        _inputs.Bindings.BindKeyboardKeyReleased(Keys.Space, Commands.SpeedDown);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.Escape, Commands.Pause);
-        _inputs.Bindings.BindKeyboardKeyPressed(Keys.F, GlobalCommands.FullScreen);
-        
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.DPadUp, Commands.MoveUp);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.DPadLeft, Commands.MoveLeft);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.DPadRight, Commands.MoveRight);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.DPadDown, Commands.MoveDown);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.LeftThumbstickUp, Commands.MoveUp);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.LeftThumbstickLeft, Commands.MoveLeft);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.LeftThumbstickRight, Commands.MoveRight);
-        _inputs.Bindings.BindGamePadButtonDown(Buttons.LeftThumbstickDown, Commands.MoveDown);
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.A, Commands.SpeedUp);
-        _inputs.Bindings.BindGamePadButtonReleased(Buttons.A, Commands.SpeedDown);
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Start, Commands.Pause);
-        _inputs.Bindings.BindGamePadButtonPressed(Buttons.Back, GlobalCommands.OpenStartScreen);
-        
+        var theme = new ThemeManager(assets);
+        theme.Apply(_gameManager.World);
+
         _gameManager.Initialize();
     }
 
     public override void Update(GameTime gameTime)
     {
         _virtualGamePadManager.Update();
-        _inputs.Update();
+        
+        Inputs.Update();
+
+        if (Inputs.IsActionDown(InputActions.Up))
+            _gameManager.ChangeDirection(SnakeDirection.Up);
+        
+        if (Inputs.IsActionDown(InputActions.Down))
+            _gameManager.ChangeDirection(SnakeDirection.Down);
+        
+        if (Inputs.IsActionDown(InputActions.Left))
+            _gameManager.ChangeDirection(SnakeDirection.Left);
+        
+        if (Inputs.IsActionDown(InputActions.Right))
+            _gameManager.ChangeDirection(SnakeDirection.Right);
+        
+        if (Inputs.IsActionDown(InputActions.Faster))
+            _gameManager.Faster();
+        
+        if (Inputs.IsActionReleased(InputActions.Faster))
+            _gameManager.Slower();
+        
+        if (Inputs.IsActionPressed(InputActions.Pause))
+            _gameManager.TogglePause();
         
         _gameManager.Update(gameTime);
-        
-        _renderer.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime)
@@ -95,47 +88,28 @@ public class PlayScreen : GameScreen, IObserver
         _renderer.Render(gameTime);
     }
 
-    public void Notify(NotifyEvent notifyEvent)
-    {
-        if (notifyEvent.EventType == NotifyEventType.GameEnded)
-        {
-            _forms.GameOver.UpdateResults(
-                _gameManager.World.Score.Score,
-                _gameManager.World.Score.Deaths,
-                _gameManager.World.Score.LongestSnake);
-
-            _forms.GameOver.IsVisible = true;
-        }
-
-        if (notifyEvent.EventType == NotifyEventType.Paused)
-        {
-            _forms.Pause.IsVisible = true;
-        }
-
-        if (notifyEvent.EventType == NotifyEventType.Resume)
-        {
-            if (_forms.Pause.IsVisible)
-                _forms.Pause.IsVisible = false;
-        }
-    }
-
-    public void ChangeDirection(SnakeDirection direction)
-    {
-        _gameManager.ChangeDirection(direction);
-    }
-
-    public void Faster()
-    {
-        _gameManager.Faster();
-    }
-
-    public void Slower()
-    {
-        _gameManager.Slower();
-    }
-
     public void TogglePause()
     {
         _gameManager.TogglePause();
+    }
+    
+    private void OnPaused(PausedEvent e)
+    {
+        _dialogs.Pause.IsVisible = true;
+    }
+    
+    private void OnGameEnded(GameEndedEvent e)
+    {
+        _dialogs.GameOver.UpdateResults(
+            _gameManager.World.Score.Score,
+            _gameManager.World.Score.Deaths,
+            _gameManager.World.Score.LongestSnake);
+
+        _dialogs.GameOver.IsVisible = true;
+    }
+    
+    private void OnResume(ResumeEvent obj)
+    {
+        _dialogs.Pause.IsVisible = false;
     }
 }

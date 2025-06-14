@@ -8,7 +8,7 @@ public class World : Entity
     public ScoreDisplay Score { get; }
     public PlayField PlayField { get; }
     public Entity FadingTextLayer { get; }
-    public Entity FormLayer { get; }
+    public Entity DialogLayer { get; }
     public PlayerSnake PlayerSnake { get; set; }
     
     public World(AssetManager assets)
@@ -36,7 +36,7 @@ public class World : Entity
         
         AddChild(Score);
 
-        FormLayer = new Entity();
-        AddChild(FormLayer);
+        DialogLayer = new Entity();
+        AddChild(DialogLayer);
     }
 }

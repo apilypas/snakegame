@@ -1,13 +1,16 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.Core.Commands;
 using SnakeGame.Core.Inputs;
+using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.Entities;
 
 public class Button : Control
 {
+    private readonly Label _label;
+    
     public Texture2D Texture { get; set; }
     public Rectangle TextureNormalRectangle { get; set; }
     public Rectangle TextureHoveredRectangle { get; set; }
@@ -16,9 +19,9 @@ public class Button : Control
     public InputManager Input { get; set; }
     public bool IsHovered { get; set; }
     public bool IsPressed { get; set; }
-    public ICommand Command { get; set; } 
-    
-    private readonly Label _label;
+
+    public delegate void OnButtonPressedEventHandler();
+    public event OnButtonPressedEventHandler OnClick;
 
     public Button()
     {
@@ -42,7 +45,7 @@ public class Button : Control
         IsPressed = IsHovered && Input.Mouse.IsLeftButtonDown;
         
         if (IsHovered && Input.Mouse.IsLeftButtonReleased)
-            Command?.Execute();
+            OnClick?.Invoke();
     }
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

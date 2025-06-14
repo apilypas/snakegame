@@ -5,15 +5,16 @@ namespace SnakeGame.Core;
 public static class Globals
 {
     public static bool IsMobileDevice { get; set; }
-    public static int VirtualScreenWidth { get; set; }
-    public static int VirtualScreenHeight { get; set; }
-    public static Vector2 ScreenScale { get; set; }
     public static Vector2 PlayFieldOffset { get; set; }
     public static Rectangle PlayFieldRectangle { get; }
     public static Vector2 SnakeSegmentOrigin { get; }
 
     static Globals()
     {
+        PlayFieldOffset = new Vector2(
+            (Constants.ScreenWidth - Constants.WallWidth * Constants.SegmentSize) / 2f,
+            (Constants.ScreenHeight - Constants.WallHeight * Constants.SegmentSize) / 2f);
+        
         PlayFieldRectangle = new(
             0,
             0,

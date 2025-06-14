@@ -19,7 +19,7 @@ public class GameManager
 
     private float _timer = Constants.InitialTimer;
     
-    public EventManager Events { get; } = new();
+    public EventBus.EventBus Events { get; } = new();
 
     private GameWorldState _state = GameWorldState.Running;
     
@@ -29,8 +29,6 @@ public class GameManager
     {
         World = new World(assets);
         _entities = new EntityManager(World, assets);
-        
-        Events.AddObserver(World.Score);
     }
 
     public void Initialize()
@@ -98,12 +96,12 @@ public class GameManager
         if (_state == GameWorldState.Running)
         {
             _state = GameWorldState.Paused;
-            Events.Notify(new NotifyEvent(null, null, NotifyEventType.Paused));
+            Events.Publish(new PausedEvent());
         }
         else if (_state == GameWorldState.Paused)
         {
             _state = GameWorldState.Running;
-            Events.Notify(new NotifyEvent(null, null, NotifyEventType.Resume));
+            Events.Publish(new ResumeEvent());
         }
     }
     
@@ -115,12 +113,12 @@ public class GameManager
 
         if (_timer >= 0f)
         {
-            Events.Notify(new NotifyTimerChangedEvent(_timer));
+            World.Score.UpdateTimer((int)_timer);
         }
         else
         {
             _state = GameWorldState.Ended;
-            Events.Notify(new NotifyEvent(null, null, NotifyEventType.GameEnded));
+            Events.Publish(new GameEndedEvent());
         }
     }
 
@@ -153,7 +151,7 @@ public class GameManager
             if (isDead)
             {
                 snake.Die();
-                Events.Notify(new NotifyEvent(snake, snake, NotifyEventType.SnakeDied));
+                World.Score.UpdateDeaths(snake);
             }
         }
     }
@@ -174,7 +172,7 @@ public class GameManager
 
                 collectable.QueueRemove = true;
                 _entities.Collectables.Remove(collectable);
-                Events.Notify(new NotifyEvent(collectable, snake, NotifyEventType.CollectableRemoved));
+                World.Score.UpdateScore(collectable, snake);
             }
         }
     }

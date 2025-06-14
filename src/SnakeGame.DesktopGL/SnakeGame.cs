@@ -28,7 +28,7 @@ public class SnakeGame : Game
         
         _screenManager = new ScreenManager();
         _screenManager.Initialize();
-        _screenManager.LoadScreen(new StartScreen(this, _screenManager));
+        _screenManager.LoadScreen(new StartScreen(this));
     }
 
     protected override void Update(GameTime gameTime)

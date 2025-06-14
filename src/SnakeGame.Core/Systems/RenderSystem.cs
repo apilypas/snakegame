@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SnakeGame.Core.Renderers;
-using SnakeGame.Core.Screens;
 
 namespace SnakeGame.Core.Systems;
 
@@ -11,21 +10,18 @@ public class RenderSystem
     private readonly IList<RendererBase> _renderers = [];
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;
-    private readonly ScreenScaleHandler _screenScaleHandler;
-    private RenderTarget2D _renderTarget;
+    private readonly RenderTarget2D _renderTarget;
 
     public RenderSystem(GraphicsDevice graphics)
     {
         _graphics = graphics;
-        _screenScaleHandler = new ScreenScaleHandler(graphics);
-        _screenScaleHandler.UpdateScreenScaling();
         
         _spriteBatch = new SpriteBatch(graphics);
         
         _renderTarget = new RenderTarget2D(
             graphics,
-            Globals.VirtualScreenWidth,
-            Globals.VirtualScreenHeight);
+            Constants.ScreenWidth,
+            Constants.ScreenHeight);
     }
 
     public void Add(RendererBase renderer)
@@ -67,22 +63,10 @@ public class RenderSystem
             Color.White,
             0f,
             Vector2.Zero,
-            Globals.ScreenScale,
+            1f,
             SpriteEffects.None,
             0f);
         
         _spriteBatch.End();
-    }
-
-    public void Update(GameTime gameTime)
-    {
-        if (_screenScaleHandler.UpdateScreenScaling())
-        {
-            _renderTarget?.Dispose();
-            _renderTarget = new RenderTarget2D(
-                _graphics,
-                Globals.VirtualScreenWidth,
-                Globals.VirtualScreenHeight);
-        }
     }
 }
