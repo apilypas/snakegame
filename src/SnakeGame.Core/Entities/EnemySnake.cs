@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Enums;
 using SnakeGame.Core.StateMachines;
@@ -16,10 +17,18 @@ public class EnemySnake : Snake
         Color.Chocolate,
         Color.Purple,
         Color.Tomato,
-        Color.Purple
+        Color.RosyBrown,
+        Color.Aquamarine,
+        Color.Violet,
+        Color.GreenYellow,
+        Color.Beige,
+        Color.Plum,
+        Color.Gray,
+        Color.DarkGray,
+        Color.DarkBlue
     ];
     
-    public int EnemySnakeId { get; set; }
+    private readonly static Random Random = new();
     
     public EnemySnake(
         AssetManager assets,
@@ -34,7 +43,7 @@ public class EnemySnake : Snake
 
     public override void Initialize()
     {
-        Color = EnemyColors[EnemySnakeId % EnemyColors.Length];
+        Color = EnemyColors[Random.NextInt64() % EnemyColors.Length];
         base.Initialize();
     }
 }

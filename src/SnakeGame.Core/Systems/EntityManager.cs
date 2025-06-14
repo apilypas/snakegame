@@ -14,8 +14,6 @@ public class EntityManager
     private float _speedBoostSpawnTimer;
     private float _enemySpawnTimer;
     
-    private int _lastEntityId;
-    
     private readonly World _world;
     private readonly AssetManager _assets;
     
@@ -52,10 +50,7 @@ public class EntityManager
 
     public void SpawnEnemySnake(Vector2 at, int length, SnakeDirection direction)
     {
-        var enemySnake = new EnemySnake(_assets, at, length, direction, this)
-        {
-            EnemySnakeId = GetNextId()
-        };
+        var enemySnake = new EnemySnake(_assets, at, length, direction, this);
 
         Snakes.Add(enemySnake);
         _world.PlayField.AddChild(enemySnake);
@@ -350,10 +345,5 @@ public class EntityManager
                 _world.PlayField.AddChild(clock);
             }
         }
-    }
-
-    private int GetNextId()
-    {
-        return _lastEntityId++;
     }
 }
