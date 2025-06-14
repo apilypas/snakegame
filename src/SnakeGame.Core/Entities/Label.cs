@@ -10,7 +10,7 @@ public class Label : Entity
     public string Text { get; set; }
     public Color Color { get; set; }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.DrawStringWithShadow(
             Font,

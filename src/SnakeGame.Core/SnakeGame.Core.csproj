@@ -12,9 +12,11 @@
     </ItemGroup>
     <ItemGroup>
       <None Remove="pipeline-references\**" />
+      <None Remove="bin\**" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Remove="pipeline-references\**" />
+      <EmbeddedResource Remove="bin\**" />
     </ItemGroup>
     <ItemGroup>
       <None Update="Content\Map.tmx">
@@ -32,12 +34,14 @@
     <ItemGroup>
       <MonoGameContentReference Include="**\*.mgcb" />
       <MonoGameContentReference Remove="pipeline-references\**" />
+      <MonoGameContentReference Remove="bin\**" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="bin\Debug\net8.0\" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="pipeline-references\**" />
+      <Compile Remove="bin\**" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
       <Message Text="Restoring dotnet tools" Importance="High" />

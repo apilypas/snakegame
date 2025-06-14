@@ -9,7 +9,7 @@ public class Panel : Control
     public Texture2D Texture { get; set; }
     public Rectangle TextureRectangle { get; set; }
     
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.DrawFromNinePatch(
             GlobalPosition,

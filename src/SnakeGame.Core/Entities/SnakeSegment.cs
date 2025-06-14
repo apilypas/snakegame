@@ -3,12 +3,14 @@ using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.Entities;
 
-public class SnakeSegment : Entity
+public class SnakeSegment
 {
     public SnakeDirection Direction { get; init; }
     public bool IsCorner { get; init; }
     public bool IsClockwise { get; init; }
     public Color Color { get; set; }
+    public Vector2 Position { get; set; }
+    public float Rotation { get; set; }
 
     public Rectangle GetRectangle()
     {

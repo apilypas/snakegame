@@ -9,7 +9,6 @@ public class Entity
 {
     private readonly HashSet<Entity> _children = [];
     
-    public int Id { get; set; }
     public Vector2 Position { get; set; }
     public Vector2 GlobalPosition { get; set; }
     public float Rotation { get; set; }
@@ -20,7 +19,7 @@ public class Entity
     public ThemeManager Theme { get; set; }
 
     public virtual void Update(GameTime gameTime) { }
-    public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime) { }
+    public virtual void Draw(SpriteBatch spriteBatch) { }
 
     public void AddChild(Entity entity)
     {

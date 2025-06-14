@@ -19,6 +19,8 @@ public class EnemySnake : Snake
         Color.Purple
     ];
     
+    public int EnemySnakeId { get; set; }
+    
     public EnemySnake(
         AssetManager assets,
         Vector2 location,
@@ -32,8 +34,7 @@ public class EnemySnake : Snake
 
     public override void Initialize()
     {
+        Color = EnemyColors[EnemySnakeId % EnemyColors.Length];
         base.Initialize();
-
-        Color = EnemyColors[Id % EnemyColors.Length];
     }
 }

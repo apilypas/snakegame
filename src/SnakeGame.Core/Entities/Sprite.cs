@@ -11,7 +11,7 @@ public class Sprite : Entity
     public Vector2 Origin { get; set; }
     public SpriteEffects Effects { get; set; } = SpriteEffects.None;
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(
             Texture,

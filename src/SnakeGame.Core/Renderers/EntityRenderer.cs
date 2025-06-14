@@ -26,7 +26,7 @@ public class EntityRenderer : RendererBase
         if (!entity.IsVisible)
             return;
 
-        entity.Draw(spriteBatch, gameTime);
+        entity.Draw(spriteBatch);
 
         foreach (var child in entity.GetChildren())
         {

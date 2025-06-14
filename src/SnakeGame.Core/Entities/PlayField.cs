@@ -18,7 +18,7 @@ public class PlayField : Entity
             _tiledMapRenderer.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         if (_tiledMapRenderer == null)
             _tiledMapRenderer = new TiledMapRenderer(spriteBatch.GraphicsDevice, TiledMap);

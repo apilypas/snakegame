@@ -48,6 +48,7 @@ public class Snake : Entity
     {
         _renderer = new SnakeRenderer(this, _assets);
         Reset(_defaultLocation, _defaultLength, _defaultDirection);
+        UpdateSegmentColors();
     }
 
     public void UpdateDirection(SnakeDirection direction)
@@ -214,7 +215,7 @@ public class Snake : Entity
         _speedTimer = seconds;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         _renderer.Render(spriteBatch);
     }
@@ -267,7 +268,7 @@ public class Snake : Entity
     {
         Head.Color = GetColor(Color, 0);
         Tail.Color = GetColor(Color, Segments.Count - 1);
-
+        
         for (var i = 0; i < Segments.Count; i++)
         {
             Segments[i].Color = GetColor(Color, i);

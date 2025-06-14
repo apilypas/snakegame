@@ -48,7 +48,7 @@ public class Button : Control
             OnClick?.Invoke();
     }
 
-    public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         if (IsPressed)
         {

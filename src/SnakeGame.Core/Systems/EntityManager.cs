@@ -54,7 +54,7 @@ public class EntityManager
     {
         var enemySnake = new EnemySnake(_assets, at, length, direction, this)
         {
-            Id = GetNextId()
+            EnemySnakeId = GetNextId()
         };
 
         Snakes.Add(enemySnake);
@@ -110,7 +110,6 @@ public class EntityManager
         {
             var collectable = new Collectable(_assets.CollectableTexture, CollectableType.Diamond)
             {
-                Id = GetNextId(),
                 Position = location.Value
             };
             
@@ -145,7 +144,6 @@ public class EntityManager
         {
             var collectable = new Collectable(_assets.CollectableTexture, CollectableType.SpeedBoost)
             {
-                Id = GetNextId(),
                 Position = location.Value
             };
             
@@ -331,7 +329,6 @@ public class EntityManager
         {
             var snakePart = new Collectable(_assets.CollectableTexture, CollectableType.SnakePart)
             {
-                Id = GetNextId(),
                 Position = snake.Segments[0].Position
             };
 
@@ -346,7 +343,6 @@ public class EntityManager
             {
                 var clock = new Collectable(_assets.CollectableTexture, CollectableType.Clock)
                 {
-                    Id = GetNextId(),
                     Position = snake.Segments[0].Position
                 };
 
