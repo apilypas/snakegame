@@ -266,12 +266,16 @@ public class Snake : Entity
     
     private void UpdateSegmentColors()
     {
-        Head.Color = GetColor(Color, 0);
-        Tail.Color = GetColor(Color, Segments.Count - 1);
+        if (!Head.HasColor)
+            Head.Color = GetColor(Color, 0);
+        
+        if (!Tail.HasColor)
+            Tail.Color = GetColor(Color, Segments.Count - 1);
         
         for (var i = 0; i < Segments.Count; i++)
         {
-            Segments[i].Color = GetColor(Color, i);
+            if (!Segments[i].HasColor)
+                Segments[i].Color = GetColor(Color, i);
         }
     }
     

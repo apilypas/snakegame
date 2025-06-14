@@ -11,6 +11,7 @@ public class SnakeSegment
     public Color Color { get; set; }
     public Vector2 Position { get; set; }
     public float Rotation { get; set; }
+    public bool HasColor { get; set; }
 
     public Rectangle GetRectangle()
     {
