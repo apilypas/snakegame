@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SnakeGame.Core.Entities;
+using SnakeGame.Core.Enums;
 using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Renderers;

@@ -1,4 +1,4 @@
-namespace SnakeGame.Core.Entities;
+namespace SnakeGame.Core.Enums;
 
 public enum CollectableType
 {

@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Entities;
+using SnakeGame.Core.Enums;
 using SnakeGame.Core.Events;
 using SnakeGame.Core.Utils;
 

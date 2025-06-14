@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.Entities;
 
