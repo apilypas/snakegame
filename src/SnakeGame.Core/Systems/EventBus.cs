@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SnakeGame.Core.EventBus;
+namespace SnakeGame.Core.Systems;
 
 public class EventBus
 {

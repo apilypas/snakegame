@@ -20,7 +20,7 @@ public class GameManager
 
     private float _timer = Constants.InitialTimer;
     
-    public EventBus.EventBus Events { get; } = new();
+    public EventBus Events { get; } = new();
 
     private GameWorldState _state = GameWorldState.Running;
     
