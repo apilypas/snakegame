@@ -11,7 +11,7 @@ public class World : Entity
     public Entity DialogLayer { get; }
     public PlayerSnake PlayerSnake { get; set; }
     
-    public World(AssetManager assets)
+    public World(AssetManager assets, EventBus eventBus)
     {
         PlayField = new PlayField
         {
@@ -28,7 +28,7 @@ public class World : Entity
         
         AddChild(FadingTextLayer);
         
-        Score = new ScoreDisplay
+        Score = new ScoreDisplay(eventBus)
         {
             Position = new Vector2(Globals.PlayFieldRectangle.Width + 16f, 16f) 
                        + Globals.PlayFieldOffset

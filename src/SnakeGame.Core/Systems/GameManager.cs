@@ -19,10 +19,11 @@ public class GameManager
     private readonly EntityManager _entities;
 
     private float _timer = Constants.InitialTimer;
+    private int _timerRounded = (int)Constants.InitialTimer;
     private float _scoreMultiplicatorTimer;
     private int _scoreMultiplicator = 1;
 
-    public EventBus Events { get; } = new();
+    public EventBus EventBus { get; } = new();
 
     private GameWorldState _state = GameWorldState.Running;
 
@@ -33,7 +34,7 @@ public class GameManager
 
     public GameManager(AssetManager assets)
     {
-        World = new World(assets);
+        World = new World(assets, EventBus);
         _entities = new EntityManager(World, assets);
     }
 
@@ -103,12 +104,12 @@ public class GameManager
         if (_state == GameWorldState.Running)
         {
             _state = GameWorldState.Paused;
-            Events.Publish(new PausedEvent());
+            EventBus.Publish(new PausedEvent());
         }
         else if (_state == GameWorldState.Paused)
         {
             _state = GameWorldState.Running;
-            Events.Publish(new ResumeEvent());
+            EventBus.Publish(new ResumeEvent());
         }
     }
     
@@ -120,12 +121,16 @@ public class GameManager
 
         if (_timer >= 0f)
         {
-            World.Score.SetTimer((int)_timer);
+            if ((int)_timer != _timerRounded)
+            {
+                _timerRounded = (int)_timer;
+                EventBus.Publish(new TimerChangedEvent { Timer = _timerRounded });
+            }
         }
         else
         {
             _state = GameWorldState.Ended;
-            Events.Publish(new GameEndedEvent());
+            EventBus.Publish(new GameEndedEvent());
         }
     }
 
@@ -163,8 +168,8 @@ public class GameManager
                 {
                     Deaths++;
                     _scoreMultiplicator = 1;
-                    World.Score.SetDeaths(Deaths);
-                    World.Score.SetScoreMultiplicator(_scoreMultiplicator);
+                    EventBus.Publish(new PlayerDiedEvent { TotalDeaths = Deaths });
+                    EventBus.Publish(new ScoreMultiplicatorChangedEvent { ScoreMultiplicator = _scoreMultiplicator });
                 }
             }
         }
@@ -189,7 +194,7 @@ public class GameManager
 
                 if (snake is PlayerSnake)
                 {
-                    World.Score.SetScore(Score);
+                    EventBus.Publish(new ScoreChangedEvent { Score = Score });
                 }
             }
         }
@@ -197,7 +202,7 @@ public class GameManager
         if (World.PlayerSnake != null && World.PlayerSnake.Segments.Count > LongestSnake)
         {
             LongestSnake = World.PlayerSnake.Segments.Count;
-            World.Score.SetLongestSnake(LongestSnake);
+            EventBus.Publish(new LongestSnakeChanged { Length = LongestSnake });
         }
     }
 
@@ -259,7 +264,7 @@ public class GameManager
         {
             _scoreMultiplicatorTimer -= Constants.ScoreMultiplicatorTimer;
             _scoreMultiplicator++;
-            World.Score.SetScoreMultiplicator(_scoreMultiplicator);
+            EventBus.Publish(new ScoreMultiplicatorChangedEvent { ScoreMultiplicator = _scoreMultiplicator });
         }
     }
 }

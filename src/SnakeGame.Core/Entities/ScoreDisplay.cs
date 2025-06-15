@@ -1,4 +1,6 @@
 using System.Text;
+using SnakeGame.Core.Events;
+using SnakeGame.Core.Systems;
 
 namespace SnakeGame.Core.Entities;
 
@@ -12,49 +14,52 @@ public class ScoreDisplay : Entity
     private int _timer = (int)Constants.InitialTimer;
     private int _scoreMultiplicator = 1;
 
-    public ScoreDisplay()
+    public ScoreDisplay(EventBus eventBus)
     {
         _scoreLabel = new Label();
 
+        eventBus.Subscribe<TimerChangedEvent>(OnTimerChanged);
+        eventBus.Subscribe<ScoreChangedEvent>(OnScoreChanged);
+        eventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+        eventBus.Subscribe<LongestSnakeChanged>(OnLongestSnakeChanged);
+        eventBus.Subscribe<ScoreMultiplicatorChangedEvent>(OnScoreMultiplayerChanged);
+        
         AddChild(_scoreLabel);
         
         UpdateTexts();
     }
-    
-    public void SetDeaths(int deaths)
-    {
-        _deaths = deaths;
-        UpdateTexts();
-    }
-    
-    public void SetTimer(int timer)
-    {
-        if (_timer == timer)
-            return;
 
-        _timer = timer;
-        
-        UpdateTexts();
-    }
-    
-    public void SetScore(int score)
+    private void OnPlayerDied(PlayerDiedEvent e)
     {
-        _score = score;
-
+        _deaths = e.TotalDeaths;
         UpdateTexts();
     }
 
-    public void SetLongestSnake(int longest)
+    private void OnTimerChanged(TimerChangedEvent e)
     {
-        _longestSnake = longest;
+        _timer = e.Timer;
         
         UpdateTexts();
     }
 
-    public void SetScoreMultiplicator(int scoreMultiplicator)
+    private void OnScoreChanged(ScoreChangedEvent e)
     {
-        _scoreMultiplicator = scoreMultiplicator;
+        _score = e.Score;
+
+        UpdateTexts();
+    }
+
+    private void OnLongestSnakeChanged(LongestSnakeChanged e)
+    {
+        _longestSnake = e.Length;
         
+        UpdateTexts();
+    }
+    
+    private void OnScoreMultiplayerChanged(ScoreMultiplicatorChangedEvent e)
+    {
+        _scoreMultiplicator = e.ScoreMultiplicator;
+
         UpdateTexts();
     }
 

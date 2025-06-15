@@ -40,9 +40,9 @@ public class PlayScreen : GameScreen
         _virtualGamePadManager = new VirtualGamePadManager(Inputs);
         Inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
-        _gameManager.Events.Subscribe<PausedEvent>(OnPaused);
-        _gameManager.Events.Subscribe<ResumeEvent>(OnResume);
-        _gameManager.Events.Subscribe<GameEndedEvent>(OnGameEnded);
+        _gameManager.EventBus.Subscribe<PausedEvent>(OnPaused);
+        _gameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
+        _gameManager.EventBus.Subscribe<GameEndedEvent>(OnGameEnded);
 
         _renderer = new RenderSystem(GraphicsDevice);
         _renderer.Add(new EntityRenderer(_gameManager.World));
