@@ -102,9 +102,9 @@ public class PlayScreen : GameScreen
     private void OnGameEnded(GameEndedEvent e)
     {
         _dialogs.GameOver.UpdateResults(
-            _gameManager.World.Score.Score,
-            _gameManager.World.Score.Deaths,
-            _gameManager.World.Score.LongestSnake);
+            _gameManager.Score,
+            _gameManager.Deaths,
+            _gameManager.LongestSnake);
 
         _dialogs.GameOver.IsVisible = true;
     }

@@ -1,17 +1,16 @@
-using System;
 using System.Text;
-using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.Entities;
 
 public class ScoreDisplay : Entity
 {
     private readonly Label _scoreLabel;
-    
-    public int Score { get; private set; }
-    public int Deaths { get; private set; }
-    public int LongestSnake { get; private set; } = Constants.InitialSnakeSize;
-    public int Timer { get; private set; } = (int)Constants.InitialTimer;
+
+    private int _score;
+    private int _deaths;
+    private int _longestSnake = Constants.InitialSnakeSize;
+    private int _timer = (int)Constants.InitialTimer;
+    private int _scoreMultiplicator = 1;
 
     public ScoreDisplay()
     {
@@ -22,56 +21,51 @@ public class ScoreDisplay : Entity
         UpdateTexts();
     }
     
-    public void UpdateDeaths(Snake snake)
+    public void SetDeaths(int deaths)
     {
-        if (snake is not PlayerSnake)
-            return;
-
-        Deaths++;
+        _deaths = deaths;
         UpdateTexts();
     }
     
-    public void UpdateTimer(int timer)
+    public void SetTimer(int timer)
     {
-        if (Timer == timer)
+        if (_timer == timer)
             return;
 
-        Timer = timer;
-        UpdateTexts();
-    }
-    
-    public void UpdateScore(Collectable collectable, Snake snake)
-    {
-        if (snake is not PlayerSnake playerSnake)
-            return;
+        _timer = timer;
         
-        switch (collectable.Type)
-        {
-            case CollectableType.Diamond:
-                Score += Constants.DiamondCollectScore;
-                break;
-            case CollectableType.SnakePart:
-                Score += Constants.SnakePartCollectScore;
-                break;
-            case CollectableType.SpeedBoost:
-                Score += Constants.SpeedBoostCollectScore;
-                break;
-            case CollectableType.Clock:
-                Score += Constants.ClockCollectScore;
-                break;
-        }
+        UpdateTexts();
+    }
+    
+    public void SetScore(int score)
+    {
+        _score = score;
 
-        LongestSnake = Math.Max(LongestSnake, playerSnake.Segments.Count);
+        UpdateTexts();
+    }
 
+    public void SetLongestSnake(int longest)
+    {
+        _longestSnake = longest;
+        
+        UpdateTexts();
+    }
+
+    public void SetScoreMultiplicator(int scoreMultiplicator)
+    {
+        _scoreMultiplicator = scoreMultiplicator;
+        
         UpdateTexts();
     }
 
     private void UpdateTexts()
     {
         _scoreLabel.Text = new StringBuilder()
-            .AppendLine($"Score: {Score}")
-            .AppendLine($"Timer: {Timer / 60:00}:{Timer % 60:00}")
-            .AppendLine($"Deaths: {Deaths}")
+            .AppendLine($"Score: {_score}")
+            .AppendLine($"Timer: {_timer / 60:00}:{_timer % 60:00}")
+            .AppendLine($"Deaths: {_deaths}")
+            .AppendLine($"Longest Snake: {_longestSnake}")
+            .AppendLine($"Score multiplicator: {_scoreMultiplicator}")
             .ToString();
     }
 }

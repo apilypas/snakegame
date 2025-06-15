@@ -19,12 +19,17 @@ public class GameManager
     private readonly EntityManager _entities;
 
     private float _timer = Constants.InitialTimer;
-    
+    private float _scoreMultiplicatorTimer;
+    private int _scoreMultiplicator = 1;
+
     public EventBus Events { get; } = new();
 
     private GameWorldState _state = GameWorldState.Running;
-    
+
     public World World { get; }
+    public int Score { get; private set; }
+    public int Deaths { get; private set; }
+    public int LongestSnake { get; private set; } = 3;
 
     public GameManager(AssetManager assets)
     {
@@ -59,6 +64,7 @@ public class GameManager
             return;
         
         HandleGameTimer(gameTime);
+        HandleScoreMultiplicator(gameTime);
         HandleCollectables();
         HandleCollisions();
 
@@ -114,7 +120,7 @@ public class GameManager
 
         if (_timer >= 0f)
         {
-            World.Score.UpdateTimer((int)_timer);
+            World.Score.SetTimer((int)_timer);
         }
         else
         {
@@ -152,7 +158,14 @@ public class GameManager
             if (isDead)
             {
                 snake.Die();
-                World.Score.UpdateDeaths(snake);
+
+                if (snake is PlayerSnake)
+                {
+                    Deaths++;
+                    _scoreMultiplicator = 1;
+                    World.Score.SetDeaths(Deaths);
+                    World.Score.SetScoreMultiplicator(_scoreMultiplicator);
+                }
             }
         }
     }
@@ -173,8 +186,18 @@ public class GameManager
 
                 collectable.QueueRemove = true;
                 _entities.Collectables.Remove(collectable);
-                World.Score.UpdateScore(collectable, snake);
+
+                if (snake is PlayerSnake)
+                {
+                    World.Score.SetScore(Score);
+                }
             }
+        }
+
+        if (World.PlayerSnake != null && World.PlayerSnake.Segments.Count > LongestSnake)
+        {
+            LongestSnake = World.PlayerSnake.Segments.Count;
+            World.Score.SetLongestSnake(LongestSnake);
         }
     }
 
@@ -185,7 +208,9 @@ public class GameManager
             snake.Grow();
             if (snake is PlayerSnake)
             {
-                _entities.SpawnFadingText(snake.Head.Position, $"+{Constants.DiamondCollectScore}");
+                var score = _scoreMultiplicator * Constants.DiamondCollectScore;
+                Score += score;
+                _entities.SpawnFadingText(snake.Head.Position, $"+{score}");
             }
         }
         else if (collectable.Type == CollectableType.SnakePart)
@@ -193,7 +218,9 @@ public class GameManager
             snake.Grow();
             if (snake is PlayerSnake)
             {
-                _entities.SpawnFadingText(snake.Head.Position, $"+{Constants.SnakePartCollectScore}");
+                var score = _scoreMultiplicator * Constants.SnakePartCollectScore;
+                Score += score;
+                _entities.SpawnFadingText(snake.Head.Position, $"+{score}");
             }
         }
         else if (collectable.Type == CollectableType.SpeedBoost)
@@ -202,7 +229,9 @@ public class GameManager
             snake.SpeedBoost(Constants.SpeedUpTimer);
             if (snake is PlayerSnake)
             {
-                _entities.SpawnFadingText(snake.Head.Position, $"+{Constants.SpeedBoostCollectScore} (Speed)");
+                var score = _scoreMultiplicator * Constants.SpeedBoostCollectScore;
+                Score += score;
+                _entities.SpawnFadingText(snake.Head.Position, $"+{score} (+Speed)");
             }
         }
         else if (collectable.Type == CollectableType.Clock)
@@ -213,8 +242,24 @@ public class GameManager
                 _timer += Constants.ClockBonus;
                 _timer = Math.Min(_timer, Constants.MaxTimer);
                 
-                _entities.SpawnFadingText(snake.Head.Position, $"+{Constants.ClockCollectScore} (Time)");
+                var score = _scoreMultiplicator * Constants.ClockCollectScore;
+                Score += score;
+                _entities.SpawnFadingText(snake.Head.Position, $"+{score} (+Time)");
             }
+        }
+    }
+    
+    private void HandleScoreMultiplicator(GameTime gameTime)
+    {
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        _scoreMultiplicatorTimer += deltaTime;
+
+        if (_scoreMultiplicatorTimer >= Constants.ScoreMultiplicatorTimer)
+        {
+            _scoreMultiplicatorTimer -= Constants.ScoreMultiplicatorTimer;
+            _scoreMultiplicator++;
+            World.Score.SetScoreMultiplicator(_scoreMultiplicator);
         }
     }
 }
