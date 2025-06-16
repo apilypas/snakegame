@@ -10,7 +10,7 @@ public class PauseDialog : Dialog
     public PauseDialog(PlayScreen playScreen, Entity world)
         : base(world, new SizeF(230, 130))
     {
-        AddChild(new Label
+        Content.AddChild(new Label
         {
             Text = "Game is paused",
             Position = new Vector2(10f, 10f)
@@ -26,7 +26,7 @@ public class PauseDialog : Dialog
 
         resumeButton.OnClick += playScreen.TogglePause;
 
-        AddChild(resumeButton);
+        Content.AddChild(resumeButton);
             
         var exitButton = new Button
         {
@@ -41,6 +41,6 @@ public class PauseDialog : Dialog
             playScreen.ScreenManager.LoadScreen(new StartScreen(playScreen.Game));
         };
             
-        AddChild(exitButton);
+        Content.AddChild(exitButton);
     }
 }

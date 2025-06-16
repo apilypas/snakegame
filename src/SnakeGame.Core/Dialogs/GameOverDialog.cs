@@ -13,7 +13,7 @@ public class GameOverDialog : Dialog
     public GameOverDialog(PlayScreen playScreen, Entity world)
         : base(world, new SizeF(230, 200))
     {
-        AddChild(new Label
+        Content.AddChild(new Label
         {
             Text = "Game is over",
             Position = new Vector2(10f, 10f)
@@ -24,7 +24,7 @@ public class GameOverDialog : Dialog
             Text = "-",
             Position = new Vector2(10f, 30f)
         };
-        AddChild(_resultsLabel);
+        Content.AddChild(_resultsLabel);
             
         var exitButton = new Button
         {
@@ -39,7 +39,7 @@ public class GameOverDialog : Dialog
             playScreen.ScreenManager.LoadScreen(new StartScreen(playScreen.Game));
         };
 
-        AddChild(exitButton);
+        Content.AddChild(exitButton);
     }
 
     public void UpdateResults(int score, int deaths, int longest)
