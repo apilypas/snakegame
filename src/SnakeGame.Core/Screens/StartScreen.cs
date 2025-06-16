@@ -1,8 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Entities;
+using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
@@ -21,10 +23,12 @@ public class StartScreen : GameScreen
         assets.LoadContent(Content);
         
         _inputs = new InputManager();
+        _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
+        _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         
         _world = CreateUserInterface();
         
-        _renderer = new RenderSystem(GraphicsDevice);
+        _renderer = new RenderSystem(GraphicsDevice, _inputs);
         
         _renderer.Add(new EntityRenderer(_world));
         
@@ -38,7 +42,12 @@ public class StartScreen : GameScreen
     {
         _inputs.Update();
         
+        if (_inputs.IsActionReleased(InputActions.Fullscreen))
+            Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
+        
         _world.UpdateEntityTree(gameTime);
+        
+        _renderer.Update();
     }
 
     public override void Draw(GameTime gameTime)
@@ -51,8 +60,8 @@ public class StartScreen : GameScreen
         var world = new Entity
         {
             Position = new Vector2(
-                GraphicsDevice.Viewport.Width / 2f - 50,
-                GraphicsDevice.Viewport.Height / 2f - 100)
+                Constants.ScreenWidth / 2f - 50,
+                Constants.ScreenHeight / 2f - 100)
         };
 
         var label = new Label

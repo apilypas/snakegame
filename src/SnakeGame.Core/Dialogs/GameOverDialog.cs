@@ -11,7 +11,7 @@ public class GameOverDialog : Dialog
     private readonly Label _resultsLabel;
         
     public GameOverDialog(PlayScreen playScreen, Entity world)
-        : base(playScreen.GraphicsDevice, world, new SizeF(230, 200))
+        : base(world, new SizeF(230, 200))
     {
         AddChild(new Label
         {

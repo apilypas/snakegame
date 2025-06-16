@@ -25,12 +25,18 @@ public class PlayScreen : GameScreen
         assets.LoadContent(Content);
         
         Inputs = new InputManager();
-        Inputs.BindKey(InputActions.Up, Keys.W, Keys.Up);
-        Inputs.BindKey(InputActions.Down, Keys.S, Keys.Down);
-        Inputs.BindKey(InputActions.Left, Keys.A, Keys.Left);
-        Inputs.BindKey(InputActions.Right, Keys.D, Keys.Right);
+        Inputs.BindKey(InputActions.Up, Keys.W);
+        Inputs.BindKey(InputActions.Up, Keys.Up);
+        Inputs.BindKey(InputActions.Down, Keys.S);
+        Inputs.BindKey(InputActions.Down, Keys.Down);
+        Inputs.BindKey(InputActions.Left, Keys.A);
+        Inputs.BindKey(InputActions.Left, Keys.Left);
+        Inputs.BindKey(InputActions.Right, Keys.D);
+        Inputs.BindKey(InputActions.Right, Keys.Right);
         Inputs.BindKey(InputActions.Faster, Keys.Space);
         Inputs.BindKey(InputActions.Pause, Keys.Escape);
+        Inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
+        Inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         
         _gameManager = new GameManager(assets);
         
@@ -44,7 +50,7 @@ public class PlayScreen : GameScreen
         _gameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
         _gameManager.EventBus.Subscribe<GameEndedEvent>(OnGameEnded);
 
-        _renderer = new RenderSystem(GraphicsDevice);
+        _renderer = new RenderSystem(GraphicsDevice, Inputs);
         _renderer.Add(new EntityRenderer(_gameManager.World));
         _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, virtualGamePad));
         
@@ -81,7 +87,12 @@ public class PlayScreen : GameScreen
         if (Inputs.IsActionPressed(InputActions.Pause))
             _gameManager.TogglePause();
         
+        if (Inputs.IsActionPressed(InputActions.Fullscreen))
+            Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
+        
         _gameManager.Update(gameTime);
+        
+        _renderer.Update();
     }
 
     public override void Draw(GameTime gameTime)

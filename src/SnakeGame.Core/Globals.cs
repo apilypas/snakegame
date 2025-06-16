@@ -11,15 +11,15 @@ public static class Globals
 
     static Globals()
     {
-        PlayFieldOffset = new Vector2(
-            (Constants.ScreenWidth - Constants.WallWidth * Constants.SegmentSize) / 2f,
-            (Constants.ScreenHeight - Constants.WallHeight * Constants.SegmentSize) / 2f);
-        
         PlayFieldRectangle = new(
             0,
             0,
             Constants.WallWidth * Constants.SegmentSize,
             Constants.WallHeight * Constants.SegmentSize);
+        
+        PlayFieldOffset = new Vector2(
+            (Constants.ScreenWidth - PlayFieldRectangle.Width) / 2f,
+            (Constants.ScreenHeight - PlayFieldRectangle.Height) / 2f);
 
         SnakeSegmentOrigin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     }

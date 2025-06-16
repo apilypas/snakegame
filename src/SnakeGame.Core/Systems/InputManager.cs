@@ -7,23 +7,34 @@ namespace SnakeGame.Core.Systems;
 
 public class InputManager
 {
+    private struct InputBinding
+    {
+        public string ActionName;
+        public Keys[] Keys;
+    }
+    
     public KeyboardInputHandler Keyboard { get; } = new();
     public MouseInputHandler Mouse { get; } = new();
     public TouchInputHandler Touch { get; } = new();
     public GamePadInputHandler GamePad { get; } = new();
     
-    private readonly Dictionary<string, List<Keys>> _bindings = new();
+    private readonly List<InputBinding> _bindings = [];
 
     public void BindKey(string actionName, params Keys[] keys)
     {
-        if (keys.Length == 0)
-            throw new ArgumentException($"{nameof(keys)} should have at least one value");
+        if (keys.Length is <= 0 or > 2)
+            throw new ArgumentException($"{nameof(keys)} should have one or two values");
         
-        if (!_bindings.ContainsKey(actionName))
-            _bindings.Add(actionName, []);
+        var inputBinding = new InputBinding
+        {
+            ActionName = actionName,
+            Keys = keys
+        };
         
-        foreach (var key in keys)
-            _bindings[actionName].Add(key);
+        _bindings.Add(inputBinding);
+        
+        // Priority for multi key shortcuts with more keys
+        _bindings.Sort((a, b) => b.Keys.Length.CompareTo(a.Keys.Length));
     }
 
     public void Update()
@@ -36,9 +47,17 @@ public class InputManager
 
     public bool IsActionDown(string actionName)
     {
-        foreach (var key in _bindings[actionName])
+        foreach (var binding in _bindings)
         {
-            if (Keyboard.GetIsKeyDown(key)) return true;
+            if (binding.ActionName == actionName)
+            {
+                if (binding.Keys.Length == 1)
+                    return Keyboard.GetIsKeyDown(binding.Keys[0]);
+                
+                if (binding.Keys.Length == 2)
+                    return Keyboard.GetIsKeyDown(binding.Keys[0])
+                        && Keyboard.GetIsKeyDown(binding.Keys[1]);
+            }
         }
 
         return false;
@@ -46,9 +65,17 @@ public class InputManager
 
     public bool IsActionPressed(string actionName)
     {
-        foreach (var key in _bindings[actionName])
+        foreach (var binding in _bindings)
         {
-            if (Keyboard.GetIsKeyPressed(key)) return true;
+            if (binding.ActionName == actionName)
+            {
+                if (binding.Keys.Length == 1)
+                    return Keyboard.GetIsKeyPressed(binding.Keys[0]);
+                
+                if (binding.Keys.Length == 2)
+                    return Keyboard.GetIsKeyDown(binding.Keys[0])
+                        && Keyboard.GetIsKeyPressed(binding.Keys[1]);
+            }
         }
 
         return false;
@@ -56,9 +83,17 @@ public class InputManager
     
     public bool IsActionReleased(string actionName)
     {
-        foreach (var key in _bindings[actionName])
+        foreach (var binding in _bindings)
         {
-            if (Keyboard.GetIsKeyReleased(key)) return true;
+            if (binding.ActionName == actionName)
+            {
+                if (binding.Keys.Length == 1)
+                    return Keyboard.GetIsKeyReleased(binding.Keys[0]);
+                
+                if (binding.Keys.Length == 2)
+                    return Keyboard.GetIsKeyDown(binding.Keys[0])
+                        && Keyboard.GetIsKeyReleased(binding.Keys[1]);
+            }
         }
 
         return false;

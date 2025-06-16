@@ -1,7 +1,5 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 

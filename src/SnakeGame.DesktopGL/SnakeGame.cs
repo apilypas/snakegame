@@ -8,18 +8,20 @@ namespace SnakeGame.DesktopGL;
 public class SnakeGame : Game
 {
     private ScreenManager _screenManager;
-    private GraphicsDeviceManager _graphics;
 
     public SnakeGame()
     {
-        _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = Constants.ScreenWidth;
-        _graphics.PreferredBackBufferHeight = Constants.ScreenHeight;
+        var graphics = new GraphicsDeviceManager(this);
+        graphics.PreferredBackBufferWidth = Constants.ScreenWidth;
+        graphics.PreferredBackBufferHeight = Constants.ScreenHeight;
         
         Window.Title = "Snake Game";
+        //Window.AllowUserResizing = true;
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        
+        Services.AddService(graphics);
     }
 
     protected override void LoadContent()

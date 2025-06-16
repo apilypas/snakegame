@@ -8,7 +8,7 @@ namespace SnakeGame.Core.Dialogs;
 public class PauseDialog : Dialog
 {
     public PauseDialog(PlayScreen playScreen, Entity world)
-        : base(playScreen.GraphicsDevice, world, new SizeF(230, 130))
+        : base(world, new SizeF(230, 130))
     {
         AddChild(new Label
         {
