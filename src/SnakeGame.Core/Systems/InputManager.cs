@@ -69,12 +69,18 @@ public class InputManager
         {
             if (binding.ActionName == actionName)
             {
-                if (binding.Keys.Length == 1)
-                    return Keyboard.GetIsKeyPressed(binding.Keys[0]);
-                
-                if (binding.Keys.Length == 2)
-                    return Keyboard.GetIsKeyDown(binding.Keys[0])
-                        && Keyboard.GetIsKeyPressed(binding.Keys[1]);
+                if (binding.Keys.Length == 1
+                    && Keyboard.GetIsKeyPressed(binding.Keys[0]))
+                {
+                    return true;
+                }
+
+                if (binding.Keys.Length == 2
+                    && Keyboard.GetIsKeyDown(binding.Keys[0])
+                    && Keyboard.GetIsKeyPressed(binding.Keys[1]))
+                {
+                    return true;
+                }
             }
         }
 
@@ -87,12 +93,18 @@ public class InputManager
         {
             if (binding.ActionName == actionName)
             {
-                if (binding.Keys.Length == 1)
-                    return Keyboard.GetIsKeyReleased(binding.Keys[0]);
-                
-                if (binding.Keys.Length == 2)
-                    return Keyboard.GetIsKeyDown(binding.Keys[0])
-                        && Keyboard.GetIsKeyReleased(binding.Keys[1]);
+                if (binding.Keys.Length == 1
+                    && Keyboard.GetIsKeyReleased(binding.Keys[0]))
+                {
+                    return true;
+                }
+
+                if (binding.Keys.Length == 2 
+                    && Keyboard.GetIsKeyDown(binding.Keys[0])
+                    && Keyboard.GetIsKeyReleased(binding.Keys[1]))
+                {
+                    return true;
+                }
             }
         }
 

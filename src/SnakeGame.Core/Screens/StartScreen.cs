@@ -42,7 +42,7 @@ public class StartScreen : GameScreen
     {
         _inputs.Update();
         
-        if (_inputs.IsActionReleased(InputActions.Fullscreen))
+        if (_inputs.IsActionPressed(InputActions.Fullscreen))
             Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
         
         _world.UpdateEntityTree(gameTime);
