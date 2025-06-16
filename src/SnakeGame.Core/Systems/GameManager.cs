@@ -21,6 +21,7 @@ public class GameManager
     private float _timer = Constants.InitialTimer;
     private int _timerRounded = (int)Constants.InitialTimer;
     private float _scoreMultiplicatorTimer;
+    private float _invincibilityTimer;
     private int _scoreMultiplicator = 1;
 
     public EventBus EventBus { get; } = new();
@@ -66,12 +67,13 @@ public class GameManager
         
         HandleGameTimer(gameTime);
         HandleScoreMultiplicator(gameTime);
+        HandleInvincibility(gameTime);
         HandleCollectables();
         HandleCollisions();
 
         _entities.Update(gameTime);
     }
-    
+
     public void Faster()
     {
         if (_state != GameWorldState.Running)
@@ -154,7 +156,10 @@ public class GameManager
                 {
                     if (snake != otherSnake && otherSnake.CollidesWith(headRectangle))
                     {
-                        isDead = true;
+                        if (snake.IsInvincible)
+                            otherSnake.Die();
+                        else
+                            isDead = true;
                         break;
                     }
                 }
@@ -239,6 +244,17 @@ public class GameManager
                 _entities.SpawnFadingText(snake.Head.Position, $"+{score} (+Speed)");
             }
         }
+        else if (collectable.Type == CollectableType.Crown)
+        {
+            if (snake is PlayerSnake)
+            {
+                snake.IsInvincible = true;
+                _invincibilityTimer = Constants.InvincibleTimer;
+                var score = _scoreMultiplicator * Constants.CrownCollectScore;
+                Score += score;
+                _entities.SpawnFadingText(snake.Head.Position, $"+{score} (+Invincible)");
+            }
+        }
         else if (collectable.Type == CollectableType.Clock)
         {
             snake.Grow();
@@ -266,5 +282,19 @@ public class GameManager
             _scoreMultiplicator++;
             EventBus.Publish(new ScoreMultiplicatorChangedEvent { ScoreMultiplicator = _scoreMultiplicator });
         }
+    }
+    
+    
+    private void HandleInvincibility(GameTime gameTime)
+    {
+        if (_invincibilityTimer <= 0)
+            return;
+        
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        _invincibilityTimer -= deltaTime;
+
+        if (_invincibilityTimer <= 0)
+            World.PlayerSnake.IsInvincible = false;
     }
 }

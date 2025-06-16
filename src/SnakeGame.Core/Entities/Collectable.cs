@@ -9,10 +9,8 @@ public class Collectable : Entity
 {
     private readonly Texture2D _texture;
     
-    private const float MoveByY = 1f;
-    private const float Duration = .1f;
+    private const float HoverSpeed = 15f;
         
-    private float _timer;
     private float _offsetY;
     private bool _isInverted;
 
@@ -35,23 +33,17 @@ public class Collectable : Entity
 
     private void UpdateHoverEffect(GameTime gameTime)
     {
-        _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        if (_isInverted)
+            _offsetY += HoverSpeed * delta;
+        else
+            _offsetY -= HoverSpeed * delta;
 
-        if (_timer >= Duration)
-        {
+        if (_offsetY is < -5f or > 0f)
+            _isInverted = !_isInverted;
 
-            if (_isInverted)
-                _offsetY += MoveByY;
-            else
-                _offsetY -= MoveByY;
-
-            if (_offsetY is < -5f or > 0f)
-                _isInverted = !_isInverted;
-
-            Sprite.Position = new Vector2(0, _offsetY);
-
-            _timer -= Duration;
-        }
+        Sprite.Position = new Vector2(0, _offsetY);
     }
 
     public Rectangle GetRectangle()
@@ -86,6 +78,11 @@ public class Collectable : Entity
             {
                 Texture = _texture,
                 SourceRectangle = new Rectangle(16, 0, 16, 16)
+            },
+            CollectableType.Crown => new Sprite
+            {
+                Texture = _texture,
+                SourceRectangle = new Rectangle(16, 16, 16, 16)
             },
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };

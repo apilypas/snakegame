@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,9 @@ namespace SnakeGame.Core.Entities;
 
 public class Snake : Entity
 {
+    private readonly static Random Random = new();
+    private readonly static Color[] InvincibleColors = [Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White]; 
+    
     private int _segmentsToGrow;
 
     private SnakeDirection _direction;
@@ -35,6 +39,7 @@ public class Snake : Entity
     
     public SnakeState State { get; private set; } = SnakeState.Alive;
     public Color Color { get; set; } = Color.White;
+    public bool IsInvincible { get; set; }
 
     protected Snake(AssetManager assets, Vector2 location, int length, SnakeDirection direction)
     {
@@ -252,6 +257,7 @@ public class Snake : Entity
         State = SnakeState.Alive;
         _speedTimer = 0f;
         _isFaster = false;
+        IsInvincible = false;
     }
     
     private float GetSpeed(float deltaTime)
@@ -266,25 +272,34 @@ public class Snake : Entity
     
     private void UpdateSegmentColors()
     {
-        if (!Head.HasColor)
-            Head.Color = GetColor(Color, 0);
-        
-        if (!Tail.HasColor)
-            Tail.Color = GetColor(Color, Segments.Count - 1);
+        Head.Color = GetColor(Color, 0, IsInvincible);
+        Tail.Color = GetColor(Color, Segments.Count - 1, IsInvincible);
         
         for (var i = 0; i < Segments.Count; i++)
         {
-            if (!Segments[i].HasColor)
-                Segments[i].Color = GetColor(Color, i);
+            Segments[i].Color = GetColor(Color, i, IsInvincible);
         }
     }
     
-    private static Color GetColor(Color color, int index)
+    private static Color GetColor(Color color, int index, bool isInvincible)
+    {
+        return isInvincible 
+            ? GetInvincibleColor()
+            : GetNormalStateColor(color, index);
+    }
+
+    private static Color GetNormalStateColor(Color color, int index)
     {
         var r = MathHelper.Clamp(color.R + 5*index, 0, 255);
         var g = MathHelper.Clamp(color.G + 5*index, 0, 255);
         var b = MathHelper.Clamp(color.B + 5*index, 0, 255);
 
         return new Color(r, g, b);
+    }
+
+    private static Color GetInvincibleColor()
+    {
+        var i = Random.Next(0, InvincibleColors.Length);
+        return InvincibleColors[i];
     }
 }

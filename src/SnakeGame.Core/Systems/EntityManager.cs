@@ -12,6 +12,7 @@ public class EntityManager
 
     private float _diamondSpawnTimer;
     private float _speedBoostSpawnTimer;
+    private float _crownSpawnTimer;
     private float _enemySpawnTimer;
     
     private readonly World _world;
@@ -34,9 +35,10 @@ public class EntityManager
         SpawnEnemySnake(deltaTime);
         SpawnRandomDiamond(deltaTime);
         SpawnRandomSpeedBoost(deltaTime);
+        SpawnRandomCrown(deltaTime);
         DespawnSnake(deltaTime);
     }
-    
+
     public void SpawnPlayerSnake(Vector2 at, int length, SnakeDirection direction)
     {
         var playerSnake = new PlayerSnake(_assets, at, length, direction);
@@ -147,6 +149,40 @@ public class EntityManager
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
+    }
+    
+    private void SpawnRandomCrown(float deltaTime)
+    {
+        _crownSpawnTimer += deltaTime;
+
+        if (_crownSpawnTimer < Constants.CrownSpawnRate)
+            return;
+        
+        var crownCount = 0;
+
+        foreach (var collectable in Collectables)
+        {
+            if (collectable.Type == CollectableType.Crown)
+                crownCount++;
+        }
+        
+        if (crownCount >= Constants.MaxCrownLimit)
+            return;
+
+        var location = FindEmptyLocation();
+
+        if (location != null)
+        {
+            var collectable = new Collectable(_assets.CollectableTexture, CollectableType.Crown)
+            {
+                Position = location.Value
+            };
+            
+            Collectables.Add(collectable);
+            _world.PlayField.AddChild(collectable);
+        }
+        
+        _crownSpawnTimer -= Constants.CrownSpawnRate;
     }
 
     private Vector2? FindEmptyLocation()
