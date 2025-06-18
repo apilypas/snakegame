@@ -1,20 +1,24 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NLog;
 using SnakeGame.Core.Renderers;
 
 namespace SnakeGame.Core.Systems;
 
 public class RenderSystem
 {
+    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
     private readonly IList<RendererBase> _renderers = [];
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;
     private readonly InputManager _inputs;
-    private RenderTarget2D _renderTarget;
+    private readonly RenderTarget2D _renderTarget;
     private int _previousViewportWidth;
     private int _previousViewportHeight;
     private float _scale = 1f;
+    private Vector2 _renderAt;
 
     public RenderSystem(GraphicsDevice graphics, InputManager inputs)
     {
@@ -25,8 +29,8 @@ public class RenderSystem
         
         _renderTarget = new RenderTarget2D(
             _graphics,
-            _graphics.Viewport.Width,
-            _graphics.Viewport.Height);
+            Constants.ScreenWidth,
+            Constants.ScreenHeight);
     }
 
     public void Add(RendererBase renderer)
@@ -68,7 +72,7 @@ public class RenderSystem
         
         _spriteBatch.Draw(
             _renderTarget,
-            Vector2.Zero,
+            _renderAt,
             null,
             Color.White,
             0f,
@@ -88,14 +92,18 @@ public class RenderSystem
             _previousViewportWidth = _graphics.Viewport.Width;
             _previousViewportHeight = _graphics.Viewport.Height;
             
-            _scale = _graphics.Viewport.Height / (float)Constants.ScreenHeight;
-            
-            _renderTarget = new RenderTarget2D(
-                _graphics,
-                (int)(Constants.ScreenWidth * _scale),
-                (int)(Constants.ScreenHeight * _scale));
+            _scale = Math.Min(
+                _graphics.Viewport.Height / (float)Constants.ScreenHeight,
+                _graphics.Viewport.Width / (float)Constants.ScreenWidth);
 
+            _renderAt = new Vector2(
+                (_graphics.Viewport.Width - Constants.ScreenWidth * _scale) / 2f,
+                (_graphics.Viewport.Height - Constants.ScreenHeight * _scale) / 2f);
+            
             _inputs.Mouse.Scale = new Vector2(_scale, _scale);
+            _inputs.Mouse.Offset = _renderAt;
+            
+            _logger.Info($"Screen scale changed: {_scale}");
         }
     }
 }
