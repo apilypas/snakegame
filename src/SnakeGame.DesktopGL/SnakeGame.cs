@@ -16,7 +16,7 @@ public class SnakeGame : Game
         graphics.PreferredBackBufferHeight = Constants.ScreenHeight;
         
         Window.Title = "Snake Game";
-        Window.AllowUserResizing = true;
+        //Window.AllowUserResizing = true;
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
