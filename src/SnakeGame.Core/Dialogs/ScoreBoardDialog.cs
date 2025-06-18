@@ -49,7 +49,7 @@ public class ScoreBoardDialog : Dialog
         {
             Text = "Date",
             Position = new Vector2(columnPositions[0], 0f),
-            Color = Color.Silver,
+            Color = Colors.ScoreBoardColumnTitleColor,
             Size = new SizeF(columnWidths[0], 0f)
         });
         
@@ -57,7 +57,7 @@ public class ScoreBoardDialog : Dialog
         {
             Text = "Score",
             Position = new Vector2(columnPositions[1], 0f),
-            Color = Color.Silver,
+            Color = Colors.ScoreBoardColumnTitleColor,
             Size = new SizeF(columnWidths[1], 0f),
             HorizontalAlignment = Label.HorizontalLabelAlignment.Center
         });
@@ -66,7 +66,7 @@ public class ScoreBoardDialog : Dialog
         {
             Text = "Time (s)",
             Position = new Vector2(columnPositions[2], 0f),
-            Color = Color.Silver,
+            Color = Colors.ScoreBoardColumnTitleColor,
             Size = new SizeF(columnWidths[2], 0f),
             HorizontalAlignment = Label.HorizontalLabelAlignment.Right
         });
@@ -103,9 +103,9 @@ public class ScoreBoardDialog : Dialog
 
             if (args.Length > 0 && entry.Id == (int)args[0])
             {
-                dateLabel.Color = Color.Red;
-                scoreLabel.Color = Color.Red;
-                timeLabel.Color = Color.Red;
+                dateLabel.Color = Colors.ScoreBoardLastEntityColor;
+                scoreLabel.Color = Colors.ScoreBoardLastEntityColor;
+                timeLabel.Color = Colors.ScoreBoardLastEntityColor;
             }
 
             rowY += 20f;
