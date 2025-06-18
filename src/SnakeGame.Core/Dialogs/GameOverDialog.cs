@@ -19,7 +19,9 @@ public class GameOverDialog : Dialog
         Content.AddChild(new Label
         {
             Text = "Game is over",
-            Position = new Vector2(10f, 10f)
+            Position = new Vector2(10f, 10f),
+            Size = new Vector2(250f, 0),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center
         });
             
         _resultsLabel = new Label

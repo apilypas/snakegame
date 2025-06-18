@@ -13,7 +13,9 @@ public class PauseDialog : Dialog
         Content.AddChild(new Label
         {
             Text = "Game is paused",
-            Position = new Vector2(10f, 10f)
+            Position = new Vector2(10f, 10f),
+            Size = new SizeF(210, 0),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center
         });
         
         var resumeButton = new Button
