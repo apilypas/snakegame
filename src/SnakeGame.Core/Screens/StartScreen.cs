@@ -33,6 +33,7 @@ public class StartScreen : GameScreen
 
         _dialogs = new DialogManager(_inputs);
         _dialogs.AddDialog(new ScoreBoardDialog(_world));
+        _dialogs.AddDialog(new CreditsDialog(_world));
         
         _renderer = new RenderSystem(GraphicsDevice, _inputs);
         
@@ -118,7 +119,7 @@ public class StartScreen : GameScreen
 
         creditsButton.OnClick += () =>
         {
-            ScreenManager.LoadScreen(new CreditsScreen(Game));
+            _dialogs.Show<CreditsDialog>();
         };
 
         buttons.AddChild(creditsButton);
