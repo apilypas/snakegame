@@ -1,24 +1,32 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using SnakeGame.Core.Entities;
 using SnakeGame.Core.Inputs;
 
 namespace SnakeGame.Core.Systems;
 
 public class InputManager
 {
+    private readonly List<InputBinding> _bindings = [];
+    private readonly Entity _baseEntity;
+
     private struct InputBinding
     {
         public string ActionName;
         public Keys[] Keys;
     }
-    
+
     public KeyboardInputHandler Keyboard { get; } = new();
     public MouseInputHandler Mouse { get; } = new();
     public TouchInputHandler Touch { get; } = new();
     public GamePadInputHandler GamePad { get; } = new();
-    
-    private readonly List<InputBinding> _bindings = [];
+
+
+    public InputManager(Entity baseEntity)
+    {
+        _baseEntity = baseEntity;
+    }
 
     public void BindKey(string actionName, params Keys[] keys)
     {
@@ -109,5 +117,33 @@ public class InputManager
         }
 
         return false;
+    }
+
+    public void Apply()
+    {
+        ApplyTo(_baseEntity);
+    }
+
+    public void Remove()
+    {
+        RemoveFrom(_baseEntity);
+    }
+
+    public void ApplyTo(Entity entity)
+    {
+        if (entity is Control control)
+            control.Inputs = this;
+        
+        foreach (var child in entity.GetChildren())
+            ApplyTo(child);
+    }
+
+    public void RemoveFrom(Entity entity)
+    {
+        if (entity is Control control)
+            control.Inputs = null;
+        
+        foreach (var child in entity.GetChildren())
+            RemoveFrom(child);
     }
 }

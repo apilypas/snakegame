@@ -36,6 +36,11 @@ public class Entity
     {
         _children.Remove(entity);
     }
+
+    public void RemoveAllChildren()
+    {
+        _children.Clear();
+    }
     
     public IEnumerable<Entity> GetChildren() => _children;
 }

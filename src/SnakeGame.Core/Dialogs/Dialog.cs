@@ -7,7 +7,12 @@ namespace SnakeGame.Core.Dialogs;
 public class Dialog : Control
 {
     protected Entity Content { get; set; }
-    
+
+    public delegate void OnHideRequestEventHandler(Dialog dialog);
+    public event OnHideRequestEventHandler OnHideRequest;
+
+    public virtual void OnShown(params object[] args) { }
+
     protected Dialog(Entity world, SizeF size)
     {
         Size = size;
@@ -30,5 +35,10 @@ public class Dialog : Control
         AddChild(Content);
             
         world.AddChild(this);
+    }
+
+    protected void Hide()
+    {
+        OnHideRequest?.Invoke(this);
     }
 }

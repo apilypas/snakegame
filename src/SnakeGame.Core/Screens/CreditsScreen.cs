@@ -21,13 +21,14 @@ public class CreditsScreen : GameScreen
     {
         var assets = new AssetManager();
         assets.LoadContent(Content);
-        
-        _inputs = new InputManager();
-        _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
-        _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
-        
+
         _world = CreateUserInterface();
         
+        _inputs = new InputManager(_world);
+        _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
+        _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
+        _inputs.Apply();
+
         _renderer = new RenderSystem(GraphicsDevice, _inputs);
         
         _renderer.Add(new EntityRenderer(_world));
@@ -74,7 +75,6 @@ public class CreditsScreen : GameScreen
             
         var backButton = new Button
         {
-            Input = _inputs,
             Text = "Back",
             Position = new Vector2(80, 80),
             Size = new SizeF(100, 40),

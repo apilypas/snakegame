@@ -18,7 +18,6 @@ public class PauseDialog : Dialog
         
         var resumeButton = new Button
         {
-            Input = playScreen.Inputs,
             Text = "Resume",
             Position = new Vector2(10f, 80f),
             Size = new Vector2(100, 40)
@@ -30,7 +29,6 @@ public class PauseDialog : Dialog
             
         var exitButton = new Button
         {
-            Input = playScreen.Inputs,
             Text = "Exit",
             Position = new Vector2(120f, 80f),
             Size = new Vector2(100, 40)

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
+using SnakeGame.Core.Dialogs;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Enums;
 using SnakeGame.Core.Events;
@@ -15,8 +16,9 @@ public class PlayScreen : GameScreen
     private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly DialogManager _dialogs;
     private readonly RenderSystem _renderer;
-    private readonly GameManager _gameManager;
+    private int _lastScoreBoardEntryId;
 
+    public GameManager GameManager { get; }
     public InputManager Inputs { get; }
 
     public PlayScreen(Game game) : base(game)
@@ -24,7 +26,9 @@ public class PlayScreen : GameScreen
         var assets = new AssetManager();
         assets.LoadContent(Content);
         
-        Inputs = new InputManager();
+        GameManager = new GameManager(assets);
+
+        Inputs = new InputManager(GameManager.World);
         Inputs.BindKey(InputActions.Up, Keys.W);
         Inputs.BindKey(InputActions.Up, Keys.Up);
         Inputs.BindKey(InputActions.Down, Keys.S);
@@ -37,27 +41,29 @@ public class PlayScreen : GameScreen
         Inputs.BindKey(InputActions.Pause, Keys.Escape);
         Inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
         Inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
-        
-        _gameManager = new GameManager(assets);
-        
+        Inputs.Apply();
+
         var virtualGamePad = new VirtualGamePad(assets);
-        _dialogs = new DialogManager(this, _gameManager.World.DialogLayer);
+        _dialogs = new DialogManager(Inputs);
+        _dialogs.AddDialog(new PauseDialog(this, GameManager.World));
+        _dialogs.AddDialog(new GameOverDialog(this, GameManager.World));
+        _dialogs.AddDialog(new ScoreBoardDialog(GameManager.World));
         
         _virtualGamePadManager = new VirtualGamePadManager(Inputs);
         Inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
-        _gameManager.EventBus.Subscribe<PausedEvent>(OnPaused);
-        _gameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
-        _gameManager.EventBus.Subscribe<GameEndedEvent>(OnGameEnded);
+        GameManager.EventBus.Subscribe<PausedEvent>(OnPaused);
+        GameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
+        GameManager.EventBus.Subscribe<GameEndedEvent>(OnGameEnded);
 
         _renderer = new RenderSystem(GraphicsDevice, Inputs);
-        _renderer.Add(new EntityRenderer(_gameManager.World));
+        _renderer.Add(new EntityRenderer(GameManager.World));
         _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, virtualGamePad));
         
         var theme = new ThemeManager(assets);
-        theme.Apply(_gameManager.World);
+        theme.Apply(GameManager.World);
 
-        _gameManager.Initialize();
+        GameManager.Initialize();
     }
 
     public override void Update(GameTime gameTime)
@@ -67,30 +73,30 @@ public class PlayScreen : GameScreen
         Inputs.Update();
 
         if (Inputs.IsActionDown(InputActions.Up))
-            _gameManager.ChangeDirection(SnakeDirection.Up);
+            GameManager.ChangeDirection(SnakeDirection.Up);
         
         if (Inputs.IsActionDown(InputActions.Down))
-            _gameManager.ChangeDirection(SnakeDirection.Down);
+            GameManager.ChangeDirection(SnakeDirection.Down);
         
         if (Inputs.IsActionDown(InputActions.Left))
-            _gameManager.ChangeDirection(SnakeDirection.Left);
+            GameManager.ChangeDirection(SnakeDirection.Left);
         
         if (Inputs.IsActionDown(InputActions.Right))
-            _gameManager.ChangeDirection(SnakeDirection.Right);
+            GameManager.ChangeDirection(SnakeDirection.Right);
         
         if (Inputs.IsActionDown(InputActions.Faster))
-            _gameManager.Faster();
+            GameManager.Faster();
         
         if (Inputs.IsActionReleased(InputActions.Faster))
-            _gameManager.Slower();
+            GameManager.Slower();
         
         if (Inputs.IsActionPressed(InputActions.Pause))
-            _gameManager.TogglePause();
+            GameManager.TogglePause();
         
         if (Inputs.IsActionPressed(InputActions.Fullscreen))
             Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
         
-        _gameManager.Update(gameTime);
+        GameManager.Update(gameTime);
         
         _renderer.Update();
     }
@@ -102,26 +108,29 @@ public class PlayScreen : GameScreen
 
     public void TogglePause()
     {
-        _gameManager.TogglePause();
+        GameManager.TogglePause();
     }
-    
+
+    public void ShowScoreBoardDialog()
+    {
+        _dialogs.Show<ScoreBoardDialog>(_lastScoreBoardEntryId);
+    }
+
     private void OnPaused(PausedEvent e)
     {
-        _dialogs.Pause.IsVisible = true;
+        _dialogs.Show<PauseDialog>();
     }
-    
+
     private void OnGameEnded(GameEndedEvent e)
     {
-        _dialogs.GameOver.UpdateResults(
-            _gameManager.Score,
-            _gameManager.Deaths,
-            _gameManager.LongestSnake);
-
-        _dialogs.GameOver.IsVisible = true;
+        _dialogs.Show<GameOverDialog>();
+        
+        var dataManager = new DataManager();
+        _lastScoreBoardEntryId = dataManager.SaveScore(GameManager.Score, (int)GameManager.TotalTime);
     }
-    
+
     private void OnResume(ResumeEvent obj)
     {
-        _dialogs.Pause.IsVisible = false;
+        _dialogs.Hide<PauseDialog>();
     }
 }

@@ -9,10 +9,13 @@ namespace SnakeGame.Core.Dialogs;
 public class GameOverDialog : Dialog
 {
     private readonly Label _resultsLabel;
-        
+    private readonly PlayScreen _playScreen;
+
     public GameOverDialog(PlayScreen playScreen, Entity world)
-        : base(world, new SizeF(230, 200))
+        : base(world, new SizeF(270, 200))
     {
+        _playScreen = playScreen;
+        
         Content.AddChild(new Label
         {
             Text = "Game is over",
@@ -25,13 +28,23 @@ public class GameOverDialog : Dialog
             Position = new Vector2(10f, 30f)
         };
         Content.AddChild(_resultsLabel);
+        
+        var scoreBoardButton = new Button
+        {
+            Text = "Score Board",
+            Position = new Vector2(10f, 150f),
+            Size = new Vector2(120, 40)
+        };
+
+        scoreBoardButton.OnClick += playScreen.ShowScoreBoardDialog;
+        
+        Content.AddChild(scoreBoardButton);
             
         var exitButton = new Button
         {
-            Input = playScreen.Inputs,
             Text = "Exit",
-            Position = new Vector2(60f, 150f),
-            Size = new Vector2(100, 40)
+            Position = new Vector2(140f, 150f),
+            Size = new Vector2(120, 40)
         };
 
         exitButton.OnClick += () =>
@@ -42,13 +55,14 @@ public class GameOverDialog : Dialog
         Content.AddChild(exitButton);
     }
 
-    public void UpdateResults(int score, int deaths, int longest)
+    public override void OnShown(params object[] args)
     {
         _resultsLabel.Text = new StringBuilder()
             .AppendLine("Your results:")
-            .AppendLine($"Score: {score}")
-            .AppendLine($"Deaths: {deaths}")
-            .AppendLine($"Longest snake: {longest}")
+            .AppendLine($"Score: {_playScreen.GameManager.Score}")
+            .AppendLine($"Deaths: {_playScreen.GameManager.Deaths}")
+            .AppendLine($"Longest snake: {_playScreen.GameManager.LongestSnake}")
+            .AppendLine($"Time played: {(int)_playScreen.GameManager.TotalTime}s")
             .ToString();
     }
 }

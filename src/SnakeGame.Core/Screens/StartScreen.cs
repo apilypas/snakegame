@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Screens;
+using SnakeGame.Core.Dialogs;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Renderers;
@@ -16,17 +17,22 @@ public class StartScreen : GameScreen
     private readonly RenderSystem _renderer;
     private readonly Entity _world;
     private readonly InputManager _inputs;
-    
+    private readonly DialogManager _dialogs;
+
     public StartScreen(Game game) : base(game)
     {
         var assets = new AssetManager();
         assets.LoadContent(Content);
+
+        _world = CreateUserInterface();
         
-        _inputs = new InputManager();
+        _inputs = new InputManager(_world);
         _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
         _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
-        
-        _world = CreateUserInterface();
+        _inputs.Apply();
+
+        _dialogs = new DialogManager(_inputs);
+        _dialogs.AddDialog(new ScoreBoardDialog(_world));
         
         _renderer = new RenderSystem(GraphicsDevice, _inputs);
         
@@ -57,26 +63,29 @@ public class StartScreen : GameScreen
     
     private Entity CreateUserInterface()
     {
-        var world = new Entity
+        var world = new Entity();
+
+        var buttons = new Entity
         {
             Position = new Vector2(
                 Constants.ScreenWidth / 2f - 50,
                 Constants.ScreenHeight / 2f - 100)
         };
+        
+        world.AddChild(buttons);
 
         var label = new Label
         {
             Text = "Snake Game",
             Position = new Vector2(0f, 0f)
         };
-        world.AddChild(label);
+        buttons.AddChild(label);
             
         var startButton = new Button
         {
-            Input = _inputs,
             Text = "Start",
             Position = new Vector2(0, 40),
-            Size = new SizeF(100, 40)
+            Size = new SizeF(120, 40)
         };
 
         startButton.OnClick += () =>
@@ -84,14 +93,27 @@ public class StartScreen : GameScreen
             ScreenManager.LoadScreen(new PlayScreen(Game));
         };
 
-        world.AddChild(startButton);
+        buttons.AddChild(startButton);
+        
+        var scoreBoardButton = new Button
+        {
+            Text = "Score Board",
+            Position = new Vector2(0, 90),
+            Size = new SizeF(120, 40)
+        };
+
+        scoreBoardButton.OnClick += () =>
+        {
+            _dialogs.Show<ScoreBoardDialog>();
+        };
+
+        buttons.AddChild(scoreBoardButton);
         
         var creditsButton = new Button
         {
-            Input = _inputs,
             Text = "Credits",
-            Position = new Vector2(0, 90),
-            Size = new SizeF(100, 40)
+            Position = new Vector2(0, 140),
+            Size = new SizeF(120, 40)
         };
 
         creditsButton.OnClick += () =>
@@ -99,14 +121,13 @@ public class StartScreen : GameScreen
             ScreenManager.LoadScreen(new CreditsScreen(Game));
         };
 
-        world.AddChild(creditsButton);
+        buttons.AddChild(creditsButton);
         
         var quitButton = new Button
         {
-            Input = _inputs,
             Text = "Quit",
-            Position = new Vector2(0, 140f),
-            Size = new SizeF(100, 40)
+            Position = new Vector2(0, 190f),
+            Size = new SizeF(120, 40)
         };
 
         quitButton.OnClick += () =>
@@ -114,7 +135,7 @@ public class StartScreen : GameScreen
             Game.Exit();
         };
 
-        world.AddChild(quitButton);
+        buttons.AddChild(quitButton);
 
         return world;
     }

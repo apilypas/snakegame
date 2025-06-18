@@ -32,6 +32,7 @@ public class GameManager
     public int Score { get; private set; }
     public int Deaths { get; private set; }
     public int LongestSnake { get; private set; } = 3;
+    public float TotalTime { get; private set; }
 
     public GameManager(AssetManager assets)
     {
@@ -120,6 +121,7 @@ public class GameManager
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
         _timer -= deltaTime;
+        TotalTime += deltaTime;
 
         if (_timer >= 0f)
         {
