@@ -30,7 +30,7 @@ public class ScoreBoardDialog : Dialog
         
         _dataLines = new Entity
         {
-            Position = new Vector2(0f, 10f)
+            Position = new Vector2(0f, 20f)
         };
         Content.AddChild(_dataLines);
     }
@@ -41,28 +41,63 @@ public class ScoreBoardDialog : Dialog
         var scoreBoard = dataManager.LoadScoreBoard();
 
         _dataLines.RemoveAllChildren();
-        var y = 10f;
+        
+        var columnPositions = new[] { 10f, 110f, 220f };
+        var columnWidths = new[] { 100, 100f, 70f };
+        
+        _dataLines.AddChild(new Label
+        {
+            Text = "Date",
+            Position = new Vector2(columnPositions[0], 0f),
+            Color = Color.Silver,
+            Size = new SizeF(columnWidths[0], 0f)
+        });
+        
+        _dataLines.AddChild(new Label
+        {
+            Text = "Score",
+            Position = new Vector2(columnPositions[1], 0f),
+            Color = Color.Silver,
+            Size = new SizeF(columnWidths[1], 0f),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center
+        });
+        
+        _dataLines.AddChild(new Label
+        {
+            Text = "Time (s)",
+            Position = new Vector2(columnPositions[2], 0f),
+            Color = Color.Silver,
+            Size = new SizeF(columnWidths[2], 0f),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Right
+        });
+        
+        var rowY = 20f;
         
         foreach (var entry in scoreBoard.Entries)
         {
             var dateLabel = new Label
             {
                 Text = entry.CreatedAt.ToShortDateString(),
-                Position = new Vector2(10f, y)
+                Position = new Vector2(columnPositions[0], rowY),
+                Size = new SizeF(columnWidths[0], 0f)
             };
             _dataLines.AddChild(dateLabel);
 
             var scoreLabel = new Label
             {
-                Text = entry.Score.ToString(),
-                Position = new Vector2(110f, y)
+                Text = entry.Score.ToString("0000000000"),
+                Position = new Vector2(columnPositions[1], rowY),
+                HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
+                Size = new SizeF(columnWidths[1], 0f)
             };
             _dataLines.AddChild(scoreLabel);
             
             var timeLabel = new Label
             {
                 Text = entry.TimePlayed.ToString(),
-                Position = new Vector2(240f, y)
+                Position = new Vector2(columnPositions[2], rowY),
+                HorizontalAlignment = Label.HorizontalLabelAlignment.Right,
+                Size = new SizeF(columnWidths[2], 0f)
             };
             _dataLines.AddChild(timeLabel);
 
@@ -73,7 +108,7 @@ public class ScoreBoardDialog : Dialog
                 timeLabel.Color = Color.Red;
             }
 
-            y += 20f;
+            rowY += 20f;
         }
     }
 }

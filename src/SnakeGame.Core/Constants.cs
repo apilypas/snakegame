@@ -22,7 +22,7 @@ public static class Constants
     public const float IncreasedSnakeSpeed = 200f;
     public const float SpeedUpTimer = 10f; // Seconds
     public const float InvincibleTimer = 8f; // Seconds
-    public const float InitialTimer = 10f; // Seconds
+    public const float InitialTimer = 60f; // Seconds
     public const float MaxTimer = 300f; // Seconds
     public const int ScreenWidth = 960;
     public const int ScreenHeight = 540;

@@ -22,7 +22,10 @@ public class Button : Control
     {
         _label = new Label
         {
-            Position = new Vector2(0f, 0f)
+            Position = new Vector2(0f, 0f),
+            Size = Size,
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
+            VerticalAlignment = Label.VerticalLabelAlignment.Center
         };
         
         AddChild(_label);
@@ -33,11 +36,7 @@ public class Button : Control
         base.Update(gameTime);
         
         _label.Text = Text;
-        
-        var textSize = _label.Font.MeasureString(_label.Text);
-        _label.Position = new Vector2(
-            (Size.Width - textSize.X) / 2f,
-            (Size.Height - textSize.Y) / 2f);
+        _label.Size = Size;
 
         if (Inputs != null)
         {

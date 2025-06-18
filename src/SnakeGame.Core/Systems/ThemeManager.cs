@@ -37,21 +37,30 @@ public class ThemeManager
 
     private void ApplyToButton(Button button)
     {
-        button.Texture = _userInterfaceTexture;
-        button.TextureNormalRectangle = new Rectangle(0, 48, 48, 48);
-        button.TextureHoveredRectangle = new Rectangle(48, 48, 48, 48);
-        button.TexturePressedRectangle = new Rectangle(96, 48, 48, 48);
+        if (button.Texture == null)
+        {
+            button.Texture = _userInterfaceTexture;
+            button.TextureNormalRectangle = new Rectangle(0, 48, 48, 48);
+            button.TextureHoveredRectangle = new Rectangle(48, 48, 48, 48);
+            button.TexturePressedRectangle = new Rectangle(96, 48, 48, 48);
+        }
     }
 
     private void ApplyToPanel(Panel panel)
     {
-        panel.Texture = _userInterfaceTexture;
-        panel.TextureRectangle = new Rectangle(0, 0, 48, 48);
+        if (panel.Texture == null)
+        {
+            panel.Texture = _userInterfaceTexture;
+            panel.TextureRectangle = new Rectangle(0, 0, 48, 48);
+        }
     }
 
     private void ApplyToLabel(Label label)
     {
-        label.Font = _labelFont;
-        label.Color = Colors.DefaultTextColor;
+        if (label.Font == null)
+            label.Font = _labelFont;
+        
+        if (label.Color == Color.White)
+            label.Color = Colors.DefaultTextColor;
     }
 }
