@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
+using NLog;
 using SnakeGame.Core.Dialogs;
 using SnakeGame.Core.Entities;
 using SnakeGame.Core.Enums;
@@ -13,6 +14,7 @@ namespace SnakeGame.Core.Screens;
 
 public class PlayScreen : GameScreen
 {
+    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
     private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly DialogManager _dialogs;
     private readonly RenderSystem _renderer;
@@ -118,11 +120,14 @@ public class PlayScreen : GameScreen
 
     private void OnPaused(PausedEvent e)
     {
+        _logger.Info("Paused");
         _dialogs.Show<PauseDialog>();
     }
 
     private void OnGameEnded(GameEndedEvent e)
     {
+        _logger.Info("Game ended");
+        
         _dialogs.Show<GameOverDialog>();
         
         var dataManager = new DataManager();
@@ -131,6 +136,7 @@ public class PlayScreen : GameScreen
 
     private void OnResume(ResumeEvent obj)
     {
+        _logger.Info("Resumed");
         _dialogs.Hide<PauseDialog>();
     }
 }
