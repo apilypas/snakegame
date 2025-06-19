@@ -281,7 +281,7 @@ public class GameManager
         if (_scoreMultiplicatorTimer >= Constants.ScoreMultiplicatorTimer)
         {
             _scoreMultiplicatorTimer -= Constants.ScoreMultiplicatorTimer;
-            _scoreMultiplicator++;
+            _scoreMultiplicator = MathHelper.Clamp(_scoreMultiplicator + 1, 1, Constants.MaxScoreMultiplier);
             EventBus.Publish(new ScoreMultiplicatorChangedEvent { ScoreMultiplicator = _scoreMultiplicator });
         }
     }

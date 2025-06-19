@@ -7,11 +7,13 @@ namespace SnakeGame.Core.Systems;
 public class ThemeManager
 {
     private readonly SpriteFont _labelFont;
+    private readonly SpriteFont _scoreFont;
     private readonly Texture2D _userInterfaceTexture;
 
     public ThemeManager(AssetManager assets)
     {
         _labelFont = assets.MainFont;
+        _scoreFont = assets.BigFont;
         _userInterfaceTexture = assets.UserInterfaceTexture;
     }
 
@@ -28,11 +30,19 @@ public class ThemeManager
             if (entity is Button button)
                 ApplyToButton(button);
             
+            if (entity is ScoreDisplay scoreDisplay)
+                ApplyToScoreDisplay(scoreDisplay);
+            
             entity.Theme = this;
         }
 
         foreach (var child in entity.GetChildren())
             Apply(child);
+    }
+
+    private void ApplyToScoreDisplay(ScoreDisplay scoreDisplay)
+    {
+        scoreDisplay.ScoreFont = _scoreFont;
     }
 
     private void ApplyToButton(Button button)

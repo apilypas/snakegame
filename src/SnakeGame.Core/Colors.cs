@@ -18,4 +18,6 @@ public static class Colors
     public static Color DefaultTextColor = Color.White;
     public static Color ScoreBoardLastEntityColor = Color.FromNonPremultiplied(0xFB, 0x85, 0x00, 255);
     public static Color ScoreBoardColumnTitleColor = Color.FromNonPremultiplied(0xFF, 0xB7, 0x03, 255);
+    public static Color ScoreTimeColor = Color.FromNonPremultiplied(0xFF, 0xB7, 0x03, 255);
+    public static Color ScoreMultiplicatorColor = Color.FromNonPremultiplied(0xFF, 0xB7, 0x03, 255);
 }

@@ -30,4 +30,6 @@ public static class Constants
     public const float ClockBonus = 30f; // Seconds
     public const float ScoreMultiplicatorTimer = 10f; // Seconds
     public const int MaxScoreBoardEntries = 15;
+    public const int MaxScoreMultiplier = 666;
+    public const string ScoreFormat = "0000000000";
 }

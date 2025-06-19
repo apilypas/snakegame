@@ -27,7 +27,7 @@ public class World : Entity
         
         AddChild(FadingTextLayer);
         
-        Score = new ScoreDisplay(eventBus)
+        Score = new ScoreDisplay(eventBus, assets.CollectableTexture)
         {
             Position = new Vector2(Globals.PlayFieldRectangle.Width + 16f, 16f) 
                        + Globals.PlayFieldOffset

@@ -85,7 +85,7 @@ public class ScoreBoardDialog : Dialog
 
             var scoreLabel = new Label
             {
-                Text = entry.Score.ToString("0000000000"),
+                Text = entry.Score.ToString(Constants.ScoreFormat),
                 Position = new Vector2(columnPositions[1], rowY),
                 HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
                 Size = new SizeF(columnWidths[1], 0f)
