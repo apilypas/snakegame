@@ -52,11 +52,6 @@
 /processorParam:TextureFormat=Compressed
 /build:MainFont.spritefont
 
-#begin Map.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:Map.tmx
-
 #begin Snake.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -68,6 +63,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Snake.png
+
+#begin Tiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Tiles.png
 
 #begin UserInterface.png
 /importer:TextureImporter

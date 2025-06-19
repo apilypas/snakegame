@@ -1,39 +1,68 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
-using MonoGame.Extended.Tiled.Renderers;
 
 namespace SnakeGame.Core.Entities;
 
 public class PlayField : Entity
 {
-    private TiledMapRenderer _tiledMapRenderer;
-    
-    public TiledMap TiledMap { get; set; }
-
-    public override void Update(GameTime gameTime)
+    private record struct PlayFieldTile
     {
-        if (_tiledMapRenderer != null)
-            _tiledMapRenderer.Update(gameTime);
+        public Vector2 Position;
+        public Rectangle TileRectangle;
+    }
+    
+    private readonly Rectangle _backgroundRectangle = new(0, 0, 16, 16);
+    private readonly HashSet<PlayFieldTile> _tiles = [];
+
+    private readonly Rectangle[] _tilesRectangles =
+    [
+        new(16, 0, 16, 16),
+        new(32, 0, 16, 16),
+        new(48, 0, 16, 16),
+        new(64, 0, 16, 16)
+    ];
+
+    public Texture2D TilesTexture { get; set; }
+
+    public void Initialize()
+    {
+        RandomizeTiles();
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (_tiledMapRenderer == null)
-            _tiledMapRenderer = new TiledMapRenderer(spriteBatch.GraphicsDevice, TiledMap);
+        foreach (var tile in _tiles)
+        {
+            spriteBatch.Draw(TilesTexture, GlobalPosition + tile.Position, _backgroundRectangle, Color.White);
+            spriteBatch.Draw(TilesTexture, GlobalPosition + tile.Position, tile.TileRectangle, Color.White);
+        }
         
-        _tiledMapRenderer.Draw(
-            Matrix.CreateTranslation(
-                GlobalPosition.X,
-                GlobalPosition.Y,
-                0.0f));
-            
         spriteBatch.DrawRectangle(
-            GlobalPosition.X,
-            GlobalPosition.Y,
-            TiledMap.WidthInPixels,
-            TiledMap.WidthInPixels,
-            Colors.DefaultTextColor);
+            GlobalPosition,
+            Globals.PlayFieldRectangle.Size,
+            Color.Black);
+    }
+
+    private void RandomizeTiles()
+    {
+        var random = new Random();
+
+        for (var x = 0; x < Constants.WallWidth; x++)
+        {
+            for (var y = 0; y < Constants.WallHeight; y++)
+            {
+                var at = new Vector2(x * Constants.SegmentSize, y * Constants.SegmentSize);
+                var r = _tilesRectangles[random.Next(_tilesRectangles.Length)];
+                
+                _tiles.Add(new PlayFieldTile
+                {
+                    Position = at,
+                    TileRectangle = r
+                });
+            }
+        }
     }
 }

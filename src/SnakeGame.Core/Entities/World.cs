@@ -13,11 +13,10 @@ public class World : Entity
     
     public World(AssetManager assets, EventBus eventBus)
     {
-        PlayField = new PlayField
-        {
-            TiledMap = assets.TiledMap,
-            Position = Globals.PlayFieldOffset
-        };
+        PlayField = new PlayField();
+        PlayField.Position = Globals.PlayFieldOffset;
+        PlayField.TilesTexture = assets.TilesTexture;
+        PlayField.Initialize();
         
         AddChild(PlayField);
 
