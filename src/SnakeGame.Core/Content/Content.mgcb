@@ -52,6 +52,13 @@
 /processorParam:TextureFormat=Compressed
 /build:MainFont.spritefont
 
+#begin SmallFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:SmallFont.spritefont
+
 #begin Snake.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -34,6 +34,31 @@ public class World : Entity
         };
         
         AddChild(Score);
+        
+        AddChild(new InputBindingDisplay(assets, "Pause", "Esc")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y)
+        });
+        AddChild(new InputBindingDisplay(assets, "Move up", "W")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y + 40f)
+        });
+        AddChild(new InputBindingDisplay(assets, "Move down", "S")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y + 80f)
+        });
+        AddChild(new InputBindingDisplay(assets, "Move left", "A")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y + 120f)
+        });
+        AddChild(new InputBindingDisplay(assets, "Move right", "D")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y + 160f)
+        });
+        AddChild(new InputBindingDisplay(assets, "Faster", "Spc")
+        {
+            Position = new Vector2(Globals.PlayFieldOffset.X - 160f, Globals.PlayFieldOffset.Y + 200f)
+        });
 
         DialogLayer = new Entity();
         AddChild(DialogLayer);
