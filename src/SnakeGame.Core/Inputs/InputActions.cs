@@ -9,4 +9,5 @@ public class InputActions
     public const string Faster = nameof(Faster);
     public const string Pause = nameof(Pause);
     public const string Fullscreen = nameof(Fullscreen);
+    public const string Cancel = nameof(Cancel);
 }

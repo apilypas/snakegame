@@ -41,12 +41,22 @@ public class DialogManager
         Hide(dialog);
     }
 
+    public void HideCurrent()
+    {
+        if (_openDialogs.Count > 0)
+        {
+            var dialog = _openDialogs[^1];
+            Hide(dialog);
+        }
+    }
+
     private void Hide(Dialog dialog)
     {
         _logger.Info($"Hiding dialog {dialog.GetType().Name}");
         
         dialog.IsVisible = false;
         dialog.OnHideRequest -= OnDialogHideRequest;
+        dialog.OnHide();
         
         _inputs.RemoveFrom(dialog);
         

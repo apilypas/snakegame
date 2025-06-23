@@ -49,10 +49,7 @@ public class GameOverDialog : Dialog
             Size = new Vector2(120, 40)
         };
 
-        exitButton.OnClick += () =>
-        {
-            playScreen.ScreenManager.LoadScreen(new StartScreen(playScreen.Game));
-        };
+        exitButton.OnClick += Hide;
 
         Content.AddChild(exitButton);
     }
@@ -66,5 +63,10 @@ public class GameOverDialog : Dialog
             .AppendLine($"Longest snake: {_playScreen.GameManager.LongestSnake}")
             .AppendLine($"Time played: {(int)_playScreen.GameManager.TotalTime}s")
             .ToString();
+    }
+
+    public override void OnHide()
+    {
+        _playScreen.ScreenManager.LoadScreen(new StartScreen(_playScreen.Game));
     }
 }

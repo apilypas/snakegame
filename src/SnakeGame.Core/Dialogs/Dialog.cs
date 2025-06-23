@@ -12,6 +12,7 @@ public class Dialog : Control
     public event OnHideRequestEventHandler OnHideRequest;
 
     public virtual void OnShown(params object[] args) { }
+    public virtual void OnHide() { }
 
     protected Dialog(Entity world, SizeF size)
     {

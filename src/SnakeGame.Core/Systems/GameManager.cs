@@ -33,6 +33,8 @@ public class GameManager
     public int Deaths { get; private set; }
     public int LongestSnake { get; private set; } = 3;
     public float TotalTime { get; private set; }
+    
+    public bool IsEnded => _state == GameWorldState.Ended;
 
     public GameManager(AssetManager assets)
     {

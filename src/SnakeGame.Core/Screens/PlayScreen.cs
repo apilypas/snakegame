@@ -93,10 +93,15 @@ public class PlayScreen : GameScreen
         
         if (Inputs.IsActionReleased(InputActions.Faster))
             GameManager.Slower();
-        
+
         if (Inputs.IsActionPressed(InputActions.Pause))
-            GameManager.TogglePause();
-        
+        {
+            if (GameManager.IsEnded)
+                _dialogs.HideCurrent();
+            else
+                GameManager.TogglePause();
+        }
+
         if (Inputs.IsActionPressed(InputActions.Fullscreen))
             Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
         
