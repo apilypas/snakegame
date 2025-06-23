@@ -59,12 +59,12 @@ public class InputManager
         {
             if (binding.ActionName == actionName)
             {
-                if (binding.Keys.Length == 1)
-                    return Keyboard.GetIsKeyDown(binding.Keys[0]);
+                if (binding.Keys.Length == 1 && Keyboard.GetIsKeyDown(binding.Keys[0]))
+                    return true;
                 
-                if (binding.Keys.Length == 2)
-                    return Keyboard.GetIsKeyDown(binding.Keys[0])
-                        && Keyboard.GetIsKeyDown(binding.Keys[1]);
+                if (binding.Keys.Length == 2 && Keyboard.GetIsKeyDown(binding.Keys[0])
+                                             && Keyboard.GetIsKeyDown(binding.Keys[1]))
+                    return true;
             }
         }
 
