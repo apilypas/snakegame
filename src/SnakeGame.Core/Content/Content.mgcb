@@ -71,6 +71,30 @@
 /processorParam:TextureFormat=Color
 /build:Snake.png
 
+#begin Sound1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound1.wav
+
+#begin Sound2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound2.wav
+
+#begin Sound3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound3.wav
+
+#begin Sound4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound4.wav
+
 #begin Tiles.png
 /importer:TextureImporter
 /processor:TextureProcessor

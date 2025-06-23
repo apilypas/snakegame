@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +14,10 @@ public class AssetManager
     public SpriteFont SmallFont { get; private set; }
     public SpriteFont MainFont { get; private set; }
     public SpriteFont BigFont { get; private set; }
+    public SoundEffect Sound1 { get; private set; }
+    public SoundEffect Sound2 { get; private set; }
+    public SoundEffect Sound3 { get; private set; }
+    public SoundEffect Sound4 { get; private set; }
     
     public void LoadContent(ContentManager content)
     {
@@ -24,5 +29,9 @@ public class AssetManager
         SmallFont = content.Load<SpriteFont>("SmallFont");
         MainFont = content.Load<SpriteFont>("MainFont");
         BigFont = content.Load<SpriteFont>("BigFont");
+        Sound1 = content.Load<SoundEffect>("Sound1");
+        Sound2 = content.Load<SoundEffect>("Sound2");
+        Sound3 = content.Load<SoundEffect>("Sound3");
+        Sound4 = content.Load<SoundEffect>("Sound4");
     }
 }

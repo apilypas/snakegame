@@ -64,6 +64,8 @@ public class PlayScreen : GameScreen
         
         var theme = new ThemeManager(assets);
         theme.Apply(GameManager.World);
+        
+        _ = new SoundManager(assets, GameManager.EventBus);
 
         GameManager.Initialize();
     }
