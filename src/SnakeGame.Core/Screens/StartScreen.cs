@@ -18,11 +18,12 @@ public class StartScreen : GameScreen
     private readonly Entity _world;
     private readonly InputManager _inputs;
     private readonly DialogManager _dialogs;
+    private readonly AssetManager _assets;
 
     public StartScreen(Game game) : base(game)
     {
-        var assets = new AssetManager();
-        assets.LoadContent(Content);
+        _assets = new AssetManager();
+        _assets.LoadContent(Content);
 
         _world = CreateUserInterface();
         
@@ -40,7 +41,7 @@ public class StartScreen : GameScreen
         
         _renderer.Add(new EntityRenderer(_world));
         
-        var theme = new ThemeManager(assets);
+        var theme = new ThemeManager(_assets);
         theme.Apply(_world);
         
         GC.Collect();
@@ -69,22 +70,51 @@ public class StartScreen : GameScreen
     private Entity CreateUserInterface()
     {
         var world = new Entity();
+        
+        var label1 = new Label
+        {
+            Text = "Yet another",
+            Position = new Vector2(
+                Constants.ScreenWidth / 2f - 40f,
+                Constants.ScreenHeight / 2f - 100f),
+            Size = new SizeF(0, 100f),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
+            Font = _assets.BigFont
+        };
+        world.AddChild(label1);
+        
+        var label2 = new Label
+        {
+            Text = "Snake",
+            Position = new Vector2(
+                Constants.ScreenWidth / 2f - 40f,
+                Constants.ScreenHeight / 2f - 70f),
+            Size = new SizeF(0, 100f),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
+            Font = _assets.LogoFont
+        };
+        world.AddChild(label2);
+        
+        var label3 = new Label
+        {
+            Text = "Game",
+            Position = new Vector2(
+                Constants.ScreenWidth / 2f - 40f,
+                Constants.ScreenHeight / 2f - 0f),
+            Size = new SizeF(0, 100f),
+            HorizontalAlignment = Label.HorizontalLabelAlignment.Center,
+            Font = _assets.LogoFont
+        };
+        world.AddChild(label3);
 
         var buttons = new Entity
         {
             Position = new Vector2(
-                Constants.ScreenWidth / 2f - 50,
-                Constants.ScreenHeight / 2f - 100)
+                Constants.ScreenWidth / 2f + 140f,
+                Constants.ScreenHeight / 2f - 130f)
         };
         
         world.AddChild(buttons);
-
-        var label = new Label
-        {
-            Text = "Snake Game",
-            Position = new Vector2(0f, 0f)
-        };
-        buttons.AddChild(label);
             
         var startButton = new Button
         {

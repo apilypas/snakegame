@@ -13,10 +13,7 @@ public class CreditsDialog : Dialog
         var label = new Label
         {
             Text = new StringBuilder()
-                .AppendLine("Yet another")
-                .AppendLine("implementation")
-                .AppendLine("of")
-                .AppendLine("Snake Game")
+                .AppendLine("Yet another Snake Game")
                 .AppendLine()
                 .AppendLine("Created by: Andrius Pilypas")
                 .AppendLine("Font: Pixel Operator")

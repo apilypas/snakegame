@@ -45,6 +45,13 @@
 /processorParam:TextureFormat=Color
 /build:GamePad.png
 
+#begin LogoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:LogoFont.spritefont
+
 #begin MainFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
