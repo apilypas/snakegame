@@ -31,6 +31,7 @@ public class StartScreen : GameScreen
         _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
         _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         _inputs.BindKey(InputActions.Cancel, Keys.Escape);
+        _inputs.BindButton(InputActions.Start, Buttons.Start);
         _inputs.Apply();
 
         _dialogs = new DialogManager(_inputs);
@@ -56,6 +57,9 @@ public class StartScreen : GameScreen
         
         if (_inputs.IsActionDown(InputActions.Cancel))
             _dialogs.HideCurrent();
+        
+        if (_inputs.IsActionPressed(InputActions.Start))
+            ScreenManager.LoadScreen(new PlayScreen(Game));
         
         _world.UpdateEntityTree(gameTime);
         

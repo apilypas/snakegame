@@ -31,14 +31,24 @@ public class PlayScreen : GameScreen
         Inputs = new InputManager(GameManager.World);
         Inputs.BindKey(InputActions.Up, Keys.W);
         Inputs.BindKey(InputActions.Up, Keys.Up);
+        Inputs.BindButton(InputActions.Up, Buttons.DPadUp);
+        Inputs.BindButton(InputActions.Up, Buttons.LeftThumbstickUp);
         Inputs.BindKey(InputActions.Down, Keys.S);
         Inputs.BindKey(InputActions.Down, Keys.Down);
+        Inputs.BindButton(InputActions.Down, Buttons.DPadDown);
+        Inputs.BindButton(InputActions.Down, Buttons.LeftThumbstickDown);
         Inputs.BindKey(InputActions.Left, Keys.A);
         Inputs.BindKey(InputActions.Left, Keys.Left);
+        Inputs.BindButton(InputActions.Left, Buttons.DPadLeft);
+        Inputs.BindButton(InputActions.Left, Buttons.LeftThumbstickLeft);
         Inputs.BindKey(InputActions.Right, Keys.D);
         Inputs.BindKey(InputActions.Right, Keys.Right);
+        Inputs.BindButton(InputActions.Right, Buttons.DPadRight);
+        Inputs.BindButton(InputActions.Right, Buttons.LeftThumbstickRight);
         Inputs.BindKey(InputActions.Faster, Keys.Space);
+        Inputs.BindButton(InputActions.Faster, Buttons.A);
         Inputs.BindKey(InputActions.Pause, Keys.Escape);
+        Inputs.BindButton(InputActions.Pause, Buttons.Start);
         Inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
         Inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         Inputs.Apply();
@@ -82,7 +92,7 @@ public class PlayScreen : GameScreen
         if (Inputs.IsActionDown(InputActions.Faster))
             GameManager.Faster();
         
-        if (Inputs.IsActionReleased(InputActions.Faster))
+        if (!Inputs.IsActionDown(InputActions.Faster))
             GameManager.Slower();
 
         if (Inputs.IsActionPressed(InputActions.Pause))
