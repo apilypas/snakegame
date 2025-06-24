@@ -5,15 +5,8 @@ namespace SnakeGame.Core.Inputs;
 
 public class GamePadInputHandler(PlayerIndex playerIndex = PlayerIndex.One)
 {
-    public interface IVirtualGamePad
-    {
-        GamePadState GetState(GamePadState state);
-        bool IsConnected { get; }
-    }
-    
     private GamePadState _previousState = GamePad.GetState(playerIndex);
     private GamePadState _currentState = GamePad.GetState(playerIndex);
-    private IVirtualGamePad _virtualGamePad;
     
     public bool IsConnected => GetIsConnected();
     
@@ -21,9 +14,6 @@ public class GamePadInputHandler(PlayerIndex playerIndex = PlayerIndex.One)
     {
         _previousState = _currentState;
         _currentState = GamePad.GetState(playerIndex);
-        
-        if (_virtualGamePad != null)
-            _currentState = _virtualGamePad.GetState(_currentState);
     }
     
     public bool GetIsButtonPressed(Buttons button)
@@ -41,13 +31,8 @@ public class GamePadInputHandler(PlayerIndex playerIndex = PlayerIndex.One)
         return _currentState.IsButtonDown(button);
     }
 
-    public void AttachVirtualGamePad(IVirtualGamePad virtualGamePad)
-    {
-        _virtualGamePad = virtualGamePad;
-    }
-
     private bool GetIsConnected()
     {
-        return _currentState.IsConnected || _virtualGamePad is { IsConnected: true };
+        return _currentState.IsConnected;
     }
 }

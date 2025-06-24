@@ -7,7 +7,6 @@ namespace SnakeGame.Core.Systems;
 public class AssetManager
 {
     public Texture2D CollectableTexture { get; private set; }
-    public Texture2D GamePadTexture { get; private set; }
     public Texture2D SnakeTexture { get; private set; }
     public Texture2D UserInterfaceTexture { get; private set; }
     public Texture2D TilesTexture { get; private set; }
@@ -23,7 +22,6 @@ public class AssetManager
     public void LoadContent(ContentManager content)
     {
         CollectableTexture = content.Load<Texture2D>("Collectables");
-        GamePadTexture = content.Load<Texture2D>("GamePad");
         SnakeTexture = content.Load<Texture2D>("Snake");
         UserInterfaceTexture = content.Load<Texture2D>("UserInterface");
         TilesTexture = content.Load<Texture2D>("Tiles");

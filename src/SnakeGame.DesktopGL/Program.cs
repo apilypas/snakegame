@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using NLog;
 
 namespace SnakeGame.DesktopGL;
@@ -13,6 +14,10 @@ public static class Program
         try
         {
             Logger.Info("Starting game...");
+            
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            Logger.Info($"Version: {version}");
+            
             game.Run();
         }
         catch (Exception ex)

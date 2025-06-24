@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
@@ -10,10 +11,11 @@ public class CreditsDialog : Dialog
     public CreditsDialog(Entity world)
         : base(world, new SizeF(310f, 260f))
     {
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
         var label = new Label
         {
             Text = new StringBuilder()
-                .AppendLine("Yet another Snake Game")
+                .AppendLine($"Yet another Snake Game ({version})")
                 .AppendLine()
                 .AppendLine("Created by: Andrius Pilypas")
                 .AppendLine("Font: Pixel Operator")

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Screens;
 using NLog;
 using SnakeGame.Core.Dialogs;
-using SnakeGame.Core.Entities;
 using SnakeGame.Core.Enums;
 using SnakeGame.Core.Events;
 using SnakeGame.Core.Inputs;
@@ -15,7 +14,6 @@ namespace SnakeGame.Core.Screens;
 public class PlayScreen : GameScreen
 {
     private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-    private readonly VirtualGamePadManager _virtualGamePadManager;
     private readonly DialogManager _dialogs;
     private readonly RenderSystem _renderer;
     private int _lastScoreBoardEntryId;
@@ -45,14 +43,10 @@ public class PlayScreen : GameScreen
         Inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         Inputs.Apply();
 
-        var virtualGamePad = new VirtualGamePad(assets);
         _dialogs = new DialogManager(Inputs);
         _dialogs.AddDialog(new PauseDialog(this, GameManager.World));
         _dialogs.AddDialog(new GameOverDialog(this, GameManager.World));
         _dialogs.AddDialog(new ScoreBoardDialog(GameManager.World));
-        
-        _virtualGamePadManager = new VirtualGamePadManager(Inputs);
-        Inputs.GamePad.AttachVirtualGamePad(_virtualGamePadManager);
         
         GameManager.EventBus.Subscribe<PausedEvent>(OnPaused);
         GameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
@@ -60,7 +54,6 @@ public class PlayScreen : GameScreen
 
         _renderer = new RenderSystem(GraphicsDevice, Inputs);
         _renderer.Add(new EntityRenderer(GameManager.World));
-        _renderer.Add(new VirtualGamePadRenderer(_virtualGamePadManager, virtualGamePad));
         
         var theme = new ThemeManager(assets);
         theme.Apply(GameManager.World);
@@ -72,8 +65,6 @@ public class PlayScreen : GameScreen
 
     public override void Update(GameTime gameTime)
     {
-        _virtualGamePadManager.Update();
-        
         Inputs.Update();
 
         if (Inputs.IsActionDown(InputActions.Up))
