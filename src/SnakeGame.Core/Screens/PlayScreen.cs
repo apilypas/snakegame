@@ -13,7 +13,7 @@ namespace SnakeGame.Core.Screens;
 
 public class PlayScreen : GameScreen
 {
-    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private readonly DialogManager _dialogs;
     private readonly RenderSystem _renderer;
     private int _lastScoreBoardEntryId;

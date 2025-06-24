@@ -9,7 +9,7 @@ namespace SnakeGame.Core.Systems;
 
 public class RenderSystem
 {
-    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private readonly IList<RendererBase> _renderers = [];
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;

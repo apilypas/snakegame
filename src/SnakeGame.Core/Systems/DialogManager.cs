@@ -7,7 +7,7 @@ namespace SnakeGame.Core.Systems;
 
 public class DialogManager
 {
-    private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private readonly Dictionary<string, Dialog> _dialogs = [];
     private readonly InputManager _inputs;
     private readonly List<Dialog> _openDialogs = [];

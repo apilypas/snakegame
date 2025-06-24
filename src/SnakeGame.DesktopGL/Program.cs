@@ -6,7 +6,7 @@ namespace SnakeGame.DesktopGL;
 
 public static class Program
 {
-    private readonly static ILogger Logger = LogManager.GetCurrentClassLogger();
+    private readonly static Logger Logger = LogManager.GetCurrentClassLogger();
     
     public static void Main(string[] args)
     {
