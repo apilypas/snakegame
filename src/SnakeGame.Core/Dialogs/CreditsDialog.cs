@@ -17,9 +17,11 @@ public class CreditsDialog : Dialog
             Text = new StringBuilder()
                 .AppendLine($"Yet another Snake Game ({version})")
                 .AppendLine()
-                .AppendLine("Created by: Andrius Pilypas")
+                .AppendLine("Developed by: g1ngercat.itch.io")
+                .AppendLine("Music and art too...")
+                .AppendLine()
                 .AppendLine("Font: Pixel Operator")
-                .AppendLine("Game engine created using MonoGame")
+                .AppendLine("Game engine based on MonoGame")
                 .ToString(),
             Size = new SizeF(220f, 0f),
             Position = new Vector2(10f, 10f)
