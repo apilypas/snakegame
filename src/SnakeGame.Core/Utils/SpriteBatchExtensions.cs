@@ -19,12 +19,16 @@ public static class SpriteBatchExtensions
         SpriteEffects effects = SpriteEffects.None,
         float layerDepth = 0f)
     {
+        // Automatically calculate shadow properties
+        var size = spriteFont.MeasureString("A");
+        var shadowOffset = new Vector2(MathF.Round(size.Y / 24f), MathF.Round(size.Y / 24f));
+        
         // Shadow text
         spriteBatch.DrawString(
             spriteFont,
             text,
-            position + Vector2.One,
-            Color.Black,
+            position + shadowOffset,
+            Colors.DefaultTextShadowColor,
             rotation,
             origin,
             scale,
