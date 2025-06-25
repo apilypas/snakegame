@@ -1,5 +1,4 @@
 #!/bin/bash
-@echo on
 
 function do_publish {
   arch="$1"
