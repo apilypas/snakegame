@@ -16,7 +16,7 @@ public static class EntityExtensions
 
         entity.IsUpdated = false;
         entity.Update(gameTime);
-        entity.GlobalPosition = basePosition.Value + entity.Position;
+        entity.GlobalPosition = Vector2.Round(basePosition.Value + entity.Position);
         entity.IsUpdated = true;
 
         foreach (var child in entity.GetChildren())
