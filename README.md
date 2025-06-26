@@ -6,6 +6,8 @@ A simple snake game created as part of learning MonoGame framework.
 
 Try to survive while playing a snake against enemy snakes. Picking up items increases the length of the snake. Died enemies may drop item that increases your playtime.
 
+Game is published at [itch.io](https://g1ngercat.itch.io/yetanothersnakegame).
+
 ## Features
 
 * Fluent snake movements
