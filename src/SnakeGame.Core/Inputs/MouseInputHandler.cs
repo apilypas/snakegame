@@ -12,8 +12,6 @@ public class MouseInputHandler
     public bool IsLeftButtonPressed => GetIsLeftButtonPressed();
     public bool IsLeftButtonReleased => GetIsLeftButtonReleased();
     public Vector2 Position => GetPosition();
-    public Vector2 Scale { get; set; }
-    public Vector2 Offset { get; set; }
 
     public void Update()
     {
@@ -23,9 +21,7 @@ public class MouseInputHandler
 
     private Vector2 GetPosition()
     {
-        return new Vector2(
-                   (_currentState.X - Offset.X) / Scale.X,
-                   (_currentState.Y - Offset.Y) / Scale.Y);
+        return new Vector2(_currentState.X, _currentState.Y);
     }
 
     private bool GetIsLeftButtonPressed()

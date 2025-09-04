@@ -18,8 +18,8 @@ public static class Globals
             Constants.WallHeight * Constants.SegmentSize);
         
         PlayFieldOffset = new Vector2(
-            (Constants.ScreenWidth - PlayFieldRectangle.Width) / 2f,
-            (Constants.ScreenHeight - PlayFieldRectangle.Height) / 2f);
+            (Constants.VirtualScreenWidth - PlayFieldRectangle.Width) / 2f,
+            (Constants.VirtualScreenHeight - PlayFieldRectangle.Height) / 2f);
 
         SnakeSegmentOrigin = new(Constants.SegmentSize / 2f, Constants.SegmentSize / 2f);
     }

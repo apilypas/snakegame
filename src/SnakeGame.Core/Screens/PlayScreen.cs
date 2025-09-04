@@ -1,150 +1,151 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
-using NLog;
-using SnakeGame.Core.Dialogs;
+using SnakeGame.Core.Data;
+using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.ECS.Entities;
+using SnakeGame.Core.ECS.Systems;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.Events;
 using SnakeGame.Core.Inputs;
-using SnakeGame.Core.Renderers;
-using SnakeGame.Core.Systems;
+using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.Screens;
 
 public class PlayScreen : GameScreen
 {
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-    private readonly DialogManager _dialogs;
-    private readonly RenderSystem _renderer;
-    private int _lastScoreBoardEntryId;
-
-    public GameManager GameManager { get; }
-    public InputManager Inputs { get; }
+    private readonly World _world;
+    private readonly InputManager _inputs;
 
     public PlayScreen(Game game) : base(game)
     {
-        var assets = new AssetManager();
-        assets.LoadContent(Content);
+        var contents = new ContentManager();
+        contents.LoadContent(Content);
         
-        GameManager = new GameManager(assets);
-
-        Inputs = new InputManager(GameManager.World);
-        Inputs.BindKey(InputActions.Up, Keys.W);
-        Inputs.BindKey(InputActions.Up, Keys.Up);
-        Inputs.BindButton(InputActions.Up, Buttons.DPadUp);
-        Inputs.BindButton(InputActions.Up, Buttons.LeftThumbstickUp);
-        Inputs.BindKey(InputActions.Down, Keys.S);
-        Inputs.BindKey(InputActions.Down, Keys.Down);
-        Inputs.BindButton(InputActions.Down, Buttons.DPadDown);
-        Inputs.BindButton(InputActions.Down, Buttons.LeftThumbstickDown);
-        Inputs.BindKey(InputActions.Left, Keys.A);
-        Inputs.BindKey(InputActions.Left, Keys.Left);
-        Inputs.BindButton(InputActions.Left, Buttons.DPadLeft);
-        Inputs.BindButton(InputActions.Left, Buttons.LeftThumbstickLeft);
-        Inputs.BindKey(InputActions.Right, Keys.D);
-        Inputs.BindKey(InputActions.Right, Keys.Right);
-        Inputs.BindButton(InputActions.Right, Buttons.DPadRight);
-        Inputs.BindButton(InputActions.Right, Buttons.LeftThumbstickRight);
-        Inputs.BindKey(InputActions.Faster, Keys.Space);
-        Inputs.BindButton(InputActions.Faster, Buttons.A);
-        Inputs.BindKey(InputActions.Pause, Keys.Escape);
-        Inputs.BindButton(InputActions.Pause, Buttons.Start);
-        Inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
-        Inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
-        Inputs.Apply();
-
-        _dialogs = new DialogManager(Inputs);
-        _dialogs.AddDialog(new PauseDialog(this, GameManager.World));
-        _dialogs.AddDialog(new GameOverDialog(this, GameManager.World));
-        _dialogs.AddDialog(new ScoreBoardDialog(GameManager.World));
+        var gameState = new GameState();
         
-        GameManager.EventBus.Subscribe<PausedEvent>(OnPaused);
-        GameManager.EventBus.Subscribe<ResumeEvent>(OnResume);
-        GameManager.EventBus.Subscribe<GameEndedEvent>(OnGameEnded);
-
-        _renderer = new RenderSystem(GraphicsDevice, Inputs);
-        _renderer.Add(new EntityRenderer(GameManager.World));
+        _inputs = new InputManager();
+        _inputs.BindKey(InputActions.Up, Keys.W);
+        _inputs.BindKey(InputActions.Up, Keys.Up);
+        _inputs.BindButton(InputActions.Up, Buttons.DPadUp);
+        _inputs.BindButton(InputActions.Up, Buttons.LeftThumbstickUp);
+        _inputs.BindKey(InputActions.Down, Keys.S);
+        _inputs.BindKey(InputActions.Down, Keys.Down);
+        _inputs.BindButton(InputActions.Down, Buttons.DPadDown);
+        _inputs.BindButton(InputActions.Down, Buttons.LeftThumbstickDown);
+        _inputs.BindKey(InputActions.Left, Keys.A);
+        _inputs.BindKey(InputActions.Left, Keys.Left);
+        _inputs.BindButton(InputActions.Left, Buttons.DPadLeft);
+        _inputs.BindButton(InputActions.Left, Buttons.LeftThumbstickLeft);
+        _inputs.BindKey(InputActions.Right, Keys.D);
+        _inputs.BindKey(InputActions.Right, Keys.Right);
+        _inputs.BindButton(InputActions.Right, Buttons.DPadRight);
+        _inputs.BindButton(InputActions.Right, Buttons.LeftThumbstickRight);
+        _inputs.BindKey(InputActions.Faster, Keys.Space);
+        _inputs.BindButton(InputActions.Faster, Buttons.A);
+        _inputs.BindKey(InputActions.Pause, Keys.Escape);
+        _inputs.BindButton(InputActions.Pause, Buttons.Start);
+        _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
+        _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         
-        var theme = new ThemeManager(assets);
-        theme.Apply(GameManager.World);
+        var cameraManager = new CameraManager(
+            Game,
+            Constants.VirtualScreenWidth,
+            Constants.VirtualScreenHeight,
+            Constants.Zoom);
+        cameraManager.LookAt(new Vector2(
+            Constants.WallWidth * Constants.SegmentSize / 2f, 
+            Constants.WallHeight * Constants.SegmentSize / 2f));
         
-        _ = new SoundManager(assets, GameManager.EventBus);
+        var entityFactory = new EntityFactory();
 
-        GameManager.Initialize();
+        _world = new WorldBuilder()
+            .AddSystem(new InputSystem(_inputs, Game, entityFactory))
+            .AddSystem(new PlayerInputSystem(_inputs, gameState))
+            .AddSystem(new GameSystem(contents, gameState, entityFactory))
+            .AddSystem(new SnakeSystem(gameState))
+            .AddSystem(new FadingTextSystem())
+            .AddSystem(new PlayFieldSystem())
+            .AddSystem(new ScoreDisplaySystem())
+            .AddSystem(new DialogSystem())
+            .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
+            .AddSystem(new ButtonEventSystem(gameState, entityFactory))
+            .AddSystem(new SoundEffectSystem(contents))
+            .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, cameraManager))
+            .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
+            .Build();
+        
+        entityFactory.Initialize(_world);
+
+        // TODO: remove gameStateEntity
+        var gameStateEntity = _world.CreateEntity();
+        gameStateEntity.Attach(gameState);
+
+        var playFieldEntity = entityFactory.CreatePlayField(contents.TilesTexture);
+        
+        var playerAt = new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize);
+        
+        var playerSnakeEntity = entityFactory.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
+        gameState.Snakes.Add(playerSnakeEntity);
+        gameState.PlayerSnake = playerSnakeEntity;
+        
+        var enemyAt = new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize);
+        
+        var enemySnakeEntity = entityFactory.CreateEnemySnake(gameState, enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
+        
+        gameState.Snakes.Add(enemySnakeEntity);
+
+        var scoreLabelId = entityFactory.CreateLabel(contents.BigFont, string.Empty, Color.White);
+        _world.GetEntity(scoreLabelId).Get<TransformComponent>().Position = new Vector2(530f, 18f);
+        gameState.ScoreLabelId = scoreLabelId;
+        
+        var multiplicatorLabelId = entityFactory.CreateLabel(contents.MainFont, string.Empty, Colors.ScoreMultiplicatorColor);
+        _world.GetEntity(multiplicatorLabelId).Get<TransformComponent>().Position = new Vector2(686f, 44f);
+        gameState.MultiplicatorLabelId = multiplicatorLabelId;
+        
+        var timeLabelId = entityFactory.CreateLabel(contents.MainFont, string.Empty, Colors.ScoreTimeColor);
+        _world.GetEntity(timeLabelId).Get<TransformComponent>().Position = new Vector2(550f, 9f);
+        gameState.TimeLabelId = timeLabelId;
+
+        var clockSpriteId = entityFactory.CreateSprite(contents.CollectableTexture, new Rectangle(16, 0, 16, 16));
+        _world.GetEntity(clockSpriteId).Get<TransformComponent>().Position = new Vector2(532f, 12f);
+        
+        List<KeyValuePair<string, string>> inputBindings = [
+            new("Pause", "Esc"),
+            new("Move up", "W"),
+            new("Move down", "S"),
+            new("Move left", "A"),
+            new("Move right", "D"),
+            new("Faster", "Spc")
+        ];
+
+        var p = 4f;
+        foreach (var inputBinding in inputBindings)
+        {
+            var id1 = entityFactory.CreateLabel( contents.MainFont, inputBinding.Key, Color.White);
+            _world.GetEntity(id1).Get<TransformComponent>().Position = new Vector2(-100f, p);
+
+            var id2 = entityFactory.CreateSprite(contents.CollectableTexture, new Rectangle(32, 0, 32, 32));
+            _world.GetEntity(id2).Get<TransformComponent>().Position = new Vector2(-140f, p);
+
+            var id3 = entityFactory.CreateLabel(contents.MainFont, inputBinding.Value, Color.White);
+            _world.GetEntity(id3).Get<TransformComponent>().Position = new Vector2(-140f, p);
+            
+            p += 40f;
+        }
     }
 
     public override void Update(GameTime gameTime)
     {
-        Inputs.Update();
-
-        if (Inputs.IsActionDown(InputActions.Up))
-            GameManager.ChangeDirection(SnakeDirection.Up);
-        
-        if (Inputs.IsActionDown(InputActions.Down))
-            GameManager.ChangeDirection(SnakeDirection.Down);
-        
-        if (Inputs.IsActionDown(InputActions.Left))
-            GameManager.ChangeDirection(SnakeDirection.Left);
-        
-        if (Inputs.IsActionDown(InputActions.Right))
-            GameManager.ChangeDirection(SnakeDirection.Right);
-        
-        if (Inputs.IsActionDown(InputActions.Faster))
-            GameManager.Faster();
-        
-        if (!Inputs.IsActionDown(InputActions.Faster))
-            GameManager.Slower();
-
-        if (Inputs.IsActionPressed(InputActions.Pause))
-        {
-            if (GameManager.IsEnded)
-                _dialogs.HideCurrent();
-            else
-                GameManager.TogglePause();
-        }
-
-        if (Inputs.IsActionPressed(InputActions.Fullscreen))
-            Services.GetService<GraphicsDeviceManager>().ToggleFullScreen();
-        
-        GameManager.Update(gameTime);
-        
-        _renderer.Update();
+        _inputs.Update();
+        _world.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime)
     {
-        _renderer.Render(gameTime);
-    }
-
-    public void TogglePause()
-    {
-        GameManager.TogglePause();
-    }
-
-    public void ShowScoreBoardDialog()
-    {
-        _dialogs.Show<ScoreBoardDialog>(_lastScoreBoardEntryId);
-    }
-
-    private void OnPaused(PausedEvent e)
-    {
-        _logger.Info("Paused");
-        _dialogs.Show<PauseDialog>();
-    }
-
-    private void OnGameEnded(GameEndedEvent e)
-    {
-        _logger.Info("Game ended");
+        Game.GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
         
-        _dialogs.Show<GameOverDialog>();
-        
-        var dataManager = new DataManager();
-        _lastScoreBoardEntryId = dataManager.SaveScore(GameManager.Score, (int)GameManager.TotalTime);
-    }
-
-    private void OnResume(ResumeEvent obj)
-    {
-        _logger.Info("Resumed");
-        _dialogs.Hide<PauseDialog>();
+        _world.Draw(gameTime);
     }
 }

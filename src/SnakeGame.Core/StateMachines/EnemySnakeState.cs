@@ -1,17 +1,17 @@
 using System;
 using Microsoft.Xna.Framework;
-using SnakeGame.Core.Entities;
+using MonoGame.Extended.ECS;
+using SnakeGame.Core.Data;
+using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.Systems;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.StateMachines;
 
 public class EnemySnakeState : CharacterState
 {
-    private readonly EntityManager _entities;
-    private readonly Snake _snake;
-    private readonly Random _random;
+    private readonly Entity _snakeEntity;
+    private readonly GameState _gameState;
 
     private enum ObjectType
     {
@@ -22,29 +22,31 @@ public class EnemySnakeState : CharacterState
 
     private const int ObjectScanLength = 10;
     
-    public EnemySnakeState(EntityManager entities, Snake snake)
+    public EnemySnakeState(GameState gameState, Entity snakeEntity)
     {
-        _entities = entities;
-        _snake = snake;
-        _random = new Random(); // Let's make it less predictable (*devil smile*)
+        _gameState = gameState;
+        _snakeEntity = snakeEntity;
     }
-    
     
     public override void Update(GameTime gameTime)
     {
-        if (_snake.State != SnakeState.Alive)
+        var snake = _snakeEntity.Get<SnakeComponent>();
+        
+        if (!snake.IsAlive)
             return;
 
         var direction = GetDirection();
 
-        _snake.UpdateDirection(direction);
+        snake.NewDirection = direction;
     }
 
     private SnakeDirection GetDirection()
     {
-        var head = _snake.Segments[0].Position;
+        var snake = _snakeEntity.Get<SnakeComponent>();
         
-        var follow = _snake.Head.Direction;
+        var head = snake.Segments[0].Position;
+        
+        var follow = snake.Head.Direction;
         var left = follow.GetCounterClockwise();
         var right = follow.GetClockwise();
         
@@ -59,7 +61,7 @@ public class EnemySnakeState : CharacterState
             if (objectAtRight != ObjectType.Unavoidable && objectAtLeft != ObjectType.Unavoidable)
             {
                 // If we can go both ways, let's make it less predictable
-                return _random.Next() % 2 == 1 ? right : left;
+                return Random.Shared.Next() % 2 == 1 ? right : left;
             }
             
             return objectAtRight != ObjectType.Unavoidable ? right : left;
@@ -118,18 +120,22 @@ public class EnemySnakeState : CharacterState
         }
 
         // Other snake
-        foreach (var snake in _entities.Snakes)
+        foreach (var snakeEntity in _gameState.Snakes)
         {
-            if (snake.CollidesWith(headRectangle))
+            var snake = snakeEntity.Get<SnakeComponent>();
+            
+            if (!snake.IsInitialized) continue;
+            
+            if (CollidesWith(snake, headRectangle))
             {
                 return ObjectType.Unavoidable;
             }
         }
 
         // Collectables
-        foreach (var collectable in _entities.Collectables)
+        foreach (var collectableEntity in _gameState.Collectables)
         {
-            if (headRectangle.Contains(collectable.Position))
+            if (headRectangle.Contains(collectableEntity.Get<TransformComponent>().Position))
                 return ObjectType.Collectable;
         }
 
@@ -151,5 +157,22 @@ public class EnemySnakeState : CharacterState
             return location - new Vector2(0, Constants.SegmentSize);
         
         return location;
+    }
+    
+    private static bool CollidesWith(SnakeComponent snake, Rectangle rectangle)
+    {
+        if (snake.Head.GetRectangle().Intersects(rectangle))
+            return true;
+
+        if (snake.Tail.GetRectangle().Intersects(rectangle))
+            return true;
+
+        foreach (var segment in snake.Segments)
+        {
+            if (segment.GetRectangle().Intersects(rectangle))
+                return true;
+        }
+
+        return false;
     }
 }

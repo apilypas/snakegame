@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace SnakeGame.Core;
 
 public static class Constants
@@ -24,12 +26,14 @@ public static class Constants
     public const float InvincibleTimer = 8f; // Seconds
     public const float InitialTimer = 60f; // Seconds
     public const float MaxTimer = 300f; // Seconds
-    public const int ScreenWidth = 960;
-    public const int ScreenHeight = 540;
+    public const int VirtualScreenWidth = 960;
+    public const int VirtualScreenHeight = 540;
     public const int InitialSnakeSize = 3;
     public const float ClockBonus = 30f; // Seconds
     public const float ScoreMultiplicatorTimer = 10f; // Seconds
     public const int MaxScoreBoardEntries = 15;
     public const int MaxScoreMultiplier = 666;
     public const string ScoreFormat = "0000000000";
+    public readonly static Color[] InvincibleColors = [Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White];
+    public const float Zoom = 1f;
 }

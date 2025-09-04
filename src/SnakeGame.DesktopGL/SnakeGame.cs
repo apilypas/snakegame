@@ -12,11 +12,11 @@ public class SnakeGame : Game
     public SnakeGame()
     {
         var graphics = new GraphicsDeviceManager(this);
-        graphics.PreferredBackBufferWidth = Constants.ScreenWidth;
-        graphics.PreferredBackBufferHeight = Constants.ScreenHeight;
+        graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
+        graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
         
         Window.Title = "Snake Game";
-        //Window.AllowUserResizing = true;
+        Window.AllowUserResizing = true;
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
