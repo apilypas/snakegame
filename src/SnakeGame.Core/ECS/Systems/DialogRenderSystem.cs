@@ -16,7 +16,6 @@ public class DialogRenderSystem : EntityDrawSystem
     private readonly Texture2D _userInterfaceTexture;
     private readonly SpriteFont _mainFont;
     private ComponentMapper<DialogComponent> _dialogMapper;
-    private ComponentMapper<ColorRectangleComponent> _colorRectangleMapper;
     private ComponentMapper<ButtonComponent> _buttonMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<DialogLabelComponent> _dialogLabelMapper;
@@ -26,7 +25,6 @@ public class DialogRenderSystem : EntityDrawSystem
         ContentManager contents) 
         : base(Aspect.One(
             typeof(DialogComponent),
-            typeof(ColorRectangleComponent),
             typeof(ButtonComponent),
             typeof(DialogLabelComponent)))
     {
@@ -39,7 +37,6 @@ public class DialogRenderSystem : EntityDrawSystem
     public override void Initialize(IComponentMapperService mapperService)
     {
         _dialogMapper = mapperService.GetMapper<DialogComponent>();
-        _colorRectangleMapper = mapperService.GetMapper<ColorRectangleComponent>();
         _buttonMapper = mapperService.GetMapper<ButtonComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _dialogLabelMapper = mapperService.GetMapper<DialogLabelComponent>();
@@ -56,22 +53,6 @@ public class DialogRenderSystem : EntityDrawSystem
             BlendState.AlphaBlend,
             SamplerState.PointClamp,
             transformMatrix: transformMatrix);
-        
-        foreach (var entityId in ActiveEntities)
-        {
-            var colorRectangle = _colorRectangleMapper.Get(entityId);
-
-            if (colorRectangle != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                
-                _spriteBatch.FillRectangle(
-                    transform.Position,
-                    colorRectangle.Size,
-                    colorRectangle.FillColor,
-                    1f);
-            }
-        }
 
         foreach (var entityId in ActiveEntities)
         {
@@ -80,13 +61,22 @@ public class DialogRenderSystem : EntityDrawSystem
             if (dialog != null)
             {
                 var transform = _transformMapper.Get(entityId);
-                
-                _spriteBatch.DrawFromNinePatch(
-                    transform.Position,
-                    dialog.Size,
-                    _userInterfaceTexture,
-                    new Rectangle(0, 0, 48, 48),
-                    Color.White);
+
+                if (!dialog.IsTransparent)
+                {
+                    _spriteBatch.FillRectangle(
+                        Vector2.Zero,
+                        new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight),
+                        new Color(Color.Black, .6f),
+                        1f);
+
+                    _spriteBatch.DrawFromNinePatch(
+                        transform.Position,
+                        dialog.Size,
+                        _userInterfaceTexture,
+                        new Rectangle(0, 0, 48, 48),
+                        Color.White);
+                }
 
                 if (!string.IsNullOrEmpty(dialog.Title))
                 {
@@ -109,75 +99,72 @@ public class DialogRenderSystem : EntityDrawSystem
                         transform.Position + new Vector2(8f, 24f),
                         Color.White);
                 }
-            }
-        }
 
-        foreach (var entityId in ActiveEntities)
-        {
-            var label = _dialogLabelMapper.Get(entityId);
+                foreach (var childEntityId in dialog.ChildrenEntities)
+                {
+                    var label = _dialogLabelMapper.Get(childEntityId);
 
-            if (label != null)
-            {
-                var transform = _transformMapper.Get(entityId);
+                    if (label != null)
+                    {
+                        var labelTransform = _transformMapper.Get(childEntityId);
                 
-                _spriteBatch.DrawStringWithShadow(
-                    label.Font,
-                    label.Text,
-                    transform.Position,
-                    label.Color,
-                    transform.Rotation,
-                    Vector2.Zero);
-            } 
-        }
+                        _spriteBatch.DrawStringWithShadow(
+                            label.Font,
+                            label.Text,
+                            labelTransform.Position,
+                            label.Color,
+                            labelTransform.Rotation,
+                            Vector2.Zero);
+                    }
+                    
+                    var button = _buttonMapper.Get(childEntityId);
 
-        foreach (var entityId in ActiveEntities)
-        {
-            var button = _buttonMapper.Get(entityId);
+                    if (button != null)
+                    {
+                        var buttonTransform = _transformMapper.Get(childEntityId);
 
-            if (button != null)
-            {
-                var transform = _transformMapper.Get(entityId);
+                        if (button.IsPressed)
+                        {
+                            _spriteBatch.DrawFromNinePatch(
+                                buttonTransform.Position,
+                                button.Size,
+                                _userInterfaceTexture,
+                                new Rectangle(96, 48, 48, 48),
+                                Color.White);
+                        }
+                        else if (button.IsHovered)
+                        {
+                            _spriteBatch.DrawFromNinePatch(
+                                buttonTransform.Position,
+                                button.Size,
+                                _userInterfaceTexture,
+                                new Rectangle(48, 48, 48, 48),
+                                Color.White);
+                        }
+                        else
+                        {
+                            _spriteBatch.DrawFromNinePatch(
+                                buttonTransform.Position,
+                                button.Size,
+                                _userInterfaceTexture,
+                                new Rectangle(0, 48, 48, 48),
+                                Color.White);
+                        }
 
-                if (button.IsPressed)
-                {
-                    _spriteBatch.DrawFromNinePatch(
-                        transform.Position,
-                        button.Size,
-                        _userInterfaceTexture,
-                        new Rectangle(96, 48, 48, 48),
-                        Color.White);
-                }
-                else if (button.IsHovered)
-                {
-                    _spriteBatch.DrawFromNinePatch(
-                        transform.Position,
-                        button.Size,
-                        _userInterfaceTexture,
-                        new Rectangle(48, 48, 48, 48),
-                        Color.White);
-                }
-                else
-                {
-                    _spriteBatch.DrawFromNinePatch(
-                        transform.Position,
-                        button.Size,
-                        _userInterfaceTexture,
-                        new Rectangle(0, 48, 48, 48),
-                        Color.White);
-                }
+                        if (!string.IsNullOrEmpty(button.Text))
+                        {
+                            var textSize = _mainFont.MeasureString(button.Text);
+                            var position = new Vector2(
+                                buttonTransform.Position.X + (button.Size.Width - textSize.X) / 2f,
+                                buttonTransform.Position.Y + (button.Size.Height - textSize.Y) / 2f);
 
-                if (!string.IsNullOrEmpty(button.Text))
-                {
-                    var textSize = _mainFont.MeasureString(button.Text);
-                    var position = new Vector2(
-                        transform.Position.X + (button.Size.Width - textSize.X) / 2f,
-                        transform.Position.Y + (button.Size.Height - textSize.Y) / 2f);
-
-                    _spriteBatch.DrawStringWithShadow(
-                        _mainFont,
-                        button.Text,
-                        position,
-                        Color.White);
+                            _spriteBatch.DrawStringWithShadow(
+                                _mainFont,
+                                button.Text,
+                                position,
+                                Color.White);
+                        }
+                    }
                 }
             }
         }

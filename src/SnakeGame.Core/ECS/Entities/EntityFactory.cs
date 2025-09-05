@@ -186,14 +186,6 @@ public class EntityFactory
 
     public int CreateDialog(string title, string content, SizeF size, params (string, Action)[] buttons)
     {
-        var colorRectangleEntity = _world.CreateEntity();
-        colorRectangleEntity.Attach(new ColorRectangleComponent
-        {
-            FillColor = new Color(Color.Black, .6f),
-            Size = new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight)
-        });
-        colorRectangleEntity.Attach(new TransformComponent());
-        
         var dialogEntity = _world.CreateEntity();
 
         var dialog = new DialogComponent
@@ -211,8 +203,6 @@ public class EntityFactory
                 (Constants.VirtualScreenHeight - size.Height) / 2)
         };
         dialogEntity.Attach(transform);
-
-        dialog.ChildrenEntities.Add(colorRectangleEntity.Id);   
         
         var totalButtonWidth = buttons.Length * 100f + (buttons.Length - 1) * 4f;
             

@@ -41,6 +41,15 @@ public class StartScreen : GameScreen
 
         var gameState = _world.CreateEntity();
 
+        var dialogId = entityFactory.CreateDialog(
+            string.Empty,
+            string.Empty,
+            new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight));
+
+        var dialog = _world.GetEntity(dialogId).Get<DialogComponent>();
+
+        dialog.IsTransparent = true;
+
         var startButtonId = entityFactory.CreateButton(
             "Start",
             new Vector2(100f, 100f),
@@ -52,6 +61,8 @@ public class StartScreen : GameScreen
                     Event = ButtonEvents.StartNew
                 });
             });
+        
+        dialog.ChildrenEntities.Add(startButtonId);
 
         var scoreBoardButtonId = entityFactory.CreateButton(
             "Score Board",
@@ -64,6 +75,8 @@ public class StartScreen : GameScreen
                     Event = ButtonEvents.ShowScoreBoard
                 });
             });
+        
+        dialog.ChildrenEntities.Add(scoreBoardButtonId);
 
         var creditsButtonId = entityFactory.CreateButton(
             "Credits",
@@ -76,6 +89,8 @@ public class StartScreen : GameScreen
                     Event = ButtonEvents.ShowCredits
                 });
             });
+        
+        dialog.ChildrenEntities.Add(creditsButtonId);
 
         var quitButtonId = entityFactory.CreateButton(
             "Quit",
@@ -85,6 +100,8 @@ public class StartScreen : GameScreen
             {
                 Game.Exit();
             });
+        
+        dialog.ChildrenEntities.Add(quitButtonId);
         
         var label1 = _world.CreateEntity();
         label1.Attach(new DialogLabelComponent
@@ -98,6 +115,8 @@ public class StartScreen : GameScreen
                 Constants.VirtualScreenWidth / 2f - 40f,
                 Constants.VirtualScreenHeight / 2f - 100f)
         });
+
+        dialog.ChildrenEntities.Add(label1.Id);
         
         var label2 = _world.CreateEntity();
         label2.Attach(new DialogLabelComponent
@@ -112,6 +131,8 @@ public class StartScreen : GameScreen
                 Constants.VirtualScreenHeight / 2f - 70f)
         });
         
+        dialog.ChildrenEntities.Add(label2.Id);
+        
         var label3 = _world.CreateEntity();
         label3.Attach(new DialogLabelComponent
         {
@@ -124,6 +145,8 @@ public class StartScreen : GameScreen
                 Constants.VirtualScreenWidth / 2f - 40f,
                 Constants.VirtualScreenHeight / 2f - 0f)
         });
+        
+        dialog.ChildrenEntities.Add(label3.Id);
     }
 
     public override void Update(GameTime gameTime)

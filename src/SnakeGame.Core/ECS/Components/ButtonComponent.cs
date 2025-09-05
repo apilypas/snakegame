@@ -10,4 +10,5 @@ public class ButtonComponent
     public bool IsHovered { get; set; }
     public bool IsPressed { get; set; }
     public Action Action { get; set; }
+    public bool IsHandlingInput { get; set; }
 }

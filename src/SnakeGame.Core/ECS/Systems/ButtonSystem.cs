@@ -14,6 +14,7 @@ public class ButtonSystem : EntityUpdateSystem
     private readonly GraphicsDevice _graphicsDevice;
     private ComponentMapper<ButtonComponent> _buttonMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
+    private Vector2 _lastMousePosition = Vector2.Zero;
 
     public ButtonSystem(GraphicsDevice graphicsDevice, InputManager inputManager) 
         : base(Aspect.All(typeof(ButtonComponent)))
@@ -30,30 +31,77 @@ public class ButtonSystem : EntityUpdateSystem
 
     public override void Update(GameTime gameTime)
     {
+        HandleHoverState();
+        HandlePressedState();
+    }
+
+    protected override void OnEntityAdded(int entityId)
+    {
+        var button = _buttonMapper.Get(entityId);
+
+        if (button != null)
+        {
+            _lastMousePosition = Vector2.Zero;
+        }
+    }
+
+    protected override void OnEntityRemoved(int entityId)
+    {
+        var button = _buttonMapper.Get(entityId);
+
+        if (button != null)
+        {
+            _lastMousePosition = Vector2.Zero;
+        }
+    }
+
+    private void HandlePressedState()
+    {
         foreach (var entityId in ActiveEntities)
         {
             var button = _buttonMapper.Get(entityId);
-            var transform = _transformMapper.Get(entityId);
-            
-            var bounds = new RectangleF(
-                transform.Position.X,
-                transform.Position.Y,
-                button.Size.Width,
-                button.Size.Height);
 
-            var scaleY = (float)_graphicsDevice.Viewport.Height / Constants.VirtualScreenHeight;
-
-            var pos = _inputManager.Mouse.Position;
-            pos -= new Vector2(_graphicsDevice.Viewport.X, _graphicsDevice.Viewport.Y);
-            pos /= scaleY;
-            
-            button.IsHovered = bounds.Contains(pos);
-            
-            button.IsPressed = button.IsHovered && _inputManager.Mouse.IsLeftButtonDown;
-
-            if (button.IsHovered && _inputManager.Mouse.IsLeftButtonReleased)
+            if (button.IsHandlingInput)
             {
-                button.Action?.Invoke();
+                button.IsPressed = button.IsHovered && _inputManager.Mouse.IsLeftButtonDown;
+
+                if (button.IsHovered && _inputManager.Mouse.IsLeftButtonReleased)
+                {
+                    button.Action?.Invoke();
+                }
+            }
+        }
+    }
+
+    private void HandleHoverState()
+    {
+        var mousePosition = _inputManager.Mouse.Position;
+
+        if (Vector2.Distance(mousePosition, _lastMousePosition) < 1f)
+            return;
+        
+        _lastMousePosition = mousePosition;
+        
+        // Adjust to scaling
+        var scaleY = (float)_graphicsDevice.Viewport.Height / Constants.VirtualScreenHeight;
+        mousePosition -= new Vector2(_graphicsDevice.Viewport.X, _graphicsDevice.Viewport.Y);
+        mousePosition /= scaleY;
+        
+        foreach (var entityId in ActiveEntities)
+        {
+            var button = _buttonMapper.Get(entityId);
+
+            if (button.IsHandlingInput)
+            {
+                var transform = _transformMapper.Get(entityId);
+
+                var bounds = new RectangleF(
+                    transform.Position.X,
+                    transform.Position.Y,
+                    button.Size.Width,
+                    button.Size.Height);
+
+                button.IsHovered = bounds.Contains(mousePosition);
             }
         }
     }
