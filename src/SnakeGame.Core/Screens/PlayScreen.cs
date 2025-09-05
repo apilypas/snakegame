@@ -61,7 +61,7 @@ public class PlayScreen : GameScreen
         var entityFactory = new EntityFactory();
 
         _world = new WorldBuilder()
-            .AddSystem(new InputSystem(_inputs, Game, entityFactory))
+            .AddSystem(new InputSystem(_inputs, Game, entityFactory, gameState))
             .AddSystem(new PlayerInputSystem(_inputs, gameState))
             .AddSystem(new GameSystem(contents, gameState, entityFactory))
             .AddSystem(new SnakeSystem(gameState))
@@ -76,7 +76,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
             .Build();
         
-        entityFactory.Initialize(_world);
+        entityFactory.Initialize(_world, contents);
 
         // TODO: remove gameStateEntity
         var gameStateEntity = _world.CreateEntity();

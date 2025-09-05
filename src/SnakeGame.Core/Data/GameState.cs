@@ -24,5 +24,4 @@ public class GameState
     public int TimeLabelId { get; set; }
     public int PausedDialogId { get; set; }
     public int GameOverDialogId { get; set; }
-    public int ScoreBoardDialogId { get; set; }
 }

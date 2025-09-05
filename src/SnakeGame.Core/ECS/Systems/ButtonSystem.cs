@@ -37,9 +37,7 @@ public class ButtonSystem : EntityUpdateSystem
 
     protected override void OnEntityAdded(int entityId)
     {
-        var button = _buttonMapper.Get(entityId);
-
-        if (button != null)
+        if (_buttonMapper.Has(entityId))
         {
             _lastMousePosition = Vector2.Zero;
         }
@@ -47,9 +45,7 @@ public class ButtonSystem : EntityUpdateSystem
 
     protected override void OnEntityRemoved(int entityId)
     {
-        var button = _buttonMapper.Get(entityId);
-
-        if (button != null)
+        if (_buttonMapper.Has(entityId))
         {
             _lastMousePosition = Vector2.Zero;
         }

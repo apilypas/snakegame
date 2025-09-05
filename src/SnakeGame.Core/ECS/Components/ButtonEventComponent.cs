@@ -3,6 +3,7 @@ namespace SnakeGame.Core.ECS.Components;
 public enum ButtonEvents
 {
     Resume,
+    Close,
     Exit,
     ShowScoreBoard,
     StartNew,
@@ -11,5 +12,6 @@ public enum ButtonEvents
 
 public class ButtonEventComponent
 {
+    public int DialogEntityId { get; set; }
     public ButtonEvents Event { get; set; }
 }

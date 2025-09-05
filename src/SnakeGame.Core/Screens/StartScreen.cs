@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
-using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
 using SnakeGame.Core.ECS.Systems;
 using SnakeGame.Core.Inputs;
@@ -30,123 +28,16 @@ public class StartScreen : GameScreen
         var entityFactory = new EntityFactory();
 
         _world = new WorldBuilder()
-            .AddSystem(new InputSystem(_inputs, Game, entityFactory))
+            .AddSystem(new InputSystem(_inputs, Game, entityFactory, null))
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
             .AddSystem(new StartMenuButtonEventSystem(this, Game, entityFactory))
             .AddSystem(new DialogSystem())
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
             .Build();
         
-        entityFactory.Initialize(_world);
+        entityFactory.Initialize(_world, contents);
 
-        var gameState = _world.CreateEntity();
-
-        var dialogId = entityFactory.CreateDialog(
-            string.Empty,
-            string.Empty,
-            new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight));
-
-        var dialog = _world.GetEntity(dialogId).Get<DialogComponent>();
-
-        dialog.IsTransparent = true;
-
-        var startButtonId = entityFactory.CreateButton(
-            "Start",
-            new Vector2(100f, 100f),
-            new SizeF(100f, 40f),
-            () =>
-            {
-                gameState.Attach(new ButtonEventComponent
-                {
-                    Event = ButtonEvents.StartNew
-                });
-            });
-        
-        dialog.ChildrenEntities.Add(startButtonId);
-
-        var scoreBoardButtonId = entityFactory.CreateButton(
-            "Score Board",
-            new Vector2(100f, 160f),
-            new SizeF(100f, 40f),
-            () =>
-            {
-                gameState.Attach(new ButtonEventComponent
-                {
-                    Event = ButtonEvents.ShowScoreBoard
-                });
-            });
-        
-        dialog.ChildrenEntities.Add(scoreBoardButtonId);
-
-        var creditsButtonId = entityFactory.CreateButton(
-            "Credits",
-            new Vector2(100f, 220f),
-            new SizeF(100f, 40f),
-            () =>
-            {
-                gameState.Attach(new ButtonEventComponent
-                {
-                    Event = ButtonEvents.ShowCredits
-                });
-            });
-        
-        dialog.ChildrenEntities.Add(creditsButtonId);
-
-        var quitButtonId = entityFactory.CreateButton(
-            "Quit",
-            new Vector2(100f, 280f),
-            new SizeF(100f, 40f),
-            () =>
-            {
-                Game.Exit();
-            });
-        
-        dialog.ChildrenEntities.Add(quitButtonId);
-        
-        var label1 = _world.CreateEntity();
-        label1.Attach(new DialogLabelComponent
-        {
-            Text = "Yet another",
-            Font = contents.BigFont
-        });
-        label1.Attach(new TransformComponent
-        {
-            Position = new Vector2(
-                Constants.VirtualScreenWidth / 2f - 40f,
-                Constants.VirtualScreenHeight / 2f - 100f)
-        });
-
-        dialog.ChildrenEntities.Add(label1.Id);
-        
-        var label2 = _world.CreateEntity();
-        label2.Attach(new DialogLabelComponent
-        {
-            Text = "Snake",
-            Font = contents.LogoFont
-        });
-        label2.Attach(new TransformComponent
-        {
-            Position = new Vector2(
-                Constants.VirtualScreenWidth / 2f - 40f,
-                Constants.VirtualScreenHeight / 2f - 70f)
-        });
-        
-        dialog.ChildrenEntities.Add(label2.Id);
-        
-        var label3 = _world.CreateEntity();
-        label3.Attach(new DialogLabelComponent
-        {
-            Text = "Game",
-            Font = contents.LogoFont
-        });
-        label3.Attach(new TransformComponent
-        {
-            Position = new Vector2(
-                Constants.VirtualScreenWidth / 2f - 40f,
-                Constants.VirtualScreenHeight / 2f - 0f)
-        });
-        
-        dialog.ChildrenEntities.Add(label3.Id);
+        entityFactory.Dialogs.CreateStartScreen();
     }
 
     public override void Update(GameTime gameTime)

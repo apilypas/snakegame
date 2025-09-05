@@ -673,24 +673,13 @@ public class GameSystem : EntityProcessingSystem
                     .AppendLine($"Time played: {(int)_gameState.TotalTime}s")
                     .ToString();
 
-                var dialogId = _entityFactory.CreateDialog(
+                var dialogId = _entityFactory.Dialogs.CreateDialog(
                     "Game is over",
                     results,
                     new SizeF(250f, 300f),
-                    ("Score Board", () =>
-                    {
-                        GetEntity(entityId).Attach(new ButtonEventComponent
-                        {
-                            Event = ButtonEvents.ShowScoreBoard
-                        });
-                    }),
-                    ("Exit", () =>
-                    {
-                        GetEntity(entityId).Attach(new ButtonEventComponent
-                        {
-                            Event = ButtonEvents.Exit
-                        });
-                    }));
+                    ("Score Board", ButtonEvents.ShowScoreBoard),
+                    ("Exit", ButtonEvents.Close));
+                
                 _gameState.GameOverDialogId = dialogId;
                 
                 var dataManager = new DataManager();

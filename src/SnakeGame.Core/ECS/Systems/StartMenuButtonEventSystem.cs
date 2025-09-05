@@ -1,7 +1,4 @@
-using System.Reflection;
-using System.Text;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Screens;
@@ -17,6 +14,7 @@ public class StartMenuButtonEventSystem : EntityProcessingSystem
     private readonly Game _game;
     private readonly EntityFactory _entityFactory;
     private ComponentMapper<ButtonEventComponent> _buttonEventMapper;
+    private ComponentMapper<DialogComponent> _dialogMapper;
 
     public StartMenuButtonEventSystem(GameScreen gameScreen, Game game, EntityFactory entityFactory) 
         : base(Aspect.All(typeof(ButtonEventComponent)))
@@ -29,6 +27,7 @@ public class StartMenuButtonEventSystem : EntityProcessingSystem
     public override void Initialize(IComponentMapperService mapperService)
     {
         _buttonEventMapper = mapperService.GetMapper<ButtonEventComponent>();
+        _dialogMapper = mapperService.GetMapper<DialogComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -40,27 +39,25 @@ public class StartMenuButtonEventSystem : EntityProcessingSystem
             _gameScreen.ScreenManager.LoadScreen(new PlayScreen(_game));
         }
 
+        if (buttonEvent.Event == ButtonEvents.Close)
+        {
+            var dialog = _dialogMapper.Get(buttonEvent.DialogEntityId);
+            dialog.IsDestroyed = true;  
+        }
+
+        if (buttonEvent.Event == ButtonEvents.Exit)
+        {
+            _game.Exit();
+        }
+
         if (buttonEvent.Event == ButtonEvents.ShowCredits)
         {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var content = new StringBuilder()
-                .AppendLine($"Yet another Snake Game ({version})")
-                .AppendLine()
-                .AppendLine("Developed by: g1ngercat.itch.io")
-                .AppendLine("Music and art too...")
-                .AppendLine()
-                .AppendLine("Font: Pixel Operator")
-                .AppendLine("Game engine based on MonoGame")
-                .ToString();
-            
-            var dialogId = _entityFactory.CreateDialog(
-                "Credits",
-                content,
-                new SizeF(310f, 260f),
-                ("Back", () =>
-                {
-                    //
-                }));
+            _entityFactory.Dialogs.CreateCreditsDialog();
+        }
+        
+        if (buttonEvent.Event == ButtonEvents.ShowScoreBoard)
+        {
+            _entityFactory.Dialogs.CreateScoreBoardDialog();
         }
         
         _buttonEventMapper.Delete(entityId);

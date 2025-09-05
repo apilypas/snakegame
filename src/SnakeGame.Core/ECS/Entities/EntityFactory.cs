@@ -7,6 +7,7 @@ using MonoGame.Extended.Graphics;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
+using SnakeGame.Core.Services;
 using SnakeGame.Core.StateMachines;
 
 namespace SnakeGame.Core.ECS.Entities;
@@ -14,10 +15,13 @@ namespace SnakeGame.Core.ECS.Entities;
 public class EntityFactory
 {
     private World _world;
+    
+    public DialogEntityFactory Dialogs { get; private set; }
 
-    public void Initialize(World world)
+    public void Initialize(World world, ContentManager contents)
     {
         _world = world;
+        Dialogs = new DialogEntityFactory(world, contents);
     }
 
     public Entity CreatePlayerSnake(Vector2 location, int length, SnakeDirection direction)
@@ -163,74 +167,5 @@ public class EntityFactory
         entity.Attach(new TransformComponent());
         
         return entity.Id;
-    }
-
-    public int CreateButton(string text, Vector2 position, SizeF size, Action action)
-    {
-        var entity = _world.CreateEntity();
-        
-        entity.Attach(new ButtonComponent
-        {
-            Text = text,
-            Size = size,
-            Action = action
-        });
-        
-        entity.Attach(new TransformComponent
-        {
-            Position = position
-        });
-        
-        return entity.Id;
-    }
-
-    public int CreateDialog(string title, string content, SizeF size, params (string, Action)[] buttons)
-    {
-        var dialogEntity = _world.CreateEntity();
-
-        var dialog = new DialogComponent
-        {
-            Title = title,
-            Content = content,
-            Size = size
-        };
-        dialogEntity.Attach(dialog);
-
-        var transform = new TransformComponent
-        {
-            Position = new Vector2(
-                (Constants.VirtualScreenWidth - size.Width) / 2,
-                (Constants.VirtualScreenHeight - size.Height) / 2)
-        };
-        dialogEntity.Attach(transform);
-        
-        var totalButtonWidth = buttons.Length * 100f + (buttons.Length - 1) * 4f;
-            
-        var buttonPositionX = (dialog.Size.Width - totalButtonWidth) / 2f;
-        var buttonPositionY = dialog.Size.Height - 46f;
-
-        foreach (var button in buttons)
-        {
-            var buttonEntity = _world.CreateEntity();
-            
-            buttonEntity.Attach(new ButtonComponent
-            {
-                Text = button.Item1,
-                Size = new SizeF(100f, 40f),
-                Action = button.Item2
-            });
-            
-            buttonEntity.Attach(new TransformComponent
-            {
-                Position = transform.Position + new Vector2(buttonPositionX, buttonPositionY)
-            });
-
-            buttonPositionX += 100f;
-            buttonPositionX += 4f;
-            
-            dialog.ChildrenEntities.Add(buttonEntity.Id);
-        }
-
-        return dialogEntity.Id;
     }
 }
