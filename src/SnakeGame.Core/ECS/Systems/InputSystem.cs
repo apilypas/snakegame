@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
-using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
 using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Services;
@@ -42,14 +40,7 @@ public class InputSystem : EntityUpdateSystem
     
                     if (_gameState.IsPaused)
                     {
-                        var dialogId = _entityFactory.Dialogs.CreateDialog(
-                            "Paused",
-                            "Your game is paused",
-                            new SizeF(220, 140),
-                            ("Resume", ButtonEvents.Resume),
-                            ("Exit", ButtonEvents.Close));
-    
-                        _gameState.PausedDialogId = dialogId;
+                        _entityFactory.Dialog.CreatePauseDialog();
                     }
                 }
             }

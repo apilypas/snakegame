@@ -1,7 +1,5 @@
 using System;
-using System.Text;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
@@ -30,7 +28,7 @@ public class GameSystem : EntityProcessingSystem
         ContentManager contents,
         GameState gameState,
         EntityFactory entityFactory)
-        : base(Aspect.All(typeof(GameState)))
+        : base(Aspect.All(typeof(PlayFieldComponent)))
     {
         _contents = contents;
         _gameState = gameState;
@@ -665,22 +663,7 @@ public class GameSystem : EntityProcessingSystem
                     Type = SoundEffectTypes.GameEnded
                 });
 
-                var results = new StringBuilder()
-                    .AppendLine("Your results:")
-                    .AppendLine($"Score: {_gameState.Score}")
-                    .AppendLine($"Deaths: {_gameState.Deaths}")
-                    .AppendLine($"Longest snake: {_gameState.LongestSnake}")
-                    .AppendLine($"Time played: {(int)_gameState.TotalTime}s")
-                    .ToString();
-
-                var dialogId = _entityFactory.Dialogs.CreateDialog(
-                    "Game is over",
-                    results,
-                    new SizeF(250f, 300f),
-                    ("Score Board", ButtonEvents.ShowScoreBoard),
-                    ("Exit", ButtonEvents.Close));
-                
-                _gameState.GameOverDialogId = dialogId;
+                _entityFactory.Dialog.CreateGameOverDialog(_gameState);
                 
                 var dataManager = new DataManager();
                 dataManager.SaveScore(_gameState.Score, (int)_gameState.TotalTime);

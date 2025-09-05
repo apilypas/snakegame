@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
 using SnakeGame.Core.Data;
@@ -16,12 +15,14 @@ public class EntityFactory
 {
     private World _world;
     
-    public DialogEntityFactory Dialogs { get; private set; }
+    public DialogEntityFactory Dialog { get; private set; }
+    public HudEntityFactory Hud { get; private set; }
 
     public void Initialize(World world, ContentManager contents)
     {
         _world = world;
-        Dialogs = new DialogEntityFactory(world, contents);
+        Dialog = new DialogEntityFactory(world, contents);
+        Hud = new HudEntityFactory(world, contents);
     }
 
     public Entity CreatePlayerSnake(Vector2 location, int length, SnakeDirection direction)
@@ -137,35 +138,5 @@ public class EntityFactory
         });
         
         return entity;
-    }
-
-    public int CreateSprite(Texture2D texture, Rectangle source)
-    {
-        var entity = _world.CreateEntity();
-        
-        entity.Attach(new SpriteComponent
-        {
-            Sprite = new Sprite(new Texture2DRegion(texture, source))
-        });
-        
-        entity.Attach(new TransformComponent());
-        
-        return entity.Id;
-    }
-
-    public int CreateLabel(SpriteFont spriteFont, string text, Color color)
-    {
-        var entity = _world.CreateEntity();
-
-        entity.Attach(new LabelComponent
-        {
-            Font = spriteFont,
-            Text = text,
-            Color = color
-        });
-        
-        entity.Attach(new TransformComponent());
-        
-        return entity.Id;
     }
 }

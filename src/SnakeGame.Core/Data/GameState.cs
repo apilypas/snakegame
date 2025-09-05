@@ -19,9 +19,4 @@ public class GameState
     public HashSet<Entity> Snakes { get; } = [];
     public HashSet<Entity> Collectables { get; } = [];
     public Entity PlayerSnake { get; set; }
-    public int ScoreLabelId { get; set; }
-    public int MultiplicatorLabelId { get; set; }
-    public int TimeLabelId { get; set; }
-    public int PausedDialogId { get; set; }
-    public int GameOverDialogId { get; set; }
 }

@@ -8,24 +8,26 @@ namespace SnakeGame.Core.ECS.Systems;
 
 public class ScoreDisplaySystem : EntityProcessingSystem
 {
-    private ComponentMapper<GameState> _gameStateMapper;
+    private readonly GameState _gameState;
+    private ComponentMapper<ScoreDisplayComponent> _scoreDisplayMapper;
 
-    public ScoreDisplaySystem() 
-        : base(Aspect.All(typeof(GameState)))
+    public ScoreDisplaySystem(GameState gameState) 
+        : base(Aspect.All(typeof(ScoreDisplayComponent)))
     {
+        _gameState = gameState;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
     {
-        _gameStateMapper = mapperService.GetMapper<GameState>();
+        _scoreDisplayMapper = mapperService.GetMapper<ScoreDisplayComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
     {
-        var gameState = _gameStateMapper.Get(entityId);
-
-        GetEntity(gameState.ScoreLabelId).Get<LabelComponent>().Text = gameState.Score.ToString(Constants.ScoreFormat);
-        GetEntity(gameState.MultiplicatorLabelId).Get<LabelComponent>().Text = $"x{gameState.ScoreMultiplicator}";
-        GetEntity(gameState.TimeLabelId).Get<LabelComponent>().Text = $"{(int)gameState.Timer / 60:00}:{(int)gameState.Timer % 60:00}";
+        var scoreDisplay = _scoreDisplayMapper.Get(entityId);
+        
+        GetEntity(scoreDisplay.ScoreLabelId).Get<HudLabelComponent>().Text = _gameState.Score.ToString(Constants.ScoreFormat);
+        GetEntity(scoreDisplay.MultiplicatorLabelId).Get<HudLabelComponent>().Text = $"x{_gameState.ScoreMultiplicator}";
+        GetEntity(scoreDisplay.TimeLabelId).Get<HudLabelComponent>().Text = $"{(int)_gameState.Timer / 60:00}:{(int)_gameState.Timer % 60:00}";
     }
 }

@@ -7,7 +7,8 @@ public enum ButtonEvents
     Exit,
     ShowScoreBoard,
     StartNew,
-    ShowCredits
+    ShowCredits,
+    ShowStartScreen
 }
 
 public class ButtonEventComponent

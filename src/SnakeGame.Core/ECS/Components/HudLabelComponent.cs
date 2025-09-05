@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Core.ECS.Components;
 
-public class LabelComponent
+public class HudLabelComponent
 {
     public SpriteFont Font { get; set; }
     public string Text { get; set; }

@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
+using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
 
@@ -11,7 +12,7 @@ namespace SnakeGame.Core.ECS.Entities;
 
 public class DialogEntityFactory(World world, ContentManager contents)
 {
-    public int CreateStartScreen()
+    public void CreateStartScreen()
     {
         var dialogEntity = world.CreateEntity();
         
@@ -124,11 +125,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
         });
         
         dialog.ChildrenEntities.Add(label3.Id);
-
-        return dialogEntity.Id;
     }
 
-    public int CreateCreditsDialog()
+    public void CreateCreditsDialog()
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         var content = new StringBuilder()
@@ -141,16 +140,14 @@ public class DialogEntityFactory(World world, ContentManager contents)
             .AppendLine("Game engine based on MonoGame")
             .ToString();
 
-        var dialogId = CreateDialog(
+        CreateDialog(
             "Credits",
             content,
             new SizeF(310f, 260f),
             ("Back", ButtonEvents.Close));
-
-        return dialogId;
     }
 
-    public int CreateScoreBoardDialog()
+    public void CreateScoreBoardDialog()
     {
         var dataManager = new DataManager();
         var scoreBoard = dataManager.LoadScoreBoard();
@@ -170,16 +167,42 @@ public class DialogEntityFactory(World world, ContentManager contents)
                 .AppendLine();
         }
 
-        var dialogId = CreateDialog(
+        CreateDialog(
             "Score Board",
             resultBuilder.ToString(),
             new SizeF(300f, 400f),
             ("Back", ButtonEvents.Close));
-
-        return dialogId;
     }
-    
-    public int CreateButton(string text, Vector2 position, SizeF size, Action action)
+
+    public void CreatePauseDialog()
+    {
+        CreateDialog(
+            "Paused",
+            "Your game is paused",
+            new SizeF(220, 140),
+            ("Resume", ButtonEvents.Resume),
+            ("Exit", ButtonEvents.ShowStartScreen));
+    }
+
+    public void CreateGameOverDialog(GameState gameState)
+    {
+        var results = new StringBuilder()
+            .AppendLine("Your results:")
+            .AppendLine($"Score: {gameState.Score}")
+            .AppendLine($"Deaths: {gameState.Deaths}")
+            .AppendLine($"Longest snake: {gameState.LongestSnake}")
+            .AppendLine($"Time played: {(int)gameState.TotalTime}s")
+            .ToString();
+
+        CreateDialog(
+            "Game is over",
+            results,
+            new SizeF(250f, 300f),
+            ("Score Board", ButtonEvents.ShowScoreBoard),
+            ("Exit", ButtonEvents.ShowStartScreen));
+    }
+
+    private int CreateButton(string text, Vector2 position, SizeF size, Action action)
     {
         var entity = world.CreateEntity();
         
@@ -197,8 +220,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
         
         return entity.Id;
     }
-    
-    public int CreateDialog(string title, string content, SizeF size, params (string, ButtonEvents)[] buttons)
+
+    private void CreateDialog(string title, string content, SizeF size, params (string, ButtonEvents)[] buttons)
     {
         var dialogEntity = world.CreateEntity();
 
@@ -251,7 +274,5 @@ public class DialogEntityFactory(World world, ContentManager contents)
             
             dialog.ChildrenEntities.Add(buttonEntity.Id);
         }
-
-        return dialogEntity.Id;
     }
 }

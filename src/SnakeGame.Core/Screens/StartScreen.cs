@@ -37,7 +37,7 @@ public class StartScreen : GameScreen
         
         entityFactory.Initialize(_world, contents);
 
-        entityFactory.Dialogs.CreateStartScreen();
+        entityFactory.Dialog.CreateStartScreen();
     }
 
     public override void Update(GameTime gameTime)

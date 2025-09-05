@@ -67,12 +67,13 @@ public class PlayScreen : GameScreen
             .AddSystem(new SnakeSystem(gameState))
             .AddSystem(new FadingTextSystem())
             .AddSystem(new PlayFieldSystem())
-            .AddSystem(new ScoreDisplaySystem())
+            .AddSystem(new ScoreDisplaySystem(gameState))
             .AddSystem(new DialogSystem())
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
-            .AddSystem(new ButtonEventSystem(gameState, entityFactory))
+            .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
             .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, cameraManager))
+            .AddSystem(new HudRenderSystem(Game.GraphicsDevice))
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
             .Build();
         
@@ -95,45 +96,9 @@ public class PlayScreen : GameScreen
         var enemySnakeEntity = entityFactory.CreateEnemySnake(gameState, enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         
         gameState.Snakes.Add(enemySnakeEntity);
-
-        var scoreLabelId = entityFactory.CreateLabel(contents.BigFont, string.Empty, Color.White);
-        _world.GetEntity(scoreLabelId).Get<TransformComponent>().Position = new Vector2(530f, 18f);
-        gameState.ScoreLabelId = scoreLabelId;
         
-        var multiplicatorLabelId = entityFactory.CreateLabel(contents.MainFont, string.Empty, Colors.ScoreMultiplicatorColor);
-        _world.GetEntity(multiplicatorLabelId).Get<TransformComponent>().Position = new Vector2(686f, 44f);
-        gameState.MultiplicatorLabelId = multiplicatorLabelId;
-        
-        var timeLabelId = entityFactory.CreateLabel(contents.MainFont, string.Empty, Colors.ScoreTimeColor);
-        _world.GetEntity(timeLabelId).Get<TransformComponent>().Position = new Vector2(550f, 9f);
-        gameState.TimeLabelId = timeLabelId;
-
-        var clockSpriteId = entityFactory.CreateSprite(contents.CollectableTexture, new Rectangle(16, 0, 16, 16));
-        _world.GetEntity(clockSpriteId).Get<TransformComponent>().Position = new Vector2(532f, 12f);
-        
-        List<KeyValuePair<string, string>> inputBindings = [
-            new("Pause", "Esc"),
-            new("Move up", "W"),
-            new("Move down", "S"),
-            new("Move left", "A"),
-            new("Move right", "D"),
-            new("Faster", "Spc")
-        ];
-
-        var p = 4f;
-        foreach (var inputBinding in inputBindings)
-        {
-            var id1 = entityFactory.CreateLabel( contents.MainFont, inputBinding.Key, Color.White);
-            _world.GetEntity(id1).Get<TransformComponent>().Position = new Vector2(-100f, p);
-
-            var id2 = entityFactory.CreateSprite(contents.CollectableTexture, new Rectangle(32, 0, 32, 32));
-            _world.GetEntity(id2).Get<TransformComponent>().Position = new Vector2(-140f, p);
-
-            var id3 = entityFactory.CreateLabel(contents.MainFont, inputBinding.Value, Color.White);
-            _world.GetEntity(id3).Get<TransformComponent>().Position = new Vector2(-140f, p);
-            
-            p += 40f;
-        }
+        entityFactory.Hud.CreateScoreDisplay();
+        entityFactory.Hud.CreateKeybindsDisplay();
     }
 
     public override void Update(GameTime gameTime)

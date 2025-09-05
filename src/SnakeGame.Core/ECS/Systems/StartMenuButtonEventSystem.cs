@@ -52,12 +52,12 @@ public class StartMenuButtonEventSystem : EntityProcessingSystem
 
         if (buttonEvent.Event == ButtonEvents.ShowCredits)
         {
-            _entityFactory.Dialogs.CreateCreditsDialog();
+            _entityFactory.Dialog.CreateCreditsDialog();
         }
         
         if (buttonEvent.Event == ButtonEvents.ShowScoreBoard)
         {
-            _entityFactory.Dialogs.CreateScoreBoardDialog();
+            _entityFactory.Dialog.CreateScoreBoardDialog();
         }
         
         _buttonEventMapper.Delete(entityId);

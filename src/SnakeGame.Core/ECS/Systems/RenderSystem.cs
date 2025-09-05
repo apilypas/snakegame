@@ -22,7 +22,7 @@ public class RenderSystem : EntityDrawSystem
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<FadingTextComponent> _fadingTextMapper;
     private ComponentMapper<PlayFieldComponent> _playFieldMapper;
-    private ComponentMapper<LabelComponent> _labelMapper;
+    private ComponentMapper<HudLabelComponent> _labelMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
 
     public RenderSystem(GraphicsDevice graphics, ContentManager contents, CameraManager cameraManager)
@@ -30,8 +30,7 @@ public class RenderSystem : EntityDrawSystem
             typeof(SnakeComponent),
             typeof(SpriteComponent),
             typeof(FadingTextComponent),
-            typeof(PlayFieldComponent),
-            typeof(LabelComponent)))
+            typeof(PlayFieldComponent)))
     {
         _spriteBatch = new SpriteBatch(graphics);
         _snakeRenderer = new SnakeRenderer(contents);
@@ -46,7 +45,7 @@ public class RenderSystem : EntityDrawSystem
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _fadingTextMapper = mapperService.GetMapper<FadingTextComponent>();
         _playFieldMapper = mapperService.GetMapper<PlayFieldComponent>();
-        _labelMapper = mapperService.GetMapper<LabelComponent>();
+        _labelMapper = mapperService.GetMapper<HudLabelComponent>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
     }
 
@@ -99,21 +98,6 @@ public class RenderSystem : EntityDrawSystem
                     Globals.PlayFieldRectangle.Size,
                     Color.Black);
             }
-
-            var label = _labelMapper.Get(entityId);
-
-            if (label != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                
-                _spriteBatch.DrawStringWithShadow(
-                    label.Font,
-                    label.Text,
-                    transform.Position,
-                    label.Color,
-                    transform.Rotation,
-                    Vector2.Zero);
-            }   
         }
         
         _spriteBatch.End();
