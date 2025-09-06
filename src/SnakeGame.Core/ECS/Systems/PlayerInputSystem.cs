@@ -29,8 +29,7 @@ public class PlayerInputSystem : EntityProcessingSystem
 
     public override void Process(GameTime gameTime, int entityId)
     {
-        if (_gameState.IsPaused)
-            return;
+        if (_gameState.IsPaused) return;
         
         var snake = _snakeMapper.Get(entityId);
 

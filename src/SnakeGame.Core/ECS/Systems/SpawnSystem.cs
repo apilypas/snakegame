@@ -41,6 +41,8 @@ public class SpawnSystem : EntityUpdateSystem
 
     public override void Update(GameTime gameTime)
     {
+        if (_gameState.IsPaused) return;
+        
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
         HandlePlayerSpawning();

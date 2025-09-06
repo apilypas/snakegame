@@ -31,6 +31,8 @@ public class DespawnSnakeSystem : EntityProcessingSystem
 
     public override void Process(GameTime gameTime, int entityId)
     {
+        if (_gameState.IsPaused) return;
+        
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         var snake = _snakeMapper.Get(entityId);
             

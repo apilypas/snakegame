@@ -6,7 +6,6 @@ using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Systems;
 
@@ -34,10 +33,8 @@ public class GameSystem : EntityProcessingSystem
 
     public override void Process(GameTime gameTime, int entityId)
     {
-        if (_gameState.IsPaused)
-            return;
+        if (_gameState.IsPaused) return;
         
-        HandleGameTimer(gameTime, entityId);
         HandleScoreMultiplicator(gameTime);
         HandleInvincibility(gameTime);
         HandleCollectables(entityId);
@@ -263,48 +260,6 @@ public class GameSystem : EntityProcessingSystem
         }
 
         return false;
-    }
-    
-    private void HandleGameTimer(GameTime gameTime, int entityId)
-    {
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        _gameState.Timer -= deltaTime;
-        _gameState.TotalTime += deltaTime;
-
-        if (_gameState.Timer >= 0f)
-        {
-            if ((int)_gameState.Timer != _gameState.TimerRounded)
-            {
-                _gameState.TimerRounded = (int)_gameState.Timer;
-
-                if (_gameState.TimerRounded <= 10)
-                {
-                    GetEntity(entityId).Attach(new SoundEffectComponent
-                    {
-                        Type = SoundEffectTypes.TimerChanged
-                    });
-                }
-            }
-        }
-        else
-        {
-            if (!_gameState.IsPaused)
-            {
-                _gameState.State = GameWorldState.Ended;
-                _gameState.IsPaused = true;
-                
-                GetEntity(entityId).Attach(new SoundEffectComponent
-                {
-                    Type = SoundEffectTypes.GameEnded
-                });
-
-                _entityFactory.Dialog.CreateGameOverDialog(_gameState);
-                
-                var dataManager = new DataManager();
-                dataManager.SaveScore(_gameState.Score, (int)_gameState.TotalTime);
-            }
-        }
     }
     
     private void HandleScoreMultiplicator(GameTime gameTime)
