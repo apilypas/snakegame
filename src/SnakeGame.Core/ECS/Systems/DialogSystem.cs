@@ -28,14 +28,14 @@ public class DialogSystem : EntityProcessingSystem
     {
         var dialog = _dialogMapper.Get(entityId);
 
-        var isFocused = _entityIds.Count == 0 || entityId == _entityIds[^1];
+        var canHandleInput = _entityIds.Count == 0 || entityId == _entityIds[^1];
         
         foreach (var childEntityId in dialog.ChildrenEntities)
         {
             var button = _buttonMapper.Get(childEntityId);
             if (button != null)
             {
-                button.IsHandlingInput = isFocused;
+                button.IsHandlingInput = canHandleInput;
             }
         }
         

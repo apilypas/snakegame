@@ -123,6 +123,16 @@ public class DialogRenderSystem : EntityDrawSystem
                     {
                         var buttonTransform = _transformMapper.Get(childEntityId);
 
+                        if (button.IsFocused)
+                        {
+                            _spriteBatch.DrawFromNinePatch(
+                                buttonTransform.Position,
+                                button.Size,
+                                _userInterfaceTexture,
+                                new Rectangle(144, 48, 48, 48),
+                                Color.White);
+                        }
+                        
                         if (button.IsPressed)
                         {
                             _spriteBatch.DrawFromNinePatch(

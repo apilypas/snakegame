@@ -75,6 +75,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new InvincibleSystem(gameState))
             .AddSystem(new ScoreDisplaySystem(gameState))
             .AddSystem(new DialogSystem())
+            .AddSystem(new DialogButtonFocusSystem())
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
             .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
@@ -101,6 +102,8 @@ public class PlayScreen : GameScreen
         
         entityFactory.Hud.CreateScoreDisplay();
         entityFactory.Hud.CreateKeybindsDisplay();
+        
+        entityFactory.Dialog.CreateNavigationIntent();
     }
 
     public override void Update(GameTime gameTime)

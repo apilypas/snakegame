@@ -23,6 +23,24 @@ public class StartScreen : GameScreen
         _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
         _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
         _inputs.BindKey(InputActions.Cancel, Keys.Escape);
+        _inputs.BindKey(InputActions.Up, Keys.W);
+        _inputs.BindKey(InputActions.Up, Keys.Up);
+        _inputs.BindButton(InputActions.Up, Buttons.DPadUp);
+        _inputs.BindButton(InputActions.Up, Buttons.LeftThumbstickUp);
+        _inputs.BindKey(InputActions.Down, Keys.S);
+        _inputs.BindKey(InputActions.Down, Keys.Down);
+        _inputs.BindButton(InputActions.Down, Buttons.DPadDown);
+        _inputs.BindButton(InputActions.Down, Buttons.LeftThumbstickDown);
+        _inputs.BindKey(InputActions.Left, Keys.A);
+        _inputs.BindKey(InputActions.Left, Keys.Left);
+        _inputs.BindButton(InputActions.Left, Buttons.DPadLeft);
+        _inputs.BindButton(InputActions.Left, Buttons.LeftThumbstickLeft);
+        _inputs.BindKey(InputActions.Right, Keys.D);
+        _inputs.BindKey(InputActions.Right, Keys.Right);
+        _inputs.BindButton(InputActions.Right, Buttons.DPadRight);
+        _inputs.BindButton(InputActions.Right, Buttons.LeftThumbstickRight);
+        _inputs.BindKey(InputActions.Faster, Keys.Space);
+        _inputs.BindButton(InputActions.Faster, Buttons.A);
         _inputs.BindButton(InputActions.Start, Buttons.Start);
         
         var entityFactory = new EntityFactory();
@@ -32,11 +50,13 @@ public class StartScreen : GameScreen
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
             .AddSystem(new StartMenuButtonEventSystem(this, Game, entityFactory))
             .AddSystem(new DialogSystem())
+            .AddSystem(new DialogButtonFocusSystem())
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
             .Build();
         
         entityFactory.Initialize(_world, contents);
 
+        entityFactory.Dialog.CreateNavigationIntent();
         entityFactory.Dialog.CreateStartScreen();
     }
 

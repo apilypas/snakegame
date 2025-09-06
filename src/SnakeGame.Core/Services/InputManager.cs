@@ -18,7 +18,6 @@ public class InputManager
 
     public KeyboardInputHandler Keyboard { get; } = new();
     public MouseInputHandler Mouse { get; } = new();
-    public TouchInputHandler Touch { get; } = new();
     public GamePadInputHandler GamePad { get; } = new();
 
     public void BindKey(string actionName, params Keys[] keys)
@@ -54,7 +53,6 @@ public class InputManager
     {
         Keyboard.Update();
         Mouse.Update();
-        Touch.Update();
         GamePad.Update();
     }
 

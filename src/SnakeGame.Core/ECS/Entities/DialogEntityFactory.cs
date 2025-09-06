@@ -24,7 +24,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         dialogEntity.Attach(dialog);
 
-        var startButtonId = CreateButton(
+        var startButton = CreateButton(
             "Start",
             new Vector2(740f, 150f),
             new SizeF(120f, 52f),
@@ -35,10 +35,12 @@ public class DialogEntityFactory(World world, ContentManager contents)
                     Event = ButtonEvents.StartNew
                 });
             });
-        
-        dialog.ChildrenEntities.Add(startButtonId);
 
-        var scoreBoardButtonId = CreateButton(
+        startButton.Get<ButtonComponent>().FocusOrderId = 1;
+        
+        dialog.ChildrenEntities.Add(startButton.Id);
+
+        var scoreBoardButton = CreateButton(
             "Score Board",
             new Vector2(740f, 210f),
             new SizeF(120f, 52f),
@@ -50,9 +52,11 @@ public class DialogEntityFactory(World world, ContentManager contents)
                 });
             });
         
-        dialog.ChildrenEntities.Add(scoreBoardButtonId);
+        scoreBoardButton.Get<ButtonComponent>().FocusOrderId = 2;
+        
+        dialog.ChildrenEntities.Add(scoreBoardButton.Id);
 
-        var creditsButtonId = CreateButton(
+        var creditsButton = CreateButton(
             "Credits",
             new Vector2(740f, 270f),
             new SizeF(120f, 52f),
@@ -64,9 +68,11 @@ public class DialogEntityFactory(World world, ContentManager contents)
                 });
             });
         
-        dialog.ChildrenEntities.Add(creditsButtonId);
+        creditsButton.Get<ButtonComponent>().FocusOrderId = 3;
+        
+        dialog.ChildrenEntities.Add(creditsButton.Id);
 
-        var quitButtonId = CreateButton(
+        var quitButton = CreateButton(
             "Quit",
             new Vector2(740f, 330f),
             new SizeF(120f, 52f),
@@ -78,7 +84,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
                 });
             });
         
-        dialog.ChildrenEntities.Add(quitButtonId);
+        quitButton.Get<ButtonComponent>().FocusOrderId = 4;
+        
+        dialog.ChildrenEntities.Add(quitButton.Id);
         
         var label1 = world.CreateEntity();
         label1.Attach(new DialogLabelComponent
@@ -202,7 +210,16 @@ public class DialogEntityFactory(World world, ContentManager contents)
             ("Exit", ButtonEvents.ShowStartScreen));
     }
 
-    private int CreateButton(string text, Vector2 position, SizeF size, Action action)
+    public void CreateNavigationIntent()
+    {
+        var entity = world.CreateEntity();
+        entity.Attach(new NavigationIntentComponent
+        {
+            Event = NavigationEvent.None
+        });
+    }
+
+    private Entity CreateButton(string text, Vector2 position, SizeF size, Action action)
     {
         var entity = world.CreateEntity();
         
@@ -218,7 +235,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             Position = position
         });
         
-        return entity.Id;
+        return entity;
     }
 
     private void CreateDialog(string title, string content, SizeF size, params (string, ButtonEvents)[] buttons)
@@ -245,6 +262,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             
         var buttonPositionX = (dialog.Size.Width - totalButtonWidth) / 2f;
         var buttonPositionY = dialog.Size.Height - 46f;
+        var buttonFocusOrderId = 1;
 
         foreach (var button in buttons)
         {
@@ -254,6 +272,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             {
                 Text = button.Item1,
                 Size = new SizeF(100f, 40f),
+                FocusOrderId = buttonFocusOrderId,
                 Action = () =>
                 {
                     dialogEntity.Attach(new ButtonEventComponent
@@ -271,6 +290,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
             buttonPositionX += 100f;
             buttonPositionX += 4f;
+            buttonFocusOrderId++;
             
             dialog.ChildrenEntities.Add(buttonEntity.Id);
         }
