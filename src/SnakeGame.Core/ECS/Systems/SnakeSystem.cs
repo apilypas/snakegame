@@ -95,6 +95,12 @@ public class SnakeSystem : EntityUpdateSystem
                 snake.Direction = snake.FollowingDirection;
             }
         }
+        
+        // TODO: move this out
+        if (_gameState.PlayerSnake != null && _gameState.PlayerSnake.Get<SnakeComponent>().Segments.Count > _gameState.LongestSnake)
+        {
+            _gameState.LongestSnake = _gameState.PlayerSnake.Get<SnakeComponent>().Segments.Count;
+        }
     }
 
     private void Reset(SnakeComponent snake, Vector2 location, int length, SnakeDirection direction)
