@@ -153,17 +153,17 @@ public class DialogEntityFactory(World world, ContentManager contents)
         var scoreBoard = dataManager.LoadScoreBoard();
 
         var resultBuilder = new StringBuilder()
-            .AppendFormat("{0,14}", "Date")
-            .AppendFormat("{0,14}", "Score")
-            .AppendFormat("{0,14}", "Time (s)")
+            .Append($"{"Date",14}")
+            .Append($"{"Score",14}")
+            .Append($"{"Time (s)",14}")
             .AppendLine();
 
         foreach (var entry in scoreBoard.Entries)
         {
             resultBuilder
-                .AppendFormat("{0,14}", entry.CreatedAt.ToShortDateString())
-                .AppendFormat("{0,14}", entry.Score.ToString(Constants.ScoreFormat))
-                .AppendFormat("{0,8}", entry.TimePlayed.ToString())
+                .Append($"{entry.CreatedAt.ToShortDateString(),14}")
+                .Append($"{entry.Score.ToString(Constants.ScoreFormat),14}")
+                .Append($"{entry.TimePlayed.ToString(),8}")
                 .AppendLine();
         }
 

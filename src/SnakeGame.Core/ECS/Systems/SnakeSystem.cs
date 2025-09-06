@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -37,7 +36,6 @@ public class SnakeSystem : EntityUpdateSystem
             if (!snake.IsInitialized)
             {
                 Reset(snake, snake.DefaultLocation, snake.DefaultLength, snake.DefaultDirection);
-                UpdateSegmentColors(snake);
                 snake.IsAlive = true;
                 snake.IsInitialized = true;
             }
@@ -95,8 +93,6 @@ public class SnakeSystem : EntityUpdateSystem
 
                 // Fixate direction that should be followed
                 snake.Direction = snake.FollowingDirection;
-
-                UpdateSegmentColors(snake);
             }
         }
     }
@@ -129,39 +125,6 @@ public class SnakeSystem : EntityUpdateSystem
         snake.SpeedTimer = 0f;
         snake.IsFaster = false;
         snake.IsInvincible = false;
-    }
-    
-    private void UpdateSegmentColors(SnakeComponent snake)
-    {
-        snake.Head.Color = GetColor(snake.Color, 0, snake.IsInvincible);
-        snake.Tail.Color = GetColor(snake.Color, snake.Segments.Count - 1, snake.IsInvincible);
-        
-        for (var i = 0; i < snake.Segments.Count; i++)
-        {
-            snake.Segments[i].Color = GetColor(snake.Color, i, snake.IsInvincible);
-        }
-    }
-    
-    private static Color GetColor(Color color, int index, bool isInvincible)
-    {
-        return isInvincible 
-            ? GetInvincibleColor()
-            : GetNormalStateColor(color, index);
-    }
-
-    private static Color GetNormalStateColor(Color color, int index)
-    {
-        var r = MathHelper.Clamp(color.R + 5*index, 0, 255);
-        var g = MathHelper.Clamp(color.G + 5*index, 0, 255);
-        var b = MathHelper.Clamp(color.B + 5*index, 0, 255);
-
-        return new Color(r, g, b);
-    }
-
-    private static Color GetInvincibleColor()
-    {
-        var i = Random.Shared.Next(0, Constants.InvincibleColors.Length);
-        return Constants.InvincibleColors[i];
     }
     
     private void UpdateDirection(SnakeComponent snake)

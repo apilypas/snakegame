@@ -12,25 +12,17 @@ namespace SnakeGame.Core.ECS.Systems;
 
 public class GameSystem : EntityProcessingSystem
 {
-    private float _diamondSpawnTimer;
-    private float _speedBoostSpawnTimer;
-    private float _crownSpawnTimer;
-    private float _enemySpawnTimer;
     private float _invincibilityTimer;
     
-    private readonly ContentManager _contents;
     private readonly GameState _gameState;
     private readonly EntityFactory _entityFactory;
     
     private ComponentMapper<PlayerComponent> _playerMapper;
 
-    public GameSystem(
-        ContentManager contents,
-        GameState gameState,
+    public GameSystem(GameState gameState,
         EntityFactory entityFactory)
         : base(Aspect.All(typeof(PlayFieldComponent)))
     {
-        _contents = contents;
         _gameState = gameState;
         _entityFactory = entityFactory;
     }
@@ -52,11 +44,6 @@ public class GameSystem : EntityProcessingSystem
         HandleInvincibility(gameTime);
         HandleCollectables(entityId);
         HandleCollisions(entityId);
-        SpawnPlayerSnake();
-        SpawnEnemySnake(deltaTime);
-        SpawnRandomDiamond(deltaTime);
-        SpawnRandomSpeedBoost(deltaTime);
-        SpawnRandomCrown(deltaTime);
         DespawnSnake(deltaTime);
     }
 
@@ -76,26 +63,10 @@ public class GameSystem : EntityProcessingSystem
 
         return false;
     }
-    
-    private void SpawnPlayerSnake(Vector2 at, int length, SnakeDirection direction)
-    {
-        var playerSnakeEntity = _entityFactory.CreatePlayerSnake(at, length, direction);
-
-        _gameState.Snakes.Add(playerSnakeEntity);
-        
-        _gameState.PlayerSnake = playerSnakeEntity;
-    }
-
-    private void SpawnEnemySnake(Vector2 at, int length, SnakeDirection direction)
-    {
-        var enemySnakeEntity = _entityFactory.CreateEnemySnake(_gameState, at, length, direction);
-        
-        _gameState.Snakes.Add(enemySnakeEntity);
-    }
 
     private void SpawnFadingText(Vector2 at, string text)
     {
-        var fadingTextEntity = _entityFactory.CreateFadingText(text);
+        var fadingTextEntity = _entityFactory.World.CreateFadingText(text);
         fadingTextEntity.Get<TransformComponent>().Position = at;
     }
 
@@ -103,22 +74,18 @@ public class GameSystem : EntityProcessingSystem
     {
         foreach (var collectableEntity in _gameState.Collectables)
         {
-            if (GetRectangle(collectableEntity).Intersects(targetRectangle))
+            if (new Rectangle(
+                    (int)collectableEntity.Get<TransformComponent>().Position.X,
+                    (int)collectableEntity.Get<TransformComponent>().Position.Y,
+                    Constants.SegmentSize,
+                    Constants.SegmentSize)
+                .Intersects(targetRectangle))
             {
                 return collectableEntity;
             }
         }
 
         return null;
-    }
-
-    private Rectangle GetRectangle(Entity collectableEntity)
-    {
-        return new Rectangle(
-            (int)collectableEntity.Get<TransformComponent>().Position.X,
-            (int)collectableEntity.Get<TransformComponent>().Position.Y,
-            Constants.SegmentSize,
-            Constants.SegmentSize);
     }
 
     private void HandleCollisions(int entityId)
@@ -301,250 +268,6 @@ public class GameSystem : EntityProcessingSystem
         return false;
     }
 
-    private void SpawnRandomDiamond(float deltaTime)
-    {
-        _diamondSpawnTimer += deltaTime;
-        
-        var diamondCount = 0;
-        
-        foreach (var collectableEntity in _gameState.Collectables)
-        {
-            if (collectableEntity.Get<CollectableComponent>().CollectableType == CollectableType.Diamond)
-                diamondCount++;
-        }
-        
-        if (diamondCount > 0 && _diamondSpawnTimer < Constants.DiamondSpawnRate)
-            return;
-
-        if (diamondCount >= Constants.MaxDiamondLimit)
-            return;
-
-        var location = FindEmptyLocation();
-
-        if (location != null)
-        {
-            var collectableEntity = _entityFactory.CreateCollectable(_contents.CollectableTexture, CollectableType.Diamond);
-
-            collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
-        }
-            
-        _diamondSpawnTimer -= Constants.DiamondSpawnRate;
-    }
-
-    private void SpawnRandomSpeedBoost(float deltaTime)
-    {
-        _speedBoostSpawnTimer += deltaTime;
-
-        if (_speedBoostSpawnTimer < Constants.SpeedBoostSpawnRate)
-            return;
-        
-        var speedBoostCount = 0;
-
-        foreach (var collectableEntity in _gameState.Collectables)
-        {
-            if (collectableEntity.Get<CollectableComponent>().CollectableType == CollectableType.SpeedBoost)
-                speedBoostCount++;
-        }
-        
-        if (speedBoostCount >= Constants.MaxSpeedBoostLimit)
-            return;
-
-        var location = FindEmptyLocation();
-
-        if (location != null)
-        {
-            var collectableEntity = _entityFactory.CreateCollectable(_contents.CollectableTexture, CollectableType.SpeedBoost);
-            collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
-        }
-        
-        _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
-    }
-    
-    private void SpawnRandomCrown(float deltaTime)
-    {
-        _crownSpawnTimer += deltaTime;
-
-        if (_crownSpawnTimer < Constants.CrownSpawnRate)
-            return;
-        
-        var crownCount = 0;
-
-        foreach (var collectableEntity in _gameState.Collectables)
-        {
-            if (collectableEntity.Get<CollectableComponent>().CollectableType == CollectableType.Crown)
-                crownCount++;
-        }
-        
-        if (crownCount >= Constants.MaxCrownLimit)
-            return;
-
-        var location = FindEmptyLocation();
-
-        if (location != null)
-        {
-            var collectableEntity = _entityFactory.CreateCollectable(_contents.CollectableTexture, CollectableType.Crown);
-            collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
-        }
-        
-        _crownSpawnTimer -= Constants.CrownSpawnRate;
-    }
-
-    private Vector2? FindEmptyLocation()
-    {
-        var random = Random.Shared.Next() % (Constants.WallWidth * Constants.WallHeight);
-
-        while (random >= 0)
-        {
-            var foundFree = false;
-
-            for (var i = 0; i < Constants.WallHeight; i++)
-            {
-                for (var j = 0; j < Constants.WallWidth; j++)
-                {
-                    var location = new Vector2(j * Constants.SegmentSize, i * Constants.SegmentSize);
-
-                    if (IsLocationEmpty(location))
-                    {
-                        if (random <= 0)
-                            return location;
-
-                        random--;
-                        foundFree = true;
-                    }
-                }
-            }
-
-            if (!foundFree)
-                break;
-        }
-
-        return null;
-    }
-
-    private bool IsLocationEmpty(Vector2 location)
-    {
-        var rectangle = new Rectangle(
-            (int)location.X,
-            (int)location.Y,
-            Constants.SegmentSize,
-            Constants.SegmentSize);
-
-        foreach (var snakeEntity in _gameState.Snakes)
-        {
-            var snake = snakeEntity.Get<SnakeComponent>();
-            
-            if (!snake.IsInitialized) continue;
-
-            if (!snake.IsAlive) continue;
-            
-            if (CollidesWith(snake, rectangle)) return false;
-        }
-
-        foreach (var collectableEntity in _gameState.Collectables)
-        {
-            if (GetRectangle(collectableEntity).Intersects(rectangle)) return false;
-        }
-        
-        return true;
-    }
-
-    private void SpawnPlayerSnake()
-    {
-        if (_gameState.PlayerSnake != null)
-            return;
-        
-        // Find best location
-        var location = FindBestLocationForSnake();
-        
-        if (location == null)
-            return;
-
-        var direction = location.Value.X < Constants.WallWidth * Constants.SegmentSize / 2f ?
-            SnakeDirection.Right : SnakeDirection.Left;
-
-        SpawnPlayerSnake(location.Value, 2, direction);
-    }
-
-    private void SpawnEnemySnake(float deltaTime)
-    {
-        _enemySpawnTimer += deltaTime;
-        
-        var count = 0;
-
-        foreach (var snakeEntity in _gameState.Snakes)
-        {
-            if (!_playerMapper.Has(snakeEntity.Id))
-            {
-                count++;
-            }
-        }
-        
-        if (count > 0 && _enemySpawnTimer < Constants.EnemySpawnRate)
-            return;
-
-        if (count >= Constants.MaxEnemies)
-        {
-            _enemySpawnTimer -= Constants.EnemySpawnRate;
-            return;
-        }
-
-        // Find best location
-        var location = FindBestLocationForSnake();
-        
-        if (location == null)
-            return;
-
-        var direction = location.Value.X < Constants.WallWidth * Constants.SegmentSize / 2f
-            ? SnakeDirection.Right
-            : SnakeDirection.Left;
-        
-        SpawnEnemySnake(location.Value, 2, direction);
-
-        _enemySpawnTimer -= Constants.EnemySpawnRate;
-    }
-
-    private Vector2? FindBestLocationForSnake()
-    {
-        var location = FindEmptyLocation();
-
-        if (location == null)
-            return null;
-
-        var fromX = location.Value.X - 2 * Constants.SegmentSize;
-        var fromY = location.Value.Y - 2 * Constants.SegmentSize;
-        var toX = location.Value.X + 2 * Constants.SegmentSize;
-        var toY = location.Value.Y + 2 * Constants.SegmentSize;
-
-        if (fromX < 0f)
-            return null;
-        
-        if (fromY < 0f)
-            return null;
-
-        if (toX > Constants.WallWidth * Constants.SegmentSize)
-            return null;
-        
-        if (toY > Constants.WallHeight * Constants.SegmentSize)
-            return null;
-
-        for (var x = fromX; x <= toX; x++)
-        {
-            for (var y = fromY; y <= toY; y++)
-            {
-                if (!IsLocationEmpty(new Vector2(x, y)))
-                    return null;
-            }
-        }
-
-        return location;
-    }
-
     private void DespawnSnake(float deltaTime)
     {
         foreach (var snakeEntity in _gameState.Snakes)
@@ -610,7 +333,7 @@ public class GameSystem : EntityProcessingSystem
 
         if (spawnSnakePart)
         {
-            var collectableEntity = _entityFactory.CreateCollectable(_contents.CollectableTexture, CollectableType.SnakePart);
+            var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SnakePart);
             collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
             
             _gameState.Collectables.Add(collectableEntity);
@@ -621,7 +344,7 @@ public class GameSystem : EntityProcessingSystem
 
             if (spawnClock)
             {
-                var collectableEntity = _entityFactory.CreateCollectable(_contents.CollectableTexture, CollectableType.Clock);
+                var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Clock);
                 collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
                 
                 _gameState.Collectables.Add(collectableEntity);

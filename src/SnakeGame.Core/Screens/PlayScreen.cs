@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Data;
-using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
 using SnakeGame.Core.ECS.Systems;
 using SnakeGame.Core.Enums;
@@ -63,8 +61,10 @@ public class PlayScreen : GameScreen
         _world = new WorldBuilder()
             .AddSystem(new InputSystem(_inputs, Game, entityFactory, gameState))
             .AddSystem(new PlayerInputSystem(_inputs, gameState))
-            .AddSystem(new GameSystem(contents, gameState, entityFactory))
+            .AddSystem(new GameSystem(gameState, entityFactory))
             .AddSystem(new SnakeSystem(gameState))
+            .AddSystem(new SnakeColorSystem())
+            .AddSystem(new SpawnSystem(gameState, entityFactory))
             .AddSystem(new FadingTextSystem())
             .AddSystem(new PlayFieldSystem())
             .AddSystem(new ScoreDisplaySystem(gameState))
@@ -79,21 +79,17 @@ public class PlayScreen : GameScreen
         
         entityFactory.Initialize(_world, contents);
 
-        // TODO: remove gameStateEntity
-        var gameStateEntity = _world.CreateEntity();
-        gameStateEntity.Attach(gameState);
-
-        var playFieldEntity = entityFactory.CreatePlayField(contents.TilesTexture);
+        entityFactory.World.CreatePlayField();
         
         var playerAt = new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize);
         
-        var playerSnakeEntity = entityFactory.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
+        var playerSnakeEntity = entityFactory.World.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         gameState.Snakes.Add(playerSnakeEntity);
         gameState.PlayerSnake = playerSnakeEntity;
         
         var enemyAt = new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize);
         
-        var enemySnakeEntity = entityFactory.CreateEnemySnake(gameState, enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
+        var enemySnakeEntity = entityFactory.World.CreateEnemySnake(gameState, enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         
         gameState.Snakes.Add(enemySnakeEntity);
         
