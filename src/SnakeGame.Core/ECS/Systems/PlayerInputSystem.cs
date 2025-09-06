@@ -36,22 +36,22 @@ public class PlayerInputSystem : EntityProcessingSystem
         if (!snake.IsAlive)
             return;
         
-        if (_inputs.IsActionDown(InputActions.Up))
+        if (_inputs.IsActionDown(InputActions.Up) && snake.Direction != SnakeDirection.Up)
         {
             snake.NewDirection = SnakeDirection.Up;
         }
 
-        if (_inputs.IsActionDown(InputActions.Down))
+        if (_inputs.IsActionDown(InputActions.Down) && snake.Direction != SnakeDirection.Down)
         {
             snake.NewDirection = SnakeDirection.Down;
         }
 
-        if (_inputs.IsActionDown(InputActions.Left))
+        if (_inputs.IsActionDown(InputActions.Left) && snake.Direction != SnakeDirection.Left)
         {
             snake.NewDirection = SnakeDirection.Left;
         }
 
-        if (_inputs.IsActionDown(InputActions.Right))
+        if (_inputs.IsActionDown(InputActions.Right) && snake.Direction != SnakeDirection.Right)
         {
             snake.NewDirection = SnakeDirection.Right;
         }
