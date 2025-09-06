@@ -11,8 +11,6 @@ namespace SnakeGame.Core.ECS.Systems;
 
 public class GameSystem : EntityProcessingSystem
 {
-    private float _invincibilityTimer;
-    
     private readonly GameState _gameState;
     private readonly EntityFactory _entityFactory;
     
@@ -35,7 +33,6 @@ public class GameSystem : EntityProcessingSystem
     {
         if (_gameState.IsPaused) return;
         
-        HandleInvincibility(gameTime);
         HandleCollectables(entityId);
         HandleCollisions(entityId);
     }
@@ -111,7 +108,7 @@ public class GameSystem : EntityProcessingSystem
                     
                     if (snake != otherSnake && CollidesWith(otherSnake, headRectangle))
                     {
-                        if (snake.IsInvincible)
+                        if (snakeEntity.Has<InvincibleComponent>())
                             otherSnake.IsAlive = false;
                         else
                             isDead = true;
@@ -212,8 +209,10 @@ public class GameSystem : EntityProcessingSystem
         {
             if (_playerMapper.Has(snakeEntity.Id))
             {
-                snake.IsInvincible = true;
-                _invincibilityTimer = Constants.InvincibleTimer;
+                GetEntity(snakeEntity.Id).Attach(new InvincibleComponent
+                {
+                    Timer = Constants.InvincibleTimer
+                });
                 var score = _gameState.ScoreMultiplicator * Constants.CrownCollectScore;
                 _gameState.Score += score;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Invincible)");
@@ -232,19 +231,6 @@ public class GameSystem : EntityProcessingSystem
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Time)");
             }
         }
-    }
-
-    private void HandleInvincibility(GameTime gameTime)
-    {
-        if (_invincibilityTimer <= 0)
-            return;
-        
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        _invincibilityTimer -= deltaTime;
-
-        if (_invincibilityTimer <= 0)
-            _gameState.PlayerSnake.Get<SnakeComponent>().IsInvincible = false;
     }
     
     private static bool CollidesWithSelf(SnakeComponent snake)

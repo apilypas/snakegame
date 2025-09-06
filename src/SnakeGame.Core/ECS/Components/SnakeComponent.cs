@@ -22,7 +22,6 @@ public class SnakeComponent
     public SnakeDirection? NewDirection { get; set; } // Direction where player wants to go
     public int SegmentsToGrow { get; set; }
     public Color Color { get; set; } = Color.White;
-    public bool IsInvincible { get; set; }
     public float DeathAnimationTimer { get; set; }
     public Vector2 DefaultLocation { get; set; }
     public int DefaultLength { get; set; }

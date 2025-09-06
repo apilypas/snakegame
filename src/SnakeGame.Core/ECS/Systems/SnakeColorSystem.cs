@@ -9,6 +9,7 @@ namespace SnakeGame.Core.ECS.Systems;
 public class SnakeColorSystem : EntityProcessingSystem
 {
     private ComponentMapper<SnakeComponent> _snakeMapper;
+    private ComponentMapper<InvincibleComponent> _invincibleMapper;
 
     public SnakeColorSystem() 
         : base(Aspect.All(typeof(SnakeComponent)))
@@ -18,6 +19,7 @@ public class SnakeColorSystem : EntityProcessingSystem
     public override void Initialize(IComponentMapperService mapperService)
     {
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
+        _invincibleMapper = mapperService.GetMapper<InvincibleComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -26,18 +28,20 @@ public class SnakeColorSystem : EntityProcessingSystem
 
         if (snake.IsAlive)
         {
-            UpdateSegmentColors(snake);
+            UpdateSegmentColors(entityId, snake);
         }
     }
 
-    private void UpdateSegmentColors(SnakeComponent snake)
+    private void UpdateSegmentColors(int entityId, SnakeComponent snake)
     {
-        snake.Head.Color = GetColor(snake.Color, 0, snake.IsInvincible);
-        snake.Tail.Color = GetColor(snake.Color, snake.Segments.Count - 1, snake.IsInvincible);
+        var isInvincible = _invincibleMapper.Has(entityId);
+        
+        snake.Head.Color = GetColor(snake.Color, 0, isInvincible);
+        snake.Tail.Color = GetColor(snake.Color, snake.Segments.Count - 1, isInvincible);
         
         for (var i = 0; i < snake.Segments.Count; i++)
         {
-            snake.Segments[i].Color = GetColor(snake.Color, i, snake.IsInvincible);
+            snake.Segments[i].Color = GetColor(snake.Color, i, isInvincible);
         }
     }
     

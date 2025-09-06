@@ -124,7 +124,6 @@ public class SnakeSystem : EntityUpdateSystem
         snake.IsAlive = true;
         snake.SpeedTimer = 0f;
         snake.IsFaster = false;
-        snake.IsInvincible = false;
     }
     
     private void UpdateDirection(SnakeComponent snake)

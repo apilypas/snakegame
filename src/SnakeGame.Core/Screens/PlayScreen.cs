@@ -70,6 +70,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new PlayFieldSystem())
             .AddSystem(new GameTimerSystem(gameState, entityFactory))
             .AddSystem(new ScoreMultiplicatorSystem(gameState))
+            .AddSystem(new InvincibleSystem())
             .AddSystem(new ScoreDisplaySystem(gameState))
             .AddSystem(new DialogSystem())
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
