@@ -8,12 +8,13 @@ using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Systems;
 
-public class SnakeSystem : EntityUpdateSystem
+public class SnakeMovementSystem : EntityProcessingSystem
 {
     private readonly GameState _gameState;
     private ComponentMapper<SnakeComponent> _snakeMapper;
+    private ComponentMapper<PlayerComponent> _playerMapper;
 
-    public SnakeSystem(GameState gameState)
+    public SnakeMovementSystem(GameState gameState)
         : base(Aspect.All(typeof(SnakeComponent)))
     {
         _gameState = gameState;
@@ -22,47 +23,46 @@ public class SnakeSystem : EntityUpdateSystem
     public override void Initialize(IComponentMapperService mapperService)
     {
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
+        _playerMapper = mapperService.GetMapper<PlayerComponent>();
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Process(GameTime gameTime, int entityId)
     {
         if (_gameState.IsPaused)
             return;
         
-        foreach (var entityId in ActiveEntities)
+        var snake = _snakeMapper.Get(entityId);
+
+        if (!snake.IsInitialized)
         {
-            var snake = _snakeMapper.Get(entityId);
+            Reset(snake, snake.DefaultLocation, snake.DefaultLength, snake.DefaultDirection);
+            snake.IsAlive = true;
+            snake.IsInitialized = true;
+        }
 
-            if (!snake.IsInitialized)
+        if (snake.IsAlive)
+        {
+            UpdateDirection(snake);
+
+            snake.State?.Update(gameTime);
+
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            var movementSize = deltaTime * GetSpeed(snake, deltaTime);
+
+            var head = snake.Segments[0];
+            var tail = snake.Segments[^1];
+
+            snake.Head.Position =
+                snake.Direction.FindNextPoint(snake.Head.Position, movementSize);
+
+            if (snake.SegmentsToGrow <= 0)
+                snake.Tail.Position =
+                    tail.Direction.FindNextPoint(snake.Tail.Position, movementSize);
+
+            // Check if partial head is still connected to body, otherwise - create new head
+            if (!snake.Head.GetRectangle().Intersects(head.GetRectangle()))
             {
-                Reset(snake, snake.DefaultLocation, snake.DefaultLength, snake.DefaultDirection);
-                snake.IsAlive = true;
-                snake.IsInitialized = true;
-            }
-
-            if (snake.IsAlive)
-            {
-                UpdateDirection(snake);
-
-                snake.State?.Update(gameTime);
-
-                var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                var movementSize = deltaTime * GetSpeed(snake, deltaTime);
-
-                var head = snake.Segments[0];
-                var tail = snake.Segments[^1];
-
-                snake.Head.Position =
-                    snake.Direction.FindNextPoint(snake.Head.Position, movementSize);
-
-                if (snake.SegmentsToGrow <= 0)
-                    snake.Tail.Position =
-                        tail.Direction.FindNextPoint(snake.Tail.Position, movementSize);
-
-                // Check if partial head is still connected to body, otherwise - create new head
-                if (snake.Head.GetRectangle().Intersects(head.GetRectangle()))
-                    continue;
 
                 var newLocation = snake.Direction.FindNextPoint(head.Position, Constants.SegmentSize);
 
@@ -96,10 +96,14 @@ public class SnakeSystem : EntityUpdateSystem
             }
         }
         
-        // TODO: move this out
-        if (_gameState.PlayerSnake != null && _gameState.PlayerSnake.Get<SnakeComponent>().Segments.Count > _gameState.LongestSnake)
+        var player = _playerMapper.Get(entityId);
+
+        if (player != null)
         {
-            _gameState.LongestSnake = _gameState.PlayerSnake.Get<SnakeComponent>().Segments.Count;
+            if (snake.Segments.Count > _gameState.LongestSnake)
+            {
+                _gameState.LongestSnake = snake.Segments.Count;
+            }
         }
     }
 
