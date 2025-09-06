@@ -69,6 +69,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new FadingTextSystem())
             .AddSystem(new PlayFieldSystem())
             .AddSystem(new GameTimerSystem(gameState, entityFactory))
+            .AddSystem(new ScoreMultiplicatorSystem(gameState))
             .AddSystem(new ScoreDisplaySystem(gameState))
             .AddSystem(new DialogSystem())
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))

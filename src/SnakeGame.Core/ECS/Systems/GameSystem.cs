@@ -35,7 +35,6 @@ public class GameSystem : EntityProcessingSystem
     {
         if (_gameState.IsPaused) return;
         
-        HandleScoreMultiplicator(gameTime);
         HandleInvincibility(gameTime);
         HandleCollectables(entityId);
         HandleCollisions(entityId);
@@ -128,7 +127,6 @@ public class GameSystem : EntityProcessingSystem
                 if (_playerMapper.Has(snakeEntity.Id))
                 {
                     _gameState.Deaths++;
-                    _gameState.ScoreMultiplicator = 1;
                     
                     GetEntity(entityId).Attach(new SoundEffectComponent
                     {
@@ -260,18 +258,5 @@ public class GameSystem : EntityProcessingSystem
         }
 
         return false;
-    }
-    
-    private void HandleScoreMultiplicator(GameTime gameTime)
-    {
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        _gameState.ScoreMultiplicatorTimer += deltaTime;
-
-        if (_gameState.ScoreMultiplicatorTimer >= Constants.ScoreMultiplicatorTimer)
-        {
-            _gameState.ScoreMultiplicatorTimer -= Constants.ScoreMultiplicatorTimer;
-            _gameState.ScoreMultiplicator = MathHelper.Clamp(_gameState.ScoreMultiplicator + 1, 1, Constants.MaxScoreMultiplier);
-        }
     }
 }
