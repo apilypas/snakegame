@@ -65,6 +65,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new SnakeSystem(gameState))
             .AddSystem(new SnakeColorSystem())
             .AddSystem(new SpawnSystem(gameState, entityFactory))
+            .AddSystem(new DespawnSnakeSystem(gameState, entityFactory))
             .AddSystem(new FadingTextSystem())
             .AddSystem(new PlayFieldSystem())
             .AddSystem(new ScoreDisplaySystem(gameState))

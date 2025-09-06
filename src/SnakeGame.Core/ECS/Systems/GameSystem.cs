@@ -37,14 +37,11 @@ public class GameSystem : EntityProcessingSystem
         if (_gameState.IsPaused)
             return;
         
-        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
         HandleGameTimer(gameTime, entityId);
         HandleScoreMultiplicator(gameTime);
         HandleInvincibility(gameTime);
         HandleCollectables(entityId);
         HandleCollisions(entityId);
-        DespawnSnake(deltaTime);
     }
 
     private static bool CollidesWith(SnakeComponent snake, Rectangle rectangle)
@@ -266,90 +263,6 @@ public class GameSystem : EntityProcessingSystem
         }
 
         return false;
-    }
-
-    private void DespawnSnake(float deltaTime)
-    {
-        foreach (var snakeEntity in _gameState.Snakes)
-        {
-            var snake = snakeEntity.Get<SnakeComponent>();
-            
-            if (!snake.IsInitialized) continue;
-            
-            if (!snake.IsAlive)
-            {
-                if (Reduce(snake, deltaTime) && snake.Segments.Count > 0)
-                {
-                    SpawnSnakePart(snakeEntity);
-                }
-
-                if (snake.Segments.Count == 0)
-                {
-                    _gameState.Snakes.Remove(snakeEntity);
-                    
-                    if (_playerMapper.Has(snakeEntity.Id))
-                        _gameState.PlayerSnake = null;
-                    
-                    snakeEntity.Destroy();
-                }
-            }
-        }
-    }
-    
-    private static bool Reduce(SnakeComponent snake, float deltaTime)
-    {
-        const float reduceByMs = .03f;
-        var reduced = false;
-
-        if (snake.Segments.Count > 0)
-        {
-            snake.DeathAnimationTimer += deltaTime;
-            
-            if (snake.DeathAnimationTimer >= reduceByMs)
-            {
-                snake.Segments.RemoveAt(0);
-                reduced = true;
-
-                if (snake.Segments.Count > 0)
-                {
-                    snake.Head = snake.Segments[0].Clone();
-                    snake.DeathAnimationTimer -= reduceByMs;
-                }
-                else
-                {
-                    snake.Head = null;
-                    snake.Tail = null;
-                }
-            }
-        }
-
-        return reduced;
-    }
-    
-    private void SpawnSnakePart(Entity snakeEntity)
-    {
-        var spawnSnakePart = Random.Shared.Next() % 3 == 0;
-        var snake = snakeEntity.Get<SnakeComponent>();
-
-        if (spawnSnakePart)
-        {
-            var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SnakePart);
-            collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
-            
-            _gameState.Collectables.Add(collectableEntity);
-        }
-        else if (!_playerMapper.Has(snakeEntity.Id)) // Only enemies can spawn clocks
-        {
-            var spawnClock = Random.Shared.Next() % 6 == 0;
-
-            if (spawnClock)
-            {
-                var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Clock);
-                collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
-                
-                _gameState.Collectables.Add(collectableEntity);
-            }
-        }
     }
     
     private void HandleGameTimer(GameTime gameTime, int entityId)
