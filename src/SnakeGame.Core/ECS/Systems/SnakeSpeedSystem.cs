@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -11,6 +12,8 @@ public class SnakeSpeedSystem : EntityProcessingSystem
     private readonly GameState _gameState;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<SpeedUpComponent> _speedUpMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
+    private ComponentMapper<PlayerComponent> _playerMapper;
 
     public SnakeSpeedSystem(GameState gameState) 
         : base(Aspect.All(typeof(SnakeComponent)))
@@ -22,6 +25,8 @@ public class SnakeSpeedSystem : EntityProcessingSystem
     {
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
         _speedUpMapper = mapperService.GetMapper<SpeedUpComponent>();
+        _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
+        _playerMapper = mapperService.GetMapper<PlayerComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -46,6 +51,17 @@ public class SnakeSpeedSystem : EntityProcessingSystem
             isFaster = true;
         }
         
-        snake.Speed = isFaster ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
+        var newSpeed = isFaster ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
+        var isSpeedChanged = MathF.Abs(snake.Speed - newSpeed) > 1f;
+        snake.Speed = newSpeed;
+
+        if (isFaster && isSpeedChanged && _playerMapper.Has(entityId))
+        {
+            _soundEffectMapper.Put(entityId,
+                new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.SpeedUp
+                });
+        }
     }
 }

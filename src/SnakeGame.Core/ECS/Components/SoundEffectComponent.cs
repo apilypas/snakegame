@@ -2,10 +2,11 @@ namespace SnakeGame.Core.ECS.Components;
 
 public enum SoundEffectTypes
 {
-    ScoreChanged,
+    Pickup,
     PlayerDied,
     GameEnded,
-    TimerChanged
+    TimerChanged,
+    SpeedUp
 }
 
 public class SoundEffectComponent

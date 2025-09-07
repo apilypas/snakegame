@@ -17,6 +17,7 @@ public class ContentManager
     public SoundEffect HitSoundEffect { get; private set; }
     public SoundEffect GameEndSoundEffect { get; private set; }
     public SoundEffect TimerSoundEffect { get; private set; }
+    public SoundEffect SpeedUpSoundEffect { get; private set; }
     
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
     {
@@ -32,5 +33,6 @@ public class ContentManager
         HitSoundEffect = content.Load<SoundEffect>("Sounds/Hit");
         GameEndSoundEffect = content.Load<SoundEffect>("Sounds/GameEnd");
         TimerSoundEffect = content.Load<SoundEffect>("Sounds/Timer");
+        SpeedUpSoundEffect = content.Load<SoundEffect>("Sounds/SpeedUp");
     }
 }

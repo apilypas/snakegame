@@ -49,7 +49,7 @@ public class CollectableSystem : EntityProcessingSystem
             {
                 GetEntity(entityId).Attach(new SoundEffectComponent
                 {
-                    Type = SoundEffectTypes.ScoreChanged
+                    Type = SoundEffectTypes.Pickup
                 });
             }
 

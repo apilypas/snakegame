@@ -33,25 +33,28 @@ public class SoundEffectSystem : EntityProcessingSystem
             instance.Volume = .7f;
             instance.Play();
         }
-
-        if (audioEffect.Type == SoundEffectTypes.GameEnded)
+        else if (audioEffect.Type == SoundEffectTypes.GameEnded)
         {
             var instance = _contents.GameEndSoundEffect.CreateInstance();
             instance.Volume = .7f;
             instance.Play();
         }
-
-        if (audioEffect.Type == SoundEffectTypes.PlayerDied)
+        else if (audioEffect.Type == SoundEffectTypes.PlayerDied)
         {
             var instance = _contents.HitSoundEffect.CreateInstance();
             instance.Volume = .7f;
             instance.Play();
         }
-
-        if (audioEffect.Type == SoundEffectTypes.ScoreChanged)
+        else if (audioEffect.Type == SoundEffectTypes.Pickup)
         {
             var instance = _contents.PickupSoundEffect.CreateInstance();
             instance.Pitch = Random.Shared.Next(-1, 1) / 10f;
+            instance.Volume = .7f;
+            instance.Play();
+        }
+        else if (audioEffect.Type == SoundEffectTypes.SpeedUp)
+        {
+            var instance = _contents.SpeedUpSoundEffect.CreateInstance();
             instance.Volume = .7f;
             instance.Play();
         }

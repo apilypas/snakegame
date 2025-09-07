@@ -84,6 +84,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Pickup.wav
 
+#begin Sounds/SpeedUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/SpeedUp.wav
+
 #begin Sounds/Timer.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
