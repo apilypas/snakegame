@@ -66,29 +66,29 @@
 /processorParam:TextureFormat=Color
 /build:Snake.png
 
-#begin Sound1.wav
+#begin Sounds/GameEnd.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound1.wav
+/build:Sounds/GameEnd.wav
 
-#begin Sound2.wav
+#begin Sounds/Hit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound2.wav
+/build:Sounds/Hit.wav
 
-#begin Sound3.wav
+#begin Sounds/Pickup.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound3.wav
+/build:Sounds/Pickup.wav
 
-#begin Sound4.wav
+#begin Sounds/Timer.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound4.wav
+/build:Sounds/Timer.wav
 
 #begin Tiles.png
 /importer:TextureImporter

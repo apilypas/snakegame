@@ -29,30 +29,30 @@ public class SoundEffectSystem : EntityProcessingSystem
 
         if (audioEffect.Type == SoundEffectTypes.TimerChanged)
         {
-            var instance = _contents.Sound4.CreateInstance();
+            var instance = _contents.TimerSoundEffect.CreateInstance();
             instance.Volume = .7f;
             instance.Play();
         }
 
         if (audioEffect.Type == SoundEffectTypes.GameEnded)
         {
-            var instance = _contents.Sound3.CreateInstance();
-            instance.Volume = 1f;
+            var instance = _contents.GameEndSoundEffect.CreateInstance();
+            instance.Volume = .7f;
             instance.Play();
         }
 
         if (audioEffect.Type == SoundEffectTypes.PlayerDied)
         {
-            var instance = _contents.Sound2.CreateInstance();
+            var instance = _contents.HitSoundEffect.CreateInstance();
             instance.Volume = .7f;
             instance.Play();
         }
 
         if (audioEffect.Type == SoundEffectTypes.ScoreChanged)
         {
-            var instance = _contents.Sound1.CreateInstance();
-            instance.Pitch = Random.Shared.Next(-5, 5) / 10f;
-            instance.Volume = .5f;
+            var instance = _contents.PickupSoundEffect.CreateInstance();
+            instance.Pitch = Random.Shared.Next(-1, 1) / 10f;
+            instance.Volume = .7f;
             instance.Play();
         }
         

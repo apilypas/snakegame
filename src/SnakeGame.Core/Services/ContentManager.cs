@@ -13,10 +13,10 @@ public class ContentManager
     public SpriteFont MainFont { get; private set; }
     public SpriteFont BigFont { get; private set; }
     public SpriteFont LogoFont { get; private set; }
-    public SoundEffect Sound1 { get; private set; }
-    public SoundEffect Sound2 { get; private set; }
-    public SoundEffect Sound3 { get; private set; }
-    public SoundEffect Sound4 { get; private set; }
+    public SoundEffect PickupSoundEffect { get; private set; }
+    public SoundEffect HitSoundEffect { get; private set; }
+    public SoundEffect GameEndSoundEffect { get; private set; }
+    public SoundEffect TimerSoundEffect { get; private set; }
     
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
     {
@@ -28,9 +28,9 @@ public class ContentManager
         MainFont = content.Load<SpriteFont>("MainFont");
         BigFont = content.Load<SpriteFont>("BigFont");
         LogoFont = content.Load<SpriteFont>("LogoFont");
-        Sound1 = content.Load<SoundEffect>("Sound1");
-        Sound2 = content.Load<SoundEffect>("Sound2");
-        Sound3 = content.Load<SoundEffect>("Sound3");
-        Sound4 = content.Load<SoundEffect>("Sound4");
+        PickupSoundEffect = content.Load<SoundEffect>("Sounds/Pickup");
+        HitSoundEffect = content.Load<SoundEffect>("Sounds/Hit");
+        GameEndSoundEffect = content.Load<SoundEffect>("Sounds/GameEnd");
+        TimerSoundEffect = content.Load<SoundEffect>("Sounds/Timer");
     }
 }
