@@ -219,6 +219,57 @@ public class DialogEntityFactory(World world, ContentManager contents)
         });
     }
 
+    public void CreateLevelBonusDialog()
+    {
+        var dialogEntity = world.CreateEntity();
+
+        var dialog = new DialogComponent
+        {
+            Title = "Select bonus",
+            Size = new SizeF(250f, 180f)
+        };
+        
+        dialogEntity.Attach(dialog);
+        
+        var transform = new TransformComponent
+        {
+            Position = GetDialogCenterPosition(dialog)
+        };
+        dialogEntity.Attach(transform);
+
+        var buttons = new [] {
+            new { Text = "+Time", Event = ButtonEvents.AddTime },
+            new { Text = "+Invincibility", Event = ButtonEvents.AddInvincibility },
+            new { Text = "-Enemies", Event = ButtonEvents.DestroyEnemies }
+        };
+
+        var buttonPositionY = 30f;
+        var focusOrderId = 1;
+        
+        foreach (var button in buttons)
+        {
+            var buttonEntity = CreateButton(
+                button.Text,
+                new Vector2(transform.Position.X + 10f, transform.Position.Y + buttonPositionY),
+                new SizeF(dialog.Size.Width - 20f, 40f),
+                () =>
+                {
+                    dialogEntity.Attach(new ButtonEventComponent
+                    {
+                        DialogEntityId = dialogEntity.Id,
+                        Event = button.Event
+                    });
+                });
+
+            buttonEntity.Get<ButtonComponent>().FocusOrderId = focusOrderId;
+
+            dialog.ChildrenEntities.Add(buttonEntity.Id);
+
+            buttonPositionY += 50f;
+            focusOrderId++;
+        }
+    }
+
     private Entity CreateButton(string text, Vector2 position, SizeF size, Action action)
     {
         var entity = world.CreateEntity();
@@ -252,9 +303,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         var transform = new TransformComponent
         {
-            Position = new Vector2(
-                (Constants.VirtualScreenWidth - size.Width) / 2,
-                (Constants.VirtualScreenHeight - size.Height) / 2)
+            Position = GetDialogCenterPosition(dialog)
         };
         dialogEntity.Attach(transform);
         
@@ -294,5 +343,12 @@ public class DialogEntityFactory(World world, ContentManager contents)
             
             dialog.ChildrenEntities.Add(buttonEntity.Id);
         }
+    }
+
+    private static Vector2 GetDialogCenterPosition(DialogComponent dialog)
+    {
+        return new Vector2(
+            (Constants.VirtualScreenWidth - dialog.Size.Width) / 2,
+            (Constants.VirtualScreenHeight - dialog.Size.Height) / 2);
     }
 }

@@ -9,14 +9,14 @@ using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.ECS.Systems;
 
-public class DespawnSnakeSystem : EntityProcessingSystem
+public class SnakeDespawnSystem : EntityProcessingSystem
 {
     private readonly GameState _gameState;
     private readonly EntityFactory _entityFactory;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
 
-    public DespawnSnakeSystem(GameState gameState, EntityFactory entityFactory) 
+    public SnakeDespawnSystem(GameState gameState, EntityFactory entityFactory) 
         : base(Aspect.All(typeof(SnakeComponent)))
     {
         _gameState = gameState;

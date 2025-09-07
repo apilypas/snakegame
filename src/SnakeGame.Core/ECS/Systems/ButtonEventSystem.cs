@@ -42,21 +42,48 @@ public class ButtonEventSystem : EntityProcessingSystem
             _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
             _gameState.IsPaused = false;
         }
-
-        if (buttonEvent.Event == ButtonEvents.ShowStartScreen)
+        else if (buttonEvent.Event == ButtonEvents.ShowStartScreen)
         {
             _gameScreen.ScreenManager.LoadScreen(new StartScreen(_game));
         }
-
-        if (buttonEvent.Event == ButtonEvents.ShowScoreBoard)
+        else if (buttonEvent.Event == ButtonEvents.ShowScoreBoard)
         {
             _entityFactory.Dialog.CreateScoreBoardDialog();
         }
-        
-        if (buttonEvent.Event == ButtonEvents.Close)
+        else if (buttonEvent.Event == ButtonEvents.Close)
         {
             var dialog = _dialogMapper.Get(buttonEvent.DialogEntityId);
             dialog.IsDestroyed = true;
+        }
+        else if (buttonEvent.Event == ButtonEvents.AddTime)
+        {
+            _gameState.IsPaused = false;
+            _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
+            
+            CreateEntity().Attach(new LevelBonusComponent
+            {
+                Type = LevelBonusComponent.LevelBonusType.AddTime
+            });
+        }
+        else if (buttonEvent.Event == ButtonEvents.AddInvincibility)
+        {
+            _gameState.IsPaused = false;
+            _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
+            
+            CreateEntity().Attach(new LevelBonusComponent
+            {
+                Type = LevelBonusComponent.LevelBonusType.AddInvincibility
+            });
+        }
+        else if (buttonEvent.Event == ButtonEvents.DestroyEnemies)
+        {
+            _gameState.IsPaused = false;
+            _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
+            
+            CreateEntity().Attach(new LevelBonusComponent
+            {
+                Type = LevelBonusComponent.LevelBonusType.DestroyEnemies
+            });
         }
         
         _buttonEventMapper.Delete(entityId);

@@ -8,7 +8,10 @@ public enum ButtonEvents
     ShowScoreBoard,
     StartNew,
     ShowCredits,
-    ShowStartScreen
+    ShowStartScreen,
+    AddTime,
+    AddInvincibility,
+    DestroyEnemies
 }
 
 public class ButtonEventComponent

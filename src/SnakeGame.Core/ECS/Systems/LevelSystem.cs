@@ -4,18 +4,21 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.ECS.Entities;
 
 namespace SnakeGame.Core.ECS.Systems;
 
 public class LevelSystem : EntityProcessingSystem
 {
     private readonly GameState _gameState;
+    private readonly EntityFactory _entities;
     private ComponentMapper<HudLevelDisplayComponent> _hudLevelDisplayMapper;
 
-    public LevelSystem(GameState gameState)
+    public LevelSystem(GameState gameState, EntityFactory entities)
         : base(Aspect.All(typeof(HudLevelDisplayComponent)))
     {
         _gameState = gameState;
+        _entities = entities;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -32,8 +35,12 @@ public class LevelSystem : EntityProcessingSystem
             _gameState.Level++;
             _gameState.Experience = 0;
             _gameState.MaxExperience += (int)MathF.Round((float)(_gameState.MaxExperience * .5));
+
+            _gameState.IsPaused = true;
+                    
+            _entities.Dialog.CreateLevelBonusDialog();
         }
-        
+
         hudLevelDisplay.Level = $"Level {_gameState.Level}";
         hudLevelDisplay.Progress = _gameState.Experience / (float)_gameState.MaxExperience;
     }
