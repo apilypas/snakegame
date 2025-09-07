@@ -61,6 +61,7 @@ public class PlayScreen : GameScreen
         _world = new WorldBuilder()
             .AddSystem(new InputSystem(_inputs, Game, entityFactory, gameState))
             .AddSystem(new PlayerInputSystem(_inputs, gameState))
+            .AddSystem(new EnemyStateSystem(gameState))
             .AddSystem(new CollectableSystem(gameState, entityFactory))
             .AddSystem(new SnakeMovementSystem(gameState))
             .AddSystem(new CollisionSystem(gameState))
@@ -90,15 +91,11 @@ public class PlayScreen : GameScreen
         
         var playerAt = new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize);
         
-        var playerSnakeEntity = entityFactory.World.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
-        gameState.Snakes.Add(playerSnakeEntity);
-        gameState.PlayerSnake = playerSnakeEntity;
+        entityFactory.World.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         
         var enemyAt = new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize);
         
-        var enemySnakeEntity = entityFactory.World.CreateEnemySnake(gameState, enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
-        
-        gameState.Snakes.Add(enemySnakeEntity);
+        entityFactory.World.CreateEnemySnake(enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         
         entityFactory.Hud.CreateScoreDisplay();
         entityFactory.Hud.CreateKeybindsDisplay();

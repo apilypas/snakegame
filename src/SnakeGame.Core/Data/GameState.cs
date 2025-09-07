@@ -15,8 +15,4 @@ public class GameState
     public float TotalTime { get; set; }
     public bool IsPaused { get; set; }
     public GameWorldState State { get; set; } = GameWorldState.Running;
-    
-    public HashSet<Entity> Snakes { get; } = [];
-    public HashSet<Entity> Collectables { get; } = [];
-    public Entity PlayerSnake { get; set; }
 }

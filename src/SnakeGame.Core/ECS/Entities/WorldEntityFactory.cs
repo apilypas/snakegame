@@ -1,13 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
-using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
 using SnakeGame.Core.Services;
-using SnakeGame.Core.StateMachines;
 
 namespace SnakeGame.Core.ECS.Entities;
 
@@ -40,7 +37,7 @@ public class WorldEntityFactory(World world, ContentManager contents)
         return entity;
     }
 
-    public Entity CreateEnemySnake(GameState gameState, Vector2 location, int length, SnakeDirection direction)
+    public Entity CreateEnemySnake(Vector2 location, int length, SnakeDirection direction)
     {
         Color[] enemyColors = [
             Color.FromNonPremultiplied(0x8E, 0xCA, 0xE6, 0xFF),
@@ -72,7 +69,6 @@ public class WorldEntityFactory(World world, ContentManager contents)
             DefaultLocation = location,
             DefaultLength = length,
             DefaultDirection = direction,
-            State = new EnemySnakeState(gameState, entity),
             Color = enemyColors[Random.Shared.NextInt64() % enemyColors.Length]
         });
         

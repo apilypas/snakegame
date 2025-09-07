@@ -51,7 +51,6 @@ public class CollectableSystem : EntityProcessingSystem
                 });
             }
 
-            _gameState.Collectables.Remove(GetEntity(entityId));
             DestroyEntity(entityId);
         }
     }

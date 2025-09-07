@@ -78,11 +78,7 @@ public class SpawnSystem : EntityUpdateSystem
                     ? SnakeDirection.Right
                     : SnakeDirection.Left;
 
-                var playerSnakeEntity = _entityFactory.World.CreatePlayerSnake(location.Value, 2, direction);
-
-                _gameState.Snakes.Add(playerSnakeEntity);
-
-                _gameState.PlayerSnake = playerSnakeEntity;
+                _entityFactory.World.CreatePlayerSnake(location.Value, 2, direction);
             }
         }
     }
@@ -119,10 +115,7 @@ public class SpawnSystem : EntityUpdateSystem
                         ? SnakeDirection.Right
                         : SnakeDirection.Left;
 
-                    var enemySnakeEntity =
-                        _entityFactory.World.CreateEnemySnake(_gameState, location.Value, 2, direction);
-
-                    _gameState.Snakes.Add(enemySnakeEntity);
+                    _entityFactory.World.CreateEnemySnake(location.Value, 2, direction);
                 }
             }
         }
@@ -157,8 +150,6 @@ public class SpawnSystem : EntityUpdateSystem
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Diamond);
 
             collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
         }
             
         _diamondSpawnTimer -= Constants.DiamondSpawnRate;
@@ -190,8 +181,6 @@ public class SpawnSystem : EntityUpdateSystem
         {
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SpeedBoost);
             collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
         }
         
         _speedBoostSpawnTimer -= Constants.SpeedBoostSpawnRate;
@@ -225,8 +214,6 @@ public class SpawnSystem : EntityUpdateSystem
         {
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Crown);
             collectableEntity.Get<TransformComponent>().Position = location.Value;
-            
-            _gameState.Collectables.Add(collectableEntity);
         }
         
         _crownSpawnTimer -= Constants.CrownSpawnRate;

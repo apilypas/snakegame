@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.StateMachines;
 
 namespace SnakeGame.Core.ECS.Components;
 
@@ -11,7 +10,6 @@ public class SnakeComponent
     public bool IsInitialized { get; set; }
     
     public bool IsAlive { get; set; }
-    public CharacterState State { get; set; } // State machine
     public bool IsFaster { get; set; }
     public float SpeedTimer { get; set; }
     public List<SnakeSegment> Segments { get; } = [];

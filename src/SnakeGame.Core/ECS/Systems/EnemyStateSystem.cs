@@ -1,49 +1,74 @@
 using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
+using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
 using SnakeGame.Core.Utils;
 
-namespace SnakeGame.Core.StateMachines;
+namespace SnakeGame.Core.ECS.Systems;
 
-public class EnemySnakeState : CharacterState
+public class EnemyStateSystem : EntityUpdateSystem
 {
-    private readonly Entity _snakeEntity;
-    private readonly GameState _gameState;
-
     private enum ObjectType
     {
         Empty,
         Collectable,
         Unavoidable
     }
-
-    private const int ObjectScanLength = 10;
     
-    public EnemySnakeState(GameState gameState, Entity snakeEntity)
+    private const int ObjectScanLength = 10;
+    private readonly GameState _gameState;
+
+    private ComponentMapper<SnakeComponent> _snakeMapper;
+    private ComponentMapper<CollectableComponent> _collectableMapper;
+    private ComponentMapper<EnemyComponent> _enemyMapper;
+    private ComponentMapper<TransformComponent> _transformMapper;
+
+    private int _frames;
+
+    public EnemyStateSystem(GameState gameState) 
+        : base(Aspect.One(typeof(SnakeComponent), typeof(CollectableComponent)))
     {
         _gameState = gameState;
-        _snakeEntity = snakeEntity;
     }
-    
+
+    public override void Initialize(IComponentMapperService mapperService)
+    {
+        _snakeMapper = mapperService.GetMapper<SnakeComponent>();
+        _collectableMapper = mapperService.GetMapper<CollectableComponent>();
+        _enemyMapper = mapperService.GetMapper<EnemyComponent>();
+        _transformMapper = mapperService.GetMapper<TransformComponent>();
+    }
+
     public override void Update(GameTime gameTime)
     {
-        var snake = _snakeEntity.Get<SnakeComponent>();
-        
-        if (!snake.IsAlive)
-            return;
+        if (_gameState.IsPaused) return;
 
-        var direction = GetDirection();
+        _frames++;
 
-        snake.NewDirection = direction;
+        if (_frames == 5) // Limit AI frames for better performance
+        {
+            _frames = 0;
+            
+            foreach (var entityId in ActiveEntities)
+            {
+                var snake = _snakeMapper.Get(entityId);
+
+                if (snake != null && _enemyMapper.Has(entityId))
+                {
+                    if (snake.IsAlive)
+                    {
+                        snake.NewDirection = GetDirection(snake);
+                    }
+                }
+            }
+        }
     }
-
-    private SnakeDirection GetDirection()
+    
+    private SnakeDirection GetDirection(SnakeComponent snake)
     {
-        var snake = _snakeEntity.Get<SnakeComponent>();
-        
         var head = snake.Segments[0].Position;
         
         var follow = snake.Head.Direction;
@@ -120,29 +145,34 @@ public class EnemySnakeState : CharacterState
         }
 
         // Other snake
-        foreach (var snakeEntity in _gameState.Snakes)
+        foreach (var entityId in ActiveEntities)
         {
-            var snake = snakeEntity.Get<SnakeComponent>();
-            
-            if (!snake.IsInitialized) continue;
-            
-            if (CollidesWith(snake, headRectangle))
+            var snake = _snakeMapper.Get(entityId);
+
+            if (snake is { IsInitialized: true })
             {
-                return ObjectType.Unavoidable;
+                if (CollidesWith(snake, headRectangle))
+                {
+                    return ObjectType.Unavoidable;
+                }
             }
         }
 
         // Collectables
-        foreach (var collectableEntity in _gameState.Collectables)
+        foreach (var entityId in ActiveEntities)
         {
-            if (headRectangle.Contains(collectableEntity.Get<TransformComponent>().Position))
-                return ObjectType.Collectable;
+            if (_collectableMapper.Has(entityId))
+            {
+                var transform = _transformMapper.Get(entityId);
+                if (headRectangle.Contains(transform.Position))
+                    return ObjectType.Collectable;
+            }
         }
 
         return ObjectType.Empty;
     }
 
-    private Vector2 GetNextMove(Vector2 location, SnakeDirection direction)
+    private static Vector2 GetNextMove(Vector2 location, SnakeDirection direction)
     {
         if (direction == SnakeDirection.Right)
             return location + new Vector2(Constants.SegmentSize, 0);

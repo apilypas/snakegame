@@ -44,8 +44,6 @@ public class SnakeMovementSystem : EntityProcessingSystem
         {
             UpdateDirection(snake);
 
-            snake.State?.Update(gameTime);
-
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var movementSize = deltaTime * GetSpeed(snake, deltaTime);

@@ -45,13 +45,8 @@ public class DespawnSnakeSystem : EntityProcessingSystem
 
             if (snake.Segments.Count == 0)
             {
-                _gameState.Snakes.Remove(GetEntity(entityId));
-                    
-                if (_playerMapper.Has(entityId))
-                    _gameState.PlayerSnake = null;
-                
                 DestroyEntity(entityId);
-            }
+            }   
         }
     }
     
@@ -94,8 +89,6 @@ public class DespawnSnakeSystem : EntityProcessingSystem
         {
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SnakePart);
             collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
-            
-            _gameState.Collectables.Add(collectableEntity);
         }
         else if (!_playerMapper.Has(entityId)) // Only enemies can spawn clocks
         {
@@ -105,8 +98,6 @@ public class DespawnSnakeSystem : EntityProcessingSystem
             {
                 var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Clock);
                 collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
-                
-                _gameState.Collectables.Add(collectableEntity);
             }
         }
     }
