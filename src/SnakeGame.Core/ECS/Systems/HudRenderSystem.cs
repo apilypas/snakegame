@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Graphics;
 using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.Services;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Systems;
@@ -12,15 +14,18 @@ public class HudRenderSystem : EntityDrawSystem
 {
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;
+    private readonly ContentManager _contents;
     private ComponentMapper<HudLabelComponent> _hudLabelMapper;
     private ComponentMapper<HudSpriteComponent> _hudSpriteMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
+    private ComponentMapper<HudLevelDisplayComponent> _hudLevelDisplayMapper;
 
-    public HudRenderSystem(GraphicsDevice graphics) 
-        : base(Aspect.One(typeof(HudLabelComponent), typeof(HudSpriteComponent)))
+    public HudRenderSystem(GraphicsDevice graphics, ContentManager contents) 
+        : base(Aspect.One(typeof(HudLabelComponent), typeof(HudSpriteComponent), typeof(HudLevelDisplayComponent)))
     {
         _graphics = graphics;
         _spriteBatch = new SpriteBatch(graphics);
+        _contents = contents;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -28,6 +33,7 @@ public class HudRenderSystem : EntityDrawSystem
         _hudLabelMapper = mapperService.GetMapper<HudLabelComponent>();
         _hudSpriteMapper = mapperService.GetMapper<HudSpriteComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
+        _hudLevelDisplayMapper = mapperService.GetMapper<HudLevelDisplayComponent>();
     }
 
     public override void Draw(GameTime gameTime)
@@ -65,6 +71,30 @@ public class HudRenderSystem : EntityDrawSystem
             {
                 var transform = _transformMapper.Get(entityId);
                 _spriteBatch.Draw(sprite.Sprite, transform.Position);
+            }
+            
+            var hudLevelDisplay = _hudLevelDisplayMapper.Get(entityId);
+
+            if (hudLevelDisplay != null)
+            {
+                var transform = _transformMapper.Get(entityId);
+                _spriteBatch.DrawStringWithShadow(
+                    _contents.BigFont,
+                    hudLevelDisplay.Level,
+                    transform.Position,
+                    Colors.ScoreTimeColor);
+                _spriteBatch.FillRectangle(
+                    transform.Position + new Vector2(0f, 42f),
+                    new SizeF(160f, 24f),
+                    Colors.ScoreTimeColor);
+                _spriteBatch.DrawRectangle(
+                    transform.Position + new Vector2(0f, 42f),
+                    new SizeF(160f, 24f),
+                    Colors.DefaultTextShadowColor);
+                _spriteBatch.FillRectangle(
+                    transform.Position + new Vector2(1f, 43f),
+                    new SizeF(158f * hudLevelDisplay.Progress, 22f),
+                    Colors.DefaultTextColor);
             }
         }
         

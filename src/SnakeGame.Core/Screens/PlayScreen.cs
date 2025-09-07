@@ -81,8 +81,9 @@ public class PlayScreen : GameScreen
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
             .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
+            .AddSystem(new LevelSystem(gameState))
             .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, cameraManager))
-            .AddSystem(new HudRenderSystem(Game.GraphicsDevice))
+            .AddSystem(new HudRenderSystem(Game.GraphicsDevice, contents))
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
             .Build();
         
@@ -100,6 +101,7 @@ public class PlayScreen : GameScreen
         
         entityFactory.Hud.CreateScoreDisplay();
         entityFactory.Hud.CreateKeybindsDisplay();
+        entityFactory.Hud.CreateLevelDisplay();
         
         entityFactory.Dialog.CreateNavigationIntent();
     }

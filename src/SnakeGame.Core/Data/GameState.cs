@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using MonoGame.Extended.ECS;
-
 namespace SnakeGame.Core.Data;
 
 public class GameState
@@ -15,4 +12,7 @@ public class GameState
     public float TotalTime { get; set; }
     public bool IsPaused { get; set; }
     public GameWorldState State { get; set; } = GameWorldState.Running;
+    public int Level { get; set; } = 1;
+    public int Experience { get; set; }
+    public int MaxExperience { get; set; } = 5;
 }

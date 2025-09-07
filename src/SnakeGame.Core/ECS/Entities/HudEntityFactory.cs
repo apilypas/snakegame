@@ -75,8 +75,20 @@ public class HudEntityFactory(World world, ContentManager contents)
             p += 40f;
         }
     }
-    
-    public int CreateLabel(SpriteFont spriteFont, string text, Color color)
+
+    public void CreateLevelDisplay()
+    {
+        var entity = world.CreateEntity();
+
+        entity.Attach(new HudLevelDisplayComponent());
+        
+        entity.Attach(new TransformComponent
+        {
+            Position = new Vector2(744f, 100f)
+        });
+    }
+
+    private int CreateLabel(SpriteFont spriteFont, string text, Color color)
     {
         var entity = world.CreateEntity();
 
@@ -91,8 +103,8 @@ public class HudEntityFactory(World world, ContentManager contents)
         
         return entity.Id;
     }
-    
-    public int CreateSprite(Texture2D texture, Rectangle source)
+
+    private int CreateSprite(Texture2D texture, Rectangle source)
     {
         var entity = world.CreateEntity();
         

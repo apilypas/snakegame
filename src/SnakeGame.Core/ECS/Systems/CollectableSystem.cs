@@ -76,6 +76,7 @@ public class CollectableSystem : EntityProcessingSystem
             {
                 var score = _gameState.ScoreMultiplicator * Constants.DiamondCollectScore;
                 _gameState.Score += score;
+                _gameState.Experience++;
                 SpawnFadingText(snake.Head.Position, $"+{score}");
             }
         }
