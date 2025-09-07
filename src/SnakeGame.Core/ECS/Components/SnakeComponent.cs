@@ -10,8 +10,7 @@ public class SnakeComponent
     public bool IsInitialized { get; set; }
     
     public bool IsAlive { get; set; }
-    public bool IsFaster { get; set; }
-    public float SpeedTimer { get; set; }
+    public float Speed { get; set; }
     public List<SnakeSegment> Segments { get; } = [];
     public SnakeSegment Head { get; set; } // Used for partial head
     public SnakeSegment Tail { get; set; } // User for partial tail

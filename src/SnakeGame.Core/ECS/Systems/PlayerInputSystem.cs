@@ -14,6 +14,7 @@ public class PlayerInputSystem : EntityProcessingSystem
     private readonly InputManager _inputs;
     private readonly GameState _gameState;
     private ComponentMapper<SnakeComponent> _snakeMapper;
+    private ComponentMapper<SpeedUpComponent> _speedUpMapper;
 
     public PlayerInputSystem(InputManager inputs, GameState gameState)
         : base(Aspect.All(typeof(PlayerComponent)))
@@ -25,6 +26,7 @@ public class PlayerInputSystem : EntityProcessingSystem
     public override void Initialize(IComponentMapperService mapperService)
     {
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
+        _speedUpMapper = mapperService.GetMapper<SpeedUpComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -58,12 +60,12 @@ public class PlayerInputSystem : EntityProcessingSystem
 
         if (_inputs.IsActionDown(InputActions.Faster))
         {
-            snake.IsFaster = true;
+            _speedUpMapper.Get(entityId).IsForced = true;
         }
 
         if (!_inputs.IsActionDown(InputActions.Faster))
         {
-            snake.IsFaster = false;
+            _speedUpMapper.Get(entityId).IsForced = false;
         }
     }
 }

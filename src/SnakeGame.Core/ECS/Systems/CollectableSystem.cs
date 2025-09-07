@@ -17,6 +17,7 @@ public class CollectableSystem : EntityProcessingSystem
     private ComponentMapper<PlayerComponent> _playerMapper;
     private ComponentMapper<CollectableComponent> _collectableMapper;
     private ComponentMapper<SnakeComponent> _snakeMapper;
+    private ComponentMapper<SpeedUpComponent> _speedUpMapper;
 
     public CollectableSystem(GameState gameState,
         EntityFactory entityFactory)
@@ -31,6 +32,7 @@ public class CollectableSystem : EntityProcessingSystem
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
         _collectableMapper = mapperService.GetMapper<CollectableComponent>();
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
+        _speedUpMapper = mapperService.GetMapper<SpeedUpComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -90,7 +92,9 @@ public class CollectableSystem : EntityProcessingSystem
         else if (collectable.CollectableType == CollectableType.SpeedBoost)
         {
             snake.SegmentsToGrow++;
-            snake.SpeedTimer = Constants.SpeedUpTimer;
+
+            _speedUpMapper.Get(collectable.CollectedByEntityId.Value).Timer = Constants.SpeedUpTimer;
+            
             if (_playerMapper.Has(collectable.CollectedByEntityId.Value))
             {
                 var score = _gameState.ScoreMultiplicator * Constants.SpeedBoostCollectScore;

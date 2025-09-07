@@ -46,7 +46,7 @@ public class SnakeMovementSystem : EntityProcessingSystem
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var movementSize = deltaTime * GetSpeed(snake, deltaTime);
+            var movementSize = deltaTime * snake.Speed;
 
             var head = snake.Segments[0];
             var tail = snake.Segments[^1];
@@ -130,8 +130,6 @@ public class SnakeMovementSystem : EntityProcessingSystem
         snake.Tail = snake.Segments[^1].Clone();
         
         snake.IsAlive = true;
-        snake.SpeedTimer = 0f;
-        snake.IsFaster = false;
     }
     
     private void UpdateDirection(SnakeComponent snake)
@@ -160,15 +158,5 @@ public class SnakeMovementSystem : EntityProcessingSystem
         snake.FollowingDirection = direction.Value;
 
         snake.NewDirection = null;
-    }
-    
-    private float GetSpeed(SnakeComponent snake, float deltaTime)
-    {
-        var speed = snake.IsFaster || snake.SpeedTimer > 0f ? Constants.IncreasedSnakeSpeed : Constants.DefaultSnakeSpeed;
-
-        if (snake.SpeedTimer > 0f)
-            snake.SpeedTimer -= deltaTime;
-        
-        return speed;
     }
 }

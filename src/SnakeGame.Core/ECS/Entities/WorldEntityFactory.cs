@@ -20,7 +20,7 @@ public class WorldEntityFactory(World world, ContentManager contents)
         });
     }
     
-    public Entity CreatePlayerSnake(Vector2 location, int length, SnakeDirection direction)
+    public void CreatePlayerSnake(Vector2 location, int length, SnakeDirection direction)
     {
         var entity = world.CreateEntity();
         
@@ -34,10 +34,10 @@ public class WorldEntityFactory(World world, ContentManager contents)
             DefaultDirection = direction
         });
         
-        return entity;
+        entity.Attach(new SpeedUpComponent());
     }
 
-    public Entity CreateEnemySnake(Vector2 location, int length, SnakeDirection direction)
+    public void CreateEnemySnake(Vector2 location, int length, SnakeDirection direction)
     {
         Color[] enemyColors = [
             Color.FromNonPremultiplied(0x8E, 0xCA, 0xE6, 0xFF),
@@ -72,7 +72,7 @@ public class WorldEntityFactory(World world, ContentManager contents)
             Color = enemyColors[Random.Shared.NextInt64() % enemyColors.Length]
         });
         
-        return entity;
+        entity.Attach(new SpeedUpComponent());
     }
 
     public Entity CreateCollectable(CollectableType type)

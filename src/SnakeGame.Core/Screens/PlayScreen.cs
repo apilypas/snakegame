@@ -63,6 +63,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new PlayerInputSystem(_inputs, gameState))
             .AddSystem(new EnemyStateSystem(gameState))
             .AddSystem(new CollectableSystem(gameState, entityFactory))
+            .AddSystem(new SnakeSpeedSystem(gameState))
             .AddSystem(new SnakeMovementSystem(gameState))
             .AddSystem(new CollisionSystem(gameState))
             .AddSystem(new CollisionEventSystem(gameState))
