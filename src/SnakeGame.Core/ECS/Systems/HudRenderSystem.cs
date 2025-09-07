@@ -14,7 +14,7 @@ public class HudRenderSystem : EntityDrawSystem
 {
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;
-    private readonly ContentManager _contents;
+    private readonly SpriteFont _mainFont;
     private ComponentMapper<HudLabelComponent> _hudLabelMapper;
     private ComponentMapper<HudSpriteComponent> _hudSpriteMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
@@ -25,7 +25,7 @@ public class HudRenderSystem : EntityDrawSystem
     {
         _graphics = graphics;
         _spriteBatch = new SpriteBatch(graphics);
-        _contents = contents;
+        _mainFont = contents.MainFont;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -79,20 +79,20 @@ public class HudRenderSystem : EntityDrawSystem
             {
                 var transform = _transformMapper.Get(entityId);
                 _spriteBatch.DrawStringWithShadow(
-                    _contents.BigFont,
+                    _mainFont,
                     hudLevelDisplay.Level,
                     transform.Position,
                     Colors.ScoreTimeColor);
                 _spriteBatch.FillRectangle(
-                    transform.Position + new Vector2(0f, 42f),
+                    transform.Position + new Vector2(0f, 22f),
                     new SizeF(160f, 24f),
                     Colors.ScoreTimeColor);
                 _spriteBatch.DrawRectangle(
-                    transform.Position + new Vector2(0f, 42f),
+                    transform.Position + new Vector2(0f, 22f),
                     new SizeF(160f, 24f),
                     Colors.DefaultTextShadowColor);
                 _spriteBatch.FillRectangle(
-                    transform.Position + new Vector2(1f, 43f),
+                    transform.Position + new Vector2(1f, 23f),
                     new SizeF(158f * hudLevelDisplay.Progress, 22f),
                     Colors.DefaultTextColor);
             }
