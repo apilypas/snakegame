@@ -14,7 +14,7 @@ public class HudEntityFactory(World world, ContentManager contents)
     {
         var entity = world.CreateEntity();
         
-        var scoreLabelId = CreateLabel(contents.BigFont, string.Empty, Color.White);
+        var scoreLabelId = CreateLabel(contents.BigFont, string.Empty, Colors.DefaultTextColor);
         world.GetEntity(scoreLabelId).Get<TransformComponent>().Position = new Vector2(744f, 38f);
         
         var multiplicatorLabelId = CreateLabel(contents.MainFont, string.Empty, Colors.ScoreMultiplicatorColor);
@@ -53,7 +53,7 @@ public class HudEntityFactory(World world, ContentManager contents)
                 var size = contents.MainFont.MeasureString(inputBinding.Key);
                 var x = 100 - size.X;
                 var y = (32 - size.Y) / 2f - 2;
-                var id1 = CreateLabel(contents.MainFont, inputBinding.Key, Color.White);
+                var id1 = CreateLabel(contents.MainFont, inputBinding.Key,  Colors.DefaultTextColor);
                 world.GetEntity(id1).Get<TransformComponent>().Position = new Vector2(76f + x, p + y);
             }
 
@@ -68,7 +68,7 @@ public class HudEntityFactory(World world, ContentManager contents)
                 var size = contents.MainFont.MeasureString(inputBinding.Value);
                 var x = (32 - size.X) / 2f;
                 var y = (32 - size.Y) / 2f - 2;
-                var id3 = CreateLabel(contents.MainFont, inputBinding.Value, Color.White);
+                var id3 = CreateLabel(contents.MainFont, inputBinding.Value, Colors.DefaultTextColor);
                 world.GetEntity(id3).Get<TransformComponent>().Position = new Vector2(180f + x, p + y);
             }
 

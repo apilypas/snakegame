@@ -80,7 +80,7 @@ public class RenderSystem : EntityDrawSystem
             if (fadingText != null)
             {
                 var transform = _transformMapper.Get(entityId);
-                _spriteBatch.DrawString(_smallFont, fadingText.Text, transform.Position, Color.White);
+                _spriteBatch.DrawStringWithShadow(_smallFont, fadingText.Text, transform.Position,  Colors.DefaultTextColor);
             }
             
             var playField = _playFieldMapper.Get(entityId);

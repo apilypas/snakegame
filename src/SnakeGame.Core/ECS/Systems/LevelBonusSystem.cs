@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
@@ -59,6 +60,12 @@ public class LevelBonusSystem : EntityUpdateSystem
                     {
                         _snakeMapper.Get(enemyEntityId).IsAlive = false;
                     }
+                }
+                else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddDiamondSpawnRate)
+                {
+                    _gameState.DiamondSpawnRate = MathF.Max(
+                        1f,
+                        _gameState.DiamondSpawnRate - _gameState.DiamondSpawnRate * .2f);
                 }
                 
                 DestroyEntity(entityId);

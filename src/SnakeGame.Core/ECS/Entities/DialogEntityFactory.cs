@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -241,13 +242,19 @@ public class DialogEntityFactory(World world, ContentManager contents)
         var buttons = new [] {
             new { Text = "+Time", Event = ButtonEvents.AddTime },
             new { Text = "+Invincibility", Event = ButtonEvents.AddInvincibility },
-            new { Text = "-Enemies", Event = ButtonEvents.DestroyEnemies }
+            new { Text = "-Enemies", Event = ButtonEvents.DestroyEnemies },
+            new { Text = "+Diamond Spawn Rate", Event = ButtonEvents.AddDiamondSpawnRate }
         };
+        
+        var randomButtons = buttons
+            .OrderBy(x => Random.Shared.Next()) // Shuffle randomly
+            .Take(3)
+            .ToArray();
 
         var buttonPositionY = 30f;
         var focusOrderId = 1;
         
-        foreach (var button in buttons)
+        foreach (var button in randomButtons)
         {
             var buttonEntity = CreateButton(
                 button.Text,

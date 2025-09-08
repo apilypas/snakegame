@@ -15,4 +15,5 @@ public class GameState
     public int Level { get; set; } = 1;
     public int Experience { get; set; }
     public int MaxExperience { get; set; } = 5;
+    public float DiamondSpawnRate { get; set; } = Constants.DiamondSpawnRate;
 }

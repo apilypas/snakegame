@@ -85,6 +85,16 @@ public class ButtonEventSystem : EntityProcessingSystem
                 Type = LevelBonusComponent.LevelBonusType.DestroyEnemies
             });
         }
+        else if (buttonEvent.Event == ButtonEvents.AddDiamondSpawnRate)
+        {
+            _gameState.IsPaused = false;
+            _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
+            
+            CreateEntity().Attach(new LevelBonusComponent
+            {
+                Type = LevelBonusComponent.LevelBonusType.AddDiamondSpawnRate
+            });
+        }
         
         _buttonEventMapper.Delete(entityId);
     }

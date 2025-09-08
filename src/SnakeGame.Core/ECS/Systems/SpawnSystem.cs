@@ -137,7 +137,7 @@ public class SpawnSystem : EntityUpdateSystem
             }
         }
         
-        if (diamondCount > 0 && _diamondSpawnTimer < Constants.DiamondSpawnRate)
+        if (diamondCount > 0 && _diamondSpawnTimer < _gameState.DiamondSpawnRate)
             return;
 
         if (diamondCount >= Constants.MaxDiamondLimit)
@@ -148,11 +148,10 @@ public class SpawnSystem : EntityUpdateSystem
         if (location != null)
         {
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.Diamond);
-
-            collectableEntity.Get<TransformComponent>().Position = location.Value;
+            _transformMapper.Get(collectableEntity.Id).Position = location.Value;
         }
             
-        _diamondSpawnTimer -= Constants.DiamondSpawnRate;
+        _diamondSpawnTimer = 0f;
     }
 
     private void HandleSpeedBoostSpawning(float deltaTime)

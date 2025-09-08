@@ -11,7 +11,8 @@ public enum ButtonEvents
     ShowStartScreen,
     AddTime,
     AddInvincibility,
-    DestroyEnemies
+    DestroyEnemies,
+    AddDiamondSpawnRate
 }
 
 public class ButtonEventComponent

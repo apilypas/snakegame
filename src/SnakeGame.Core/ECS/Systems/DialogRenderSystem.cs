@@ -89,7 +89,7 @@ public class DialogRenderSystem : EntityDrawSystem
                         _mainFont,
                         dialog.Title,
                         position,
-                        Color.White);
+                        Colors.DefaultTextColor);
                 }
 
                 if (!string.IsNullOrEmpty(dialog.Content))
@@ -97,7 +97,7 @@ public class DialogRenderSystem : EntityDrawSystem
                     _spriteBatch.DrawStringWithShadow(_mainFont,
                         dialog.Content,
                         transform.Position + new Vector2(8f, 24f),
-                        Color.White);
+                        Colors.DefaultTextColor);
                 }
 
                 foreach (var childEntityId in dialog.ChildrenEntities)
@@ -172,7 +172,7 @@ public class DialogRenderSystem : EntityDrawSystem
                                 _mainFont,
                                 button.Text,
                                 position,
-                                Color.White);
+                                Colors.DefaultTextColor);
                         }
                     }
                 }
