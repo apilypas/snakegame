@@ -15,6 +15,7 @@ public class HudRenderSystem : EntityDrawSystem
     private readonly GraphicsDevice _graphics;
     private readonly SpriteBatch _spriteBatch;
     private readonly SpriteFont _mainFont;
+    private readonly Texture2D _userInterfaceTexture;
     private ComponentMapper<HudLabelComponent> _hudLabelMapper;
     private ComponentMapper<HudSpriteComponent> _hudSpriteMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
@@ -26,6 +27,7 @@ public class HudRenderSystem : EntityDrawSystem
         _graphics = graphics;
         _spriteBatch = new SpriteBatch(graphics);
         _mainFont = contents.MainFont;
+        _userInterfaceTexture = contents.UserInterfaceTexture;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -78,23 +80,30 @@ public class HudRenderSystem : EntityDrawSystem
             if (hudLevelDisplay != null)
             {
                 var transform = _transformMapper.Get(entityId);
+                
                 _spriteBatch.DrawStringWithShadow(
                     _mainFont,
                     hudLevelDisplay.Level,
                     transform.Position,
                     Colors.ScoreTimeColor);
-                _spriteBatch.FillRectangle(
+                
+                _spriteBatch.DrawFromNinePatch(
                     transform.Position + new Vector2(0f, 22f),
-                    new SizeF(160f, 24f),
-                    Colors.ScoreTimeColor);
-                _spriteBatch.DrawRectangle(
-                    transform.Position + new Vector2(0f, 22f),
-                    new SizeF(160f, 24f),
-                    Colors.DefaultTextShadowColor);
-                _spriteBatch.FillRectangle(
-                    transform.Position + new Vector2(1f, 23f),
-                    new SizeF(158f * hudLevelDisplay.Progress, 22f),
-                    Colors.DefaultTextColor);
+                    new SizeF(160f, 26f),
+                    _userInterfaceTexture,
+                    new Rectangle(32, 96, 18, 18),
+                    Color.White,
+                    6,
+                    6);
+                
+                _spriteBatch.DrawFromNinePatch(
+                    transform.Position + new Vector2(2f, 24f),
+                    new SizeF(156f * hudLevelDisplay.Progress, 22f),
+                    _userInterfaceTexture,
+                    new Rectangle(0, 96, 18, 18),
+                    Color.White,
+                    6,
+                    6);
             }
         }
         

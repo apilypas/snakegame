@@ -55,71 +55,130 @@ public static class SpriteBatchExtensions
         SizeF size,
         Texture2D texture,
         Rectangle textureRectangle,
-        Color color)
+        Color color,
+        int patchSizeX = 16,
+        int patchSizeY = 16)
     {
-        var patchSize = new Point(16, 16);
+        var patchSize = new Point(patchSizeX, patchSizeY);
+        
+        var destinationPatchSizeX = (int)Math.Ceiling(Math.Min(patchSizeX, size.Width / 3));
+        var destinationPatchSizeY = (int)Math.Ceiling(Math.Min(patchSizeY, size.Height / 3));
         
         // Top left corner
         spriteBatch.Draw(
             texture,
-            new Rectangle((int)position.X, (int)position.Y, 16, 16),
-            new Rectangle(textureRectangle.Location, patchSize),
+            new Rectangle(
+                (int)position.X,
+                (int)position.Y,
+                destinationPatchSizeX,
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location, 
+                patchSize),
             color);
         
         // Top right corner
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + size.Width - 16), (int)position.Y, 16, 16),
-            new Rectangle(textureRectangle.Location + new Point(32, 0), patchSize),
+            new Rectangle(
+                (int) (position.X + size.Width - destinationPatchSizeX), 
+                (int)position.Y,
+                destinationPatchSizeX, 
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X * 2, 0), 
+                patchSize),
             color);
         
         // Bottom left corner
         spriteBatch.Draw(
             texture,
-            new Rectangle((int)position.X, (int) (position.Y + size.Height - 16), 16, 16),
-            new Rectangle(textureRectangle.Location + new Point(0, 32), patchSize),
+            new Rectangle(
+                (int)position.X, 
+                (int) (position.Y + size.Height - destinationPatchSizeY),
+                destinationPatchSizeX, 
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location + new Point(0, patchSize.Y * 2), 
+                patchSize),
             color);
         
         // Bottom right corner
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + size.Width - 16), (int) (position.Y + size.Height - 16), 16, 16),
-            new Rectangle(textureRectangle.Location + new Point(32, 32), patchSize),
+            new Rectangle(
+                (int) (position.X + size.Width - destinationPatchSizeX), 
+                (int) (position.Y + size.Height - destinationPatchSizeY), 
+                destinationPatchSizeX, 
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X * 2, patchSize.Y * 2), 
+                patchSize),
             color);
         
         // Top border
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + 16), (int)position.Y, (int) Math.Ceiling(size.Width - 32), 16),
-            new Rectangle(textureRectangle.Location + new Point(16, 0), patchSize),
+            new Rectangle(
+                (int) (position.X + destinationPatchSizeX), 
+                (int)position.Y,
+                (int) size.Width - destinationPatchSizeX * 2,
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X, 0),
+                patchSize),
             color);
         
         // Bottom border
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + 16), (int) (position.Y + size.Height - 16), (int) Math.Ceiling(size.Width - 32), 16),
-            new Rectangle(textureRectangle.Location + new Point(16, 32), patchSize),
+            new Rectangle(
+                (int) (position.X + destinationPatchSizeX),
+                (int) (position.Y + size.Height - destinationPatchSizeY),
+                (int) size.Width - destinationPatchSizeX * 2,
+                destinationPatchSizeY),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X, patchSize.Y * 2),
+                patchSize),
             color);
         
         // Left border
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) position.X, (int) (position.Y + 16), 16, (int) Math.Ceiling(size.Height - 32)),
-            new Rectangle(textureRectangle.Location + new Point(0, 16), patchSize),
+            new Rectangle(
+                (int) position.X,
+                (int) (position.Y + destinationPatchSizeY),
+                destinationPatchSizeX,
+                (int) size.Height - destinationPatchSizeY * 2),
+            new Rectangle(
+                textureRectangle.Location + new Point(0, patchSize.Y),
+                patchSize),
             color);
         
         // Right border
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + size.Width - 16), (int) (position.Y + 16), 16, (int) Math.Ceiling(size.Height - 32)),
-            new Rectangle(textureRectangle.Location + new Point(32, 16), patchSize),
+            new Rectangle(
+                (int) (position.X + size.Width - destinationPatchSizeX),
+                (int) (position.Y + destinationPatchSizeY),
+                destinationPatchSizeX,
+                (int) size.Height - destinationPatchSizeY * 2),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X * 2, patchSize.Y),
+                patchSize),
             color);
         
         // Fill
         spriteBatch.Draw(
             texture,
-            new Rectangle((int) (position.X + 16), (int) (position.Y + 16), (int) Math.Ceiling(size.Width - 32), (int) Math.Ceiling(size.Height - 32)),
-            new Rectangle(textureRectangle.Location + new Point(16, 16), patchSize),
+            new Rectangle(
+                (int) (position.X + destinationPatchSizeX),
+                (int) (position.Y + destinationPatchSizeY),
+                (int) size.Width - destinationPatchSizeX * 2,
+                (int) size.Height - destinationPatchSizeY * 2),
+            new Rectangle(
+                textureRectangle.Location + new Point(patchSize.X, patchSize.Y),
+                patchSize),
             color);
     }
 }
