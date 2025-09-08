@@ -80,7 +80,7 @@ public class DialogButtonFocusSystem : EntityUpdateSystem
                         {
                             if (button.IsFocused)
                             {
-                                button.Action();
+                                button.IsClicked = true;
                                 break;
                             }
                         }

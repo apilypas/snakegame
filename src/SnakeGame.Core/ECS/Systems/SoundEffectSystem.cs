@@ -58,6 +58,12 @@ public class SoundEffectSystem : EntityProcessingSystem
             instance.Volume = .7f;
             instance.Play();
         }
+        else if (audioEffect.Type == SoundEffectTypes.Click)
+        {
+            var instance = _contents.ClickSoundEffect.CreateInstance();
+            instance.Volume = .5f;
+            instance.Play();
+        }
         
         _soundEffectMapper.Delete(entityId);
     }

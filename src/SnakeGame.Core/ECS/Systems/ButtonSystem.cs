@@ -14,6 +14,7 @@ public class ButtonSystem : EntityUpdateSystem
     private readonly GraphicsDevice _graphicsDevice;
     private ComponentMapper<ButtonComponent> _buttonMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
     private Vector2 _lastMousePosition = Vector2.Zero;
 
     public ButtonSystem(GraphicsDevice graphicsDevice, InputManager inputManager) 
@@ -27,12 +28,14 @@ public class ButtonSystem : EntityUpdateSystem
     {
         _buttonMapper = mapperService.GetMapper<ButtonComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
+        _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
     }
 
     public override void Update(GameTime gameTime)
     {
         HandleHoverState();
         HandlePressedState();
+        HandleClicks();
     }
 
     protected override void OnEntityAdded(int entityId)
@@ -51,6 +54,24 @@ public class ButtonSystem : EntityUpdateSystem
         }
     }
 
+    private void HandleClicks()
+    {
+        foreach (var entityId in ActiveEntities)
+        {
+            var button = _buttonMapper.Get(entityId);
+            if (button.IsClicked)
+            {
+                button.Action();
+                button.IsClicked = false;
+
+                _soundEffectMapper.Put(entityId, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.Click
+                });
+            }
+        }
+    }
+
     private void HandlePressedState()
     {
         foreach (var entityId in ActiveEntities)
@@ -63,7 +84,7 @@ public class ButtonSystem : EntityUpdateSystem
 
                 if (button.IsHovered && _inputManager.Mouse.IsLeftButtonReleased)
                 {
-                    button.Action?.Invoke();
+                    button.IsClicked = true;
                 }
             }
         }

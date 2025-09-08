@@ -49,6 +49,7 @@ public class StartScreen : GameScreen
             .AddSystem(new InputSystem(_inputs, Game, entityFactory, null))
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
             .AddSystem(new StartMenuButtonEventSystem(this, Game, entityFactory))
+            .AddSystem(new SoundEffectSystem(contents))
             .AddSystem(new DialogSystem())
             .AddSystem(new DialogButtonFocusSystem())
             .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))

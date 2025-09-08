@@ -66,6 +66,12 @@
 /processorParam:TextureFormat=Color
 /build:Snake.png
 
+#begin Sounds/Click.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Click.wav
+
 #begin Sounds/GameEnd.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
