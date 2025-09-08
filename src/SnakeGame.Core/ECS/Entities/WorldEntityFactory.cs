@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
@@ -39,37 +40,28 @@ public class WorldEntityFactory(World world, ContentManager contents)
 
     public void CreateEnemySnake(Vector2 location, int length, SnakeDirection direction)
     {
-        Color[] enemyColors = [
-            Color.FromNonPremultiplied(0x8E, 0xCA, 0xE6, 0xFF),
-            Color.FromNonPremultiplied(0x36, 0x81, 0xA3, 0xFF),
-            Color.FromNonPremultiplied(0x06, 0x4E, 0x70, 0xFF),
-            Color.FromNonPremultiplied(0x21, 0x9E, 0xBC, 0xFF),
-            Color.FromNonPremultiplied(0x25, 0x57, 0x64, 0xFF),
-            Color.FromNonPremultiplied(0x08, 0x45, 0x54, 0xFF),
-            Color.FromNonPremultiplied(0x02, 0x30, 0x47, 0xFF),
-            Color.FromNonPremultiplied(0x0D, 0x64, 0x8F, 0xFF),
-            Color.FromNonPremultiplied(0x25, 0x44, 0x54, 0xFF),
-            Color.FromNonPremultiplied(0x05, 0x22, 0x30, 0xFF),
-            Color.FromNonPremultiplied(0xFB, 0x85, 0x00, 0xFF),
-            Color.FromNonPremultiplied(0xEF, 0x9F, 0x45, 0xFF),
-            Color.FromNonPremultiplied(0x93, 0x57, 0x14, 0xFF),
-            Color.FromNonPremultiplied(0x50, 0x2B, 0x02, 0xFF),
-            Color.FromNonPremultiplied(0xAB, 0x5B, 0x00, 0xFF),
-            Color.FromNonPremultiplied(0x50, 0x2A, 0x00, 0xFF),
-            Color.FromNonPremultiplied(0x93, 0x6D, 0x41, 0xFF),
-            Color.FromNonPremultiplied(0x6C, 0x63, 0x59, 0xFF)
-        ];
-        
         var entity = world.CreateEntity();
         
         entity.Attach(new EnemyComponent());
+
+        var rgb = new[]
+        {
+            Random.Shared.NextSingle(),
+            Random.Shared.NextSingle(),
+            Random.Shared.NextSingle()
+        };
+
+        if (rgb.All(x => x < .1f))
+        {
+            rgb[Random.Shared.Next(rgb.Length - 1)] = (.1f + Random.Shared.NextSingle()) % 1f;
+        }
         
         entity.Attach(new SnakeComponent
         {
             DefaultLocation = location,
             DefaultLength = length,
             DefaultDirection = direction,
-            Color = enemyColors[Random.Shared.NextInt64() % enemyColors.Length]
+            Color = new Color(rgb[0], rgb[1], rgb[2], 1f)
         });
         
         entity.Attach(new SpeedUpComponent());
