@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
+using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Entities;
 using SnakeGame.Core.ECS.Systems;
-using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.Screens;
@@ -19,29 +19,33 @@ public class StartScreen : GameScreen
         var contents = new ContentManager();
         contents.LoadContent(Content);
 
-        _inputs = new InputManager();
-        _inputs.BindKey(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter);
-        _inputs.BindKey(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter);
-        _inputs.BindKey(InputActions.Cancel, Keys.Escape);
-        _inputs.BindKey(InputActions.Up, Keys.W);
-        _inputs.BindKey(InputActions.Up, Keys.Up);
-        _inputs.BindButton(InputActions.Up, Buttons.DPadUp);
-        _inputs.BindButton(InputActions.Up, Buttons.LeftThumbstickUp);
-        _inputs.BindKey(InputActions.Down, Keys.S);
-        _inputs.BindKey(InputActions.Down, Keys.Down);
-        _inputs.BindButton(InputActions.Down, Buttons.DPadDown);
-        _inputs.BindButton(InputActions.Down, Buttons.LeftThumbstickDown);
-        _inputs.BindKey(InputActions.Left, Keys.A);
-        _inputs.BindKey(InputActions.Left, Keys.Left);
-        _inputs.BindButton(InputActions.Left, Buttons.DPadLeft);
-        _inputs.BindButton(InputActions.Left, Buttons.LeftThumbstickLeft);
-        _inputs.BindKey(InputActions.Right, Keys.D);
-        _inputs.BindKey(InputActions.Right, Keys.Right);
-        _inputs.BindButton(InputActions.Right, Buttons.DPadRight);
-        _inputs.BindButton(InputActions.Right, Buttons.LeftThumbstickRight);
-        _inputs.BindKey(InputActions.Faster, Keys.Space);
-        _inputs.BindButton(InputActions.Faster, Buttons.A);
-        _inputs.BindButton(InputActions.Start, Buttons.Start);
+        var bindings = new[]
+        {
+            InputBinding.Create(InputActions.Fullscreen, Keys.LeftAlt, Keys.Enter),
+            InputBinding.Create(InputActions.Fullscreen, Keys.RightAlt, Keys.Enter),
+            InputBinding.Create(InputActions.Cancel, Keys.Escape),
+            InputBinding.Create(InputActions.Up, Keys.W),
+            InputBinding.Create(InputActions.Up, Keys.Up),
+            InputBinding.Create(InputActions.Up, Buttons.DPadUp),
+            InputBinding.Create(InputActions.Up, Buttons.LeftThumbstickUp),
+            InputBinding.Create(InputActions.Down, Keys.S),
+            InputBinding.Create(InputActions.Down, Keys.Down),
+            InputBinding.Create(InputActions.Down, Buttons.DPadDown),
+            InputBinding.Create(InputActions.Down, Buttons.LeftThumbstickDown),
+            InputBinding.Create(InputActions.Left, Keys.A),
+            InputBinding.Create(InputActions.Left, Keys.Left),
+            InputBinding.Create(InputActions.Left, Buttons.DPadLeft),
+            InputBinding.Create(InputActions.Left, Buttons.LeftThumbstickLeft),
+            InputBinding.Create(InputActions.Right, Keys.D),
+            InputBinding.Create(InputActions.Right, Keys.Right),
+            InputBinding.Create(InputActions.Right, Buttons.DPadRight),
+            InputBinding.Create(InputActions.Right, Buttons.LeftThumbstickRight),
+            InputBinding.Create(InputActions.Faster, Keys.Space),
+            InputBinding.Create(InputActions.Faster, Buttons.A),
+            InputBinding.Create(InputActions.Start, Buttons.Start)
+        };
+
+        _inputs = new InputManager(bindings);
         
         var entityFactory = new EntityFactory();
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
+using MonoGame.Extended.Input;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
 
@@ -80,9 +81,9 @@ public class ButtonSystem : EntityUpdateSystem
 
             if (button.IsHandlingInput)
             {
-                button.IsPressed = button.IsHovered && _inputManager.Mouse.IsLeftButtonDown;
+                button.IsPressed = button.IsHovered && _inputManager.MouseInput.IsButtonDown(MouseButton.Left);
 
-                if (button.IsHovered && _inputManager.Mouse.IsLeftButtonReleased)
+                if (button.IsHovered && _inputManager.MouseInput.WasButtonReleased(MouseButton.Left))
                 {
                     button.IsClicked = true;
                 }
@@ -92,7 +93,7 @@ public class ButtonSystem : EntityUpdateSystem
 
     private void HandleHoverState()
     {
-        var mousePosition = _inputManager.Mouse.Position;
+        var mousePosition = _inputManager.MouseInput.MousePosition;
 
         if (Vector2.Distance(mousePosition, _lastMousePosition) < 1f)
             return;

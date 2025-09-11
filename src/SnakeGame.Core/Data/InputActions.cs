@@ -1,6 +1,6 @@
-namespace SnakeGame.Core.Inputs;
+namespace SnakeGame.Core.Data;
 
-public class InputActions
+public static class InputActions
 {
     public const string Up = nameof(Up);
     public const string Down = nameof(Down);

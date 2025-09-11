@@ -4,7 +4,6 @@ using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
-using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Systems;
@@ -40,7 +39,7 @@ public class InputSystem : EntityUpdateSystem
             navigationIntent = _navigationIntentMapper.Get(entityId);
         }
         
-        if (_inputs.IsActionPressed(InputActions.Pause))
+        if (_inputs.WasActionPressed(InputActions.Pause))
         {
             if (_gameState.State == GameWorldState.Running)
             {
@@ -56,24 +55,24 @@ public class InputSystem : EntityUpdateSystem
             }
         }
     
-        if (_inputs.IsActionPressed(InputActions.Fullscreen))
+        if (_inputs.WasActionPressed(InputActions.Fullscreen))
         {
             _graphicsDeviceManager?.ToggleFullScreen();
         }
 
-        if (_inputs.IsActionPressed(InputActions.Down) || _inputs.IsActionPressed(InputActions.Right))
+        if (_inputs.WasActionPressed(InputActions.Down) || _inputs.WasActionPressed(InputActions.Right))
         {
             if (navigationIntent != null)
                 navigationIntent.Event = NavigationEvent.FocusNext;
         }
         
-        if (_inputs.IsActionPressed(InputActions.Up) || _inputs.IsActionPressed(InputActions.Left))
+        if (_inputs.WasActionPressed(InputActions.Up) || _inputs.WasActionPressed(InputActions.Left))
         {
             if (navigationIntent != null)
                 navigationIntent.Event = NavigationEvent.FocusPrevious;
         }
 
-        if (_inputs.IsActionPressed(InputActions.Faster))
+        if (_inputs.WasActionPressed(InputActions.Faster))
         {
             if (navigationIntent != null)
                 navigationIntent.Event = NavigationEvent.Select;

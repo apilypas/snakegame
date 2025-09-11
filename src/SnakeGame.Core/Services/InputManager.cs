@@ -1,88 +1,85 @@
-using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using SnakeGame.Core.Inputs;
+using MonoGame.Extended.Input;
 
 namespace SnakeGame.Core.Services;
 
-public class InputManager
+public struct InputBinding
 {
-    private readonly List<InputBinding> _bindings = [];
+    public string ActionName;
+    public Keys[] Keys;
+    public Buttons Button;
     
-    private struct InputBinding
+    public static InputBinding Create(string actionName, params Keys[] keys)
     {
-        public string ActionName;
-        public Keys[] Keys;
-        public Buttons Button;
-    }
-
-    public KeyboardInputHandler Keyboard { get; } = new();
-    public MouseInputHandler Mouse { get; } = new();
-    public GamePadInputHandler GamePad { get; } = new();
-
-    public void BindKey(string actionName, params Keys[] keys)
-    {
-        if (keys.Length is <= 0 or > 2)
-            throw new ArgumentException($"{nameof(keys)} should have one or two values");
-        
-        var inputBinding = new InputBinding
+        return new InputBinding
         {
             ActionName = actionName,
             Keys = keys
         };
-        
-        _bindings.Add(inputBinding);
-        
-        SortBindings();
     }
 
-    public void BindButton(string actionName, Buttons button)
+    public static InputBinding Create(string actionName, Buttons button)
     {
-        var inputBinding = new InputBinding
+        return new InputBinding
         {
             ActionName = actionName,
             Button = button
         };
-        
-        _bindings.Add(inputBinding);
+    }
+}
+
+public class InputManager
+{
+    private readonly List<InputBinding> _bindings = [];
+
+    public KeyboardInputHandler KeyboardInput { get; } = new();
+    public MouseInputHandler MouseInput { get; } = new();
+    public GamePadInputHandler GamePadInput { get; } = new(PlayerIndex.One);
+
+    public InputManager(IEnumerable<InputBinding> bindings)
+    {
+        foreach (var binding in bindings)
+            _bindings.Add(binding);
         
         SortBindings();
     }
 
     public void Update()
     {
-        Keyboard.Update();
-        Mouse.Update();
-        GamePad.Update();
+        KeyboardInput.Update();
+        MouseInput.Update();
+        GamePadInput.Update();
     }
 
     public bool IsActionDown(string actionName)
     {
         foreach (var binding in _bindings)
         {
-            if (binding.ActionName == actionName && GetIsDown(binding))
+            if (binding.ActionName == actionName && IsActionDown(binding))
                 return true;
         }
 
         return false;
     }
 
-    public bool IsActionPressed(string actionName)
+    public bool WasActionPressed(string actionName)
     {
         foreach (var binding in _bindings)
         {
-            if (binding.ActionName == actionName && GetIsPressed(binding))
+            if (binding.ActionName == actionName && WasActionPressed(binding))
                 return true;
         }
 
         return false;
     }
 
-    public bool IsActionReleased(string actionName)
+    public bool WasActionReleased(string actionName)
     {
         foreach (var binding in _bindings)
         {
-            if (binding.ActionName == actionName && GetIsReleased(binding))
+            if (binding.ActionName == actionName && WasActionReleased(binding))
                 return true;
         }
 
@@ -98,75 +95,149 @@ public class InputManager
                 : int.MaxValue);
     }
 
-    private bool GetIsDown(InputBinding binding)
+    private bool IsActionDown(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
-            && Keyboard.GetIsKeyDown(binding.Keys[0]))
+            && KeyboardInput.IsKeyDown(binding.Keys[0]))
         {
             return true;
         }
 
         if (binding.Keys is { Length: 2 }
-            && Keyboard.GetIsKeyDown(binding.Keys[0])
-            && Keyboard.GetIsKeyDown(binding.Keys[1]))
+            && KeyboardInput.IsKeyDown(binding.Keys[0])
+            && KeyboardInput.IsKeyDown(binding.Keys[1]))
         {
             return true;
         }
 
-        if (binding.Button != Buttons.None
-            && GamePad.GetIsButtonDown(binding.Button))
-        {
+        if (binding.Button != Buttons.None && GamePadInput.IsButtonDown(binding.Button))
             return true;
-        }
         
         return false;
     }
     
-    private bool GetIsPressed(InputBinding binding)
+    private bool WasActionPressed(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
-            && Keyboard.GetIsKeyPressed(binding.Keys[0]))
+            && KeyboardInput.WasKeyPressed(binding.Keys[0]))
         {
             return true;
         }
 
         if (binding.Keys is { Length: 2 }
-            && Keyboard.GetIsKeyDown(binding.Keys[0])
-            && Keyboard.GetIsKeyPressed(binding.Keys[1]))
+            && KeyboardInput.IsKeyDown(binding.Keys[0])
+            && KeyboardInput.WasKeyPressed(binding.Keys[1]))
         {
             return true;
         }
 
-        if (binding.Button != Buttons.None
-            && GamePad.GetIsButtonPressed(binding.Button))
-        {
+        if (binding.Button != Buttons.None && GamePadInput.WasButtonPressed(binding.Button))
             return true;
-        }
 
         return false;
     }
     
-    private bool GetIsReleased(InputBinding binding)
+    private bool WasActionReleased(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
-            && Keyboard.GetIsKeyReleased(binding.Keys[0]))
+            && KeyboardInput.WasKeyReleased(binding.Keys[0]))
         {
             return true;
         }
 
         if (binding.Keys is { Length: 2 }
-            && Keyboard.GetIsKeyDown(binding.Keys[0])
-            && Keyboard.GetIsKeyReleased(binding.Keys[1]))
+            && KeyboardInput.IsKeyDown(binding.Keys[0])
+            && KeyboardInput.WasKeyReleased(binding.Keys[1]))
         {
             return true;
         }
 
-        if (binding.Button != Buttons.None
-            && GamePad.GetIsButtonReleased(binding.Button))
-        {
+        if (binding.Button != Buttons.None && GamePadInput.WasButtonReleased(binding.Button))
             return true;
-        }
 
         return false;
+    }
+    
+    public class KeyboardInputHandler
+    {
+        private KeyboardStateExtended _keyboardState;
+        
+        public void Update()
+        {
+            KeyboardExtended.Update();
+            _keyboardState = KeyboardExtended.GetState();
+        }
+
+        public bool IsKeyDown(Keys key)
+        {
+            return _keyboardState.IsKeyDown(key);
+        }
+
+        public bool WasKeyReleased(Keys key)
+        {
+            return _keyboardState.WasKeyReleased(key);
+        }
+
+        public bool WasKeyPressed(Keys key)
+        {
+            return _keyboardState.WasKeyPressed(key);
+        }
+    }
+
+    public class MouseInputHandler
+    {
+        private MouseStateExtended _mouseState;
+        
+        public Vector2 MousePosition => new(_mouseState.X, _mouseState.Y);
+
+        public void Update()
+        {
+            MouseExtended.Update();
+            _mouseState = MouseExtended.GetState();
+        }
+        
+        public bool IsButtonDown(MouseButton button)
+        {
+            return _mouseState.IsButtonDown(button);
+        }
+
+        public bool WasButtonPressed(MouseButton button)
+        {
+            return _mouseState.WasButtonPressed(button);
+        }
+
+        public bool WasButtonReleased(MouseButton button)
+        {
+            return _mouseState.WasButtonReleased(button);
+        }
+    }
+
+    public class GamePadInputHandler(PlayerIndex playerIndex)
+    {
+        private GamePadState _previousState = GamePad.GetState(playerIndex);
+        private GamePadState _currentState = GamePad.GetState(playerIndex);
+
+        public bool IsButtonDown(Buttons button)
+        {
+            return _currentState.IsButtonDown(button);
+        }
+        
+        public bool WasButtonPressed(Buttons button)
+        {
+            return _currentState.IsButtonDown(button)
+                   && _previousState.IsButtonUp(button);
+        }
+
+        public bool WasButtonReleased(Buttons button)
+        {
+            return _currentState.IsButtonUp(button)
+                   && _previousState.IsButtonDown(button);
+        }
+
+        public void Update()
+        {
+            _previousState = _currentState;
+            _currentState = GamePad.GetState(playerIndex);
+        }
     }
 }

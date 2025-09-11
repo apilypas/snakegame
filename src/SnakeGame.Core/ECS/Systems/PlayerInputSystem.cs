@@ -4,7 +4,6 @@ using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.Inputs;
 using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Systems;
