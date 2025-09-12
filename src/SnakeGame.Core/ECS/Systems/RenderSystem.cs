@@ -59,30 +59,6 @@ public class RenderSystem : EntityDrawSystem
         
         foreach (var entityId in ActiveEntities)
         {
-            var snake = _snakeMapper.Get(entityId);
-
-            if (snake is { IsInitialized: true })
-            {
-                var isPlayer = _playerMapper.Has(entityId);
-                _snakeRenderer.Render(_spriteBatch, snake, isPlayer);
-            }
-            
-            var sprite = _spriteMapper.Get(entityId);
-
-            if (sprite != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                _spriteBatch.Draw(sprite.Sprite, transform.Position);
-            }
-            
-            var fadingText = _fadingTextMapper.Get(entityId);
-
-            if (fadingText != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                _spriteBatch.DrawStringWithShadow(_smallFont, fadingText.Text, transform.Position,  Colors.DefaultTextColor);
-            }
-            
             var playField = _playFieldMapper.Get(entityId);
 
             if (playField != null)
@@ -97,6 +73,42 @@ public class RenderSystem : EntityDrawSystem
                     Vector2.Zero,
                     Globals.PlayFieldRectangle.Size,
                     Color.Black);
+            }
+        }
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var snake = _snakeMapper.Get(entityId);
+
+            if (snake is { IsInitialized: true })
+            {
+                var isPlayer = _playerMapper.Has(entityId);
+                _snakeRenderer.Render(_spriteBatch, snake, isPlayer);
+            }
+        }
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var sprite = _spriteMapper.Get(entityId);
+
+            if (sprite != null)
+            {
+                var transform = _transformMapper.Get(entityId);
+                _spriteBatch.Draw(sprite.Sprite, transform.Position);
+            }
+        }
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var fadingText = _fadingTextMapper.Get(entityId);
+
+            if (fadingText != null)
+            {
+                var transform = _transformMapper.Get(entityId);
+                _spriteBatch.DrawStringWithShadow(_smallFont,
+                    fadingText.Text,
+                    transform.Position,
+                    Colors.DefaultTextColor);
             }
         }
         
