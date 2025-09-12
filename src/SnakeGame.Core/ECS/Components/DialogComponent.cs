@@ -5,6 +5,7 @@ namespace SnakeGame.Core.ECS.Components;
 
 public class DialogComponent
 {
+    public int OrderId { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }
     public bool IsTransparent { get; set; }

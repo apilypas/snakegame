@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -15,6 +17,7 @@ public class DialogRenderSystem : EntityDrawSystem
     private readonly SpriteBatch _spriteBatch;
     private readonly Texture2D _userInterfaceTexture;
     private readonly SpriteFont _mainFont;
+    private List<int> _orderedEntityIds = [];
     private ComponentMapper<DialogComponent> _dialogMapper;
     private ComponentMapper<ButtonComponent> _buttonMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
@@ -42,6 +45,21 @@ public class DialogRenderSystem : EntityDrawSystem
         _dialogLabelMapper = mapperService.GetMapper<DialogLabelComponent>();
     }
 
+    protected override void OnEntityAdded(int entityId)
+    {
+        if (_dialogMapper.Has(entityId))
+        {
+            _orderedEntityIds.Add(entityId);
+            _orderedEntityIds = _orderedEntityIds.OrderBy(x => _dialogMapper.Get(x).OrderId).ToList();
+        }
+    }
+
+    protected override void OnEntityRemoved(int entityId)
+    {
+        if (_dialogMapper.Has(entityId))
+            _orderedEntityIds.Remove(entityId);
+    }
+
     public override void Draw(GameTime gameTime)
     {
         var scaleY = (float)_graphics.Viewport.Height / Constants.VirtualScreenHeight;
@@ -54,7 +72,7 @@ public class DialogRenderSystem : EntityDrawSystem
             SamplerState.PointClamp,
             transformMatrix: transformMatrix);
 
-        foreach (var entityId in ActiveEntities)
+        foreach (var entityId in _orderedEntityIds)
         {
             var dialog = _dialogMapper.Get(entityId);
 

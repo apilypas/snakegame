@@ -13,6 +13,8 @@ namespace SnakeGame.Core.ECS.Entities;
 
 public class DialogEntityFactory(World world, ContentManager contents)
 {
+    private int _lastOrderId;
+    
     public void CreateStartScreen()
     {
         var dialogEntity = world.CreateEntity();
@@ -20,7 +22,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
         var dialog = new DialogComponent
         {
             Size = new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight),
-            IsTransparent = true
+            IsTransparent = true,
+            OrderId = GetOrderId()
         };
 
         dialogEntity.Attach(dialog);
@@ -228,7 +231,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
         var dialog = new DialogComponent
         {
             Title = "Select bonus",
-            Size = new SizeF(250f, 180f)
+            Size = new SizeF(250f, 180f),
+            OrderId = GetOrderId()
         };
         
         dialogEntity.Attach(dialog);
@@ -306,7 +310,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
         {
             Title = title,
             Content = content,
-            Size = size
+            Size = size,
+            OrderId = GetOrderId()
         };
         dialogEntity.Attach(dialog);
 
@@ -359,5 +364,11 @@ public class DialogEntityFactory(World world, ContentManager contents)
         return new Vector2(
             (Constants.VirtualScreenWidth - dialog.Size.Width) / 2,
             (Constants.VirtualScreenHeight - dialog.Size.Height) / 2);
+    }
+
+    private int GetOrderId()
+    {
+        _lastOrderId++;
+        return _lastOrderId;
     }
 }
