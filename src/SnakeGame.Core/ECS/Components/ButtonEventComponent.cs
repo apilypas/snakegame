@@ -12,7 +12,8 @@ public enum ButtonEvents
     AddTime,
     AddInvincibility,
     DestroyEnemies,
-    AddDiamondSpawnRate
+    AddDiamondSpawnRate,
+    AddScoreMultiplicator
 }
 
 public class ButtonEventComponent

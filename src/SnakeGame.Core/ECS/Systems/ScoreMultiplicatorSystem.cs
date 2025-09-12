@@ -37,8 +37,11 @@ public class ScoreMultiplicatorSystem : EntityProcessingSystem
             if (_gameState.ScoreMultiplicatorTimer >= Constants.ScoreMultiplicatorTimer)
             {
                 _gameState.ScoreMultiplicatorTimer -= Constants.ScoreMultiplicatorTimer;
-                _gameState.ScoreMultiplicator = MathHelper.Clamp(_gameState.ScoreMultiplicator + 1, 1, Constants.MaxScoreMultiplier);
+                _gameState.ScoreMultiplicator++;
             }
+            
+            if (_gameState.ScoreMultiplicator > Constants.MaxScoreMultiplier)
+                _gameState.ScoreMultiplicator = Constants.MaxScoreMultiplier;
         }
         else
         {

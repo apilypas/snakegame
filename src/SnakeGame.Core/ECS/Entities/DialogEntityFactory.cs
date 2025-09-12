@@ -243,7 +243,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
             new { Text = "+Time", Event = ButtonEvents.AddTime },
             new { Text = "+Invincibility", Event = ButtonEvents.AddInvincibility },
             new { Text = "-Enemies", Event = ButtonEvents.DestroyEnemies },
-            new { Text = "+Diamond Spawn Rate", Event = ButtonEvents.AddDiamondSpawnRate }
+            new { Text = "+Diamond Spawn Rate", Event = ButtonEvents.AddDiamondSpawnRate },
+            new { Text = "+Score Multiplicator", Event = ButtonEvents.AddScoreMultiplicator }
         };
         
         var randomButtons = buttons

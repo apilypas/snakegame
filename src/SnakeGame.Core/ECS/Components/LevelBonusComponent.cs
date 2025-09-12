@@ -7,7 +7,8 @@ public class LevelBonusComponent
         AddTime,
         AddInvincibility,
         DestroyEnemies,
-        AddDiamondSpawnRate
+        AddDiamondSpawnRate,
+        AddScoreMultiplicator
     }
     
     public LevelBonusType Type { get; set; }

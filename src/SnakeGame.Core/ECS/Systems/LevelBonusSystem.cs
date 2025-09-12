@@ -67,6 +67,11 @@ public class LevelBonusSystem : EntityUpdateSystem
                         1f,
                         _gameState.DiamondSpawnRate - _gameState.DiamondSpawnRate * .2f);
                 }
+                else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddScoreMultiplicator)
+                {
+                    _gameState.ScoreMultiplicator *= 2;
+                    _gameState.ScoreMultiplicatorTimer = 0f;
+                }
                 
                 DestroyEntity(entityId);
             }
