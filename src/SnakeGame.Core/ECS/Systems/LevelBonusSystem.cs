@@ -43,6 +43,8 @@ public class LevelBonusSystem : EntityUpdateSystem
                 if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddTime)
                 {
                     _gameState.Timer += 30f;
+                    if (_gameState.Timer > Constants.MaxTimer)
+                        _gameState.Timer = Constants.MaxTimer;
                 }
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddInvincibility)
                 {

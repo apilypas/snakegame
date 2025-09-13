@@ -33,8 +33,8 @@ public class LevelSystem : EntityProcessingSystem
         if (_gameState.Experience >= _gameState.MaxExperience)
         {
             _gameState.Level++;
-            _gameState.Experience = 0;
-            _gameState.MaxExperience += (int)MathF.Round((float)(_gameState.MaxExperience * .5));
+            _gameState.Experience -= _gameState.MaxExperience;
+            _gameState.MaxExperience += (int)MathF.Round((float)(_gameState.MaxExperience * .1));
 
             _gameState.IsPaused = true;
                     
