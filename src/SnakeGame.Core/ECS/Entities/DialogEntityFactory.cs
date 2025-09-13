@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
@@ -8,6 +7,7 @@ using MonoGame.Extended.ECS;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Entities;
 
@@ -141,12 +141,10 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
     public void CreateCreditsDialog()
     {
-        var version = Assembly.GetExecutingAssembly().GetName().Version;
         var content = new StringBuilder()
-            .AppendLine($"Yet another Snake Game ({version})")
+            .AppendLine($"Yet another Snake Game ({VersionUtils.GetVersion()})")
             .AppendLine()
             .AppendLine("Developed by: g1ngercat.itch.io")
-            .AppendLine("Art too...")
             .AppendLine("Audio effects: sfxr")
             .AppendLine()
             .AppendLine("Font: Pixel Operator")

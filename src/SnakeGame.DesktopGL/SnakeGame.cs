@@ -2,6 +2,7 @@
 using MonoGame.Extended.Screens;
 using SnakeGame.Core;
 using SnakeGame.Core.Screens;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.DesktopGL;
 
@@ -15,7 +16,7 @@ public class SnakeGame : Game
         graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
         graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
         
-        Window.Title = "Snake Game";
+        Window.Title = $"Yet another Snake Game (v{VersionUtils.GetVersion()})";
         Window.AllowUserResizing = true;
         
         Content.RootDirectory = "Content";

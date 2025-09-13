@@ -22,7 +22,6 @@ public class RenderSystem : EntityDrawSystem
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<FadingTextComponent> _fadingTextMapper;
     private ComponentMapper<PlayFieldComponent> _playFieldMapper;
-    private ComponentMapper<HudLabelComponent> _labelMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
 
     public RenderSystem(GraphicsDevice graphics, ContentManager contents, CameraManager cameraManager)
@@ -45,7 +44,6 @@ public class RenderSystem : EntityDrawSystem
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _fadingTextMapper = mapperService.GetMapper<FadingTextComponent>();
         _playFieldMapper = mapperService.GetMapper<PlayFieldComponent>();
-        _labelMapper = mapperService.GetMapper<HudLabelComponent>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
     }
 
