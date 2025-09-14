@@ -102,6 +102,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Timer.wav
 
+#begin Sounds/Turn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Turn.wav
+
 #begin Tiles.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -7,7 +7,8 @@ public enum SoundEffectTypes
     GameEnded,
     TimerChanged,
     SpeedUp,
-    Click
+    Click,
+    Turn
 }
 
 public class SoundEffectComponent

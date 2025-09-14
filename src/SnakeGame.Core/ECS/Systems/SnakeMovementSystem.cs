@@ -13,6 +13,8 @@ public class SnakeMovementSystem : EntityProcessingSystem
     private readonly GameState _gameState;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
+    private SnakeDirection _lastPlayerSnakeDirection = SnakeDirection.Up;
 
     public SnakeMovementSystem(GameState gameState)
         : base(Aspect.All(typeof(SnakeComponent)))
@@ -24,6 +26,7 @@ public class SnakeMovementSystem : EntityProcessingSystem
     {
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
+        _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -38,6 +41,9 @@ public class SnakeMovementSystem : EntityProcessingSystem
             Reset(snake, snake.DefaultLocation, snake.DefaultLength, snake.DefaultDirection);
             snake.IsAlive = true;
             snake.IsInitialized = true;
+            
+            if (_playerMapper.Has(entityId))
+                _lastPlayerSnakeDirection = snake.Direction;
         }
 
         if (snake.IsAlive)
@@ -85,14 +91,25 @@ public class SnakeMovementSystem : EntityProcessingSystem
                     snake.Segments.Remove(tail);
                     snake.Tail = snake.Segments[^1].Clone();
                 }
-
+                
                 // Fixate direction that should be followed
                 snake.Direction = snake.FollowingDirection;
             }
             
-            if (_playerMapper.Has(entityId) && snake.Segments.Count > _gameState.LongestSnake)
+            if (_playerMapper.Has(entityId))
             {
-                _gameState.LongestSnake = snake.Segments.Count;
+                if (_lastPlayerSnakeDirection != snake.Direction)
+                {
+                    _lastPlayerSnakeDirection = snake.Direction;
+                    _soundEffectMapper.Put(entityId,
+                        new SoundEffectComponent
+                        {
+                            Type = SoundEffectTypes.Turn
+                        });
+                }
+
+                if (snake.Segments.Count > _gameState.LongestSnake)
+                    _gameState.LongestSnake = snake.Segments.Count;
             }
         }
     }

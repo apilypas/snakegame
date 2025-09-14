@@ -64,7 +64,14 @@ public class SoundEffectSystem : EntityProcessingSystem
             instance.Volume = .5f;
             instance.Play();
         }
-        
+        else if (audioEffect.Type == SoundEffectTypes.Turn)
+        {
+            var instance = _contents.TurnSoundEffect.CreateInstance();
+            instance.Pitch = Random.Shared.Next(-1, 1) / 10f;
+            instance.Volume = .7f;
+            instance.Play();
+        }
+
         _soundEffectMapper.Delete(entityId);
     }
 }
