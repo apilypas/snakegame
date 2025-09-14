@@ -11,4 +11,5 @@ public static class InputActions
     public const string Fullscreen = nameof(Fullscreen);
     public const string Cancel = nameof(Cancel);
     public const string Start = nameof(Start);
+    public const string Select = nameof(Select);
 }

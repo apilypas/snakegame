@@ -40,8 +40,8 @@ public class StartScreen : GameScreen
             InputBinding.Create(InputActions.Right, Keys.Right),
             InputBinding.Create(InputActions.Right, Buttons.DPadRight),
             InputBinding.Create(InputActions.Right, Buttons.LeftThumbstickRight),
-            InputBinding.Create(InputActions.Faster, Keys.Space),
-            InputBinding.Create(InputActions.Faster, Buttons.A),
+            InputBinding.Create(InputActions.Select, Keys.Space),
+            InputBinding.Create(InputActions.Select, Buttons.B),
             InputBinding.Create(InputActions.Start, Buttons.Start)
         };
 

@@ -42,7 +42,7 @@ public class HudEntityFactory(World world, ContentManager contents)
             new("Move down", "S"),
             new("Move left", "A"),
             new("Move right", "D"),
-            new("Faster", "Spc")
+            new("Faster", "J")
         ];
 
         var p = 36f;

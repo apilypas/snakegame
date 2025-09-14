@@ -72,7 +72,7 @@ public class InputSystem : EntityUpdateSystem
                 navigationIntent.Event = NavigationEvent.FocusPrevious;
         }
 
-        if (_inputs.WasActionPressed(InputActions.Faster))
+        if (_inputs.WasActionPressed(InputActions.Select))
         {
             if (navigationIntent != null)
                 navigationIntent.Event = NavigationEvent.Select;
