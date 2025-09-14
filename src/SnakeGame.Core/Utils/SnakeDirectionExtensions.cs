@@ -1,5 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
 using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.Utils;
@@ -46,11 +45,6 @@ public static class SnakeDirectionExtensions
     {
         return direction.GetClockwise() == other;
     }
-
-    public static bool IsCounterClockwise(this SnakeDirection direction, SnakeDirection other)
-    {
-        return direction.GetCounterClockwise() == other;
-    }
     
     public static float ToAngle(this SnakeDirection direction)
     {
@@ -67,30 +61,5 @@ public static class SnakeDirectionExtensions
             return -MathF.PI / 2f;
 
         return 0f;
-    }
-    
-    public static Vector2 FindNextPoint(this SnakeDirection direction, Vector2 location, float size)
-    {
-        if (direction == SnakeDirection.Right)
-        {
-            location += new Vector2(size, 0f);
-        }
-
-        if (direction == SnakeDirection.Left)
-        {
-            location -= new Vector2(size, 0f);
-        }
-
-        if (direction == SnakeDirection.Down)
-        {
-            location += new Vector2(0f, size);
-        }
-
-        if (direction == SnakeDirection.Up)
-        {
-            location -= new Vector2(0f, size);
-        }
-
-        return location;
     }
 }

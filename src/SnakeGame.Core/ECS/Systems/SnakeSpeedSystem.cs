@@ -34,6 +34,9 @@ public class SnakeSpeedSystem : EntityProcessingSystem
         if (_gameState.IsPaused) return;
         
         var snake = _snakeMapper.Get(entityId);
+
+        if (!snake.IsAlive) return;
+        
         var speedUp = _speedUpMapper.Get(entityId);
 
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

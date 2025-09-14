@@ -51,18 +51,15 @@ public class SnakeMovementSystem : EntityProcessingSystem
             var head = snake.Segments[0];
             var tail = snake.Segments[^1];
 
-            snake.Head.Position =
-                snake.Direction.FindNextPoint(snake.Head.Position, movementSize);
+            snake.Head.Position = FindNextPoint(snake.Direction, snake.Head.Position, movementSize);
 
             if (snake.SegmentsToGrow <= 0)
-                snake.Tail.Position =
-                    tail.Direction.FindNextPoint(snake.Tail.Position, movementSize);
+                snake.Tail.Position = FindNextPoint(tail.Direction,snake.Tail.Position, movementSize);
 
             // Check if partial head is still connected to body, otherwise - create new head
             if (!snake.Head.GetRectangle().Intersects(head.GetRectangle()))
             {
-
-                var newLocation = snake.Direction.FindNextPoint(head.Position, Constants.SegmentSize);
+                var newLocation = FindNextPoint(snake.Direction, head.Position, Constants.SegmentSize);
 
                 var newHead = new SnakeSegment
                 {
@@ -92,20 +89,15 @@ public class SnakeMovementSystem : EntityProcessingSystem
                 // Fixate direction that should be followed
                 snake.Direction = snake.FollowingDirection;
             }
-        }
-        
-        var player = _playerMapper.Get(entityId);
-
-        if (player != null)
-        {
-            if (snake.Segments.Count > _gameState.LongestSnake)
+            
+            if (_playerMapper.Has(entityId) && snake.Segments.Count > _gameState.LongestSnake)
             {
                 _gameState.LongestSnake = snake.Segments.Count;
             }
         }
     }
 
-    private void Reset(SnakeComponent snake, Vector2 location, int length, SnakeDirection direction)
+    private static void Reset(SnakeComponent snake, Vector2 location, int length, SnakeDirection direction)
     {
         snake.Segments.Clear();
 
@@ -120,7 +112,8 @@ public class SnakeMovementSystem : EntityProcessingSystem
 
             snake.Segments.Add(segment);
 
-            location = direction.GetOpposite().FindNextPoint(location, Constants.SegmentSize);
+            var newDirection = direction.GetOpposite();
+            location = FindNextPoint(newDirection, location, Constants.SegmentSize);
         }
 
         snake.Direction = direction;
@@ -132,7 +125,7 @@ public class SnakeMovementSystem : EntityProcessingSystem
         snake.IsAlive = true;
     }
     
-    private void UpdateDirection(SnakeComponent snake)
+    private static void UpdateDirection(SnakeComponent snake)
     {
         var head = snake.Segments[0];
         var direction = snake.NewDirection;
@@ -158,5 +151,30 @@ public class SnakeMovementSystem : EntityProcessingSystem
         snake.FollowingDirection = direction.Value;
 
         snake.NewDirection = null;
+    }
+    
+    private static Vector2 FindNextPoint(SnakeDirection direction, Vector2 location, float size)
+    {
+        if (direction == SnakeDirection.Right)
+        {
+            location += new Vector2(size, 0f);
+        }
+
+        if (direction == SnakeDirection.Left)
+        {
+            location -= new Vector2(size, 0f);
+        }
+
+        if (direction == SnakeDirection.Down)
+        {
+            location += new Vector2(0f, size);
+        }
+
+        if (direction == SnakeDirection.Up)
+        {
+            location -= new Vector2(0f, size);
+        }
+
+        return location;
     }
 }
