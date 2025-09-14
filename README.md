@@ -29,7 +29,7 @@ Game is published at [itch.io](https://g1ngercat.itch.io/yetanothersnakegame).
 
 * **Arrow keys** - moves snake around
 * **W, A, S, D** - moves snake around too
-* **Space** - speeds snake up
+* **J** - speeds snake up
 * **Esc** - pauses game
 * **Alt+Enter** - takes game to full screen
 
