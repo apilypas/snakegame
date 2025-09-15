@@ -34,6 +34,8 @@ public class SnakeColorSystem : EntityProcessingSystem
 
     private void UpdateSegmentColors(int entityId, SnakeComponent snake)
     {
+        if (snake.Head.Color != Color.White) return;
+        
         var isInvincible = _invincibleMapper.Has(entityId);
         
         snake.Head.Color = GetColor(snake.Color, 0, isInvincible);

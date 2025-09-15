@@ -8,7 +8,7 @@ public class SnakeSegment
     public SnakeDirection Direction { get; init; }
     public bool IsCorner { get; init; }
     public bool IsClockwise { get; init; }
-    public Color Color { get; set; }
+    public Color Color { get; set; } = Color.White;
     public Vector2 Position { get; set; }
     public float Rotation { get; set; }
     
