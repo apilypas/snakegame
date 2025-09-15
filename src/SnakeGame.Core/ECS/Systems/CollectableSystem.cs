@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
+using MonoGame.Extended.Tweening;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
@@ -9,15 +10,18 @@ using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.ECS.Systems;
 
-public class CollectableSystem : EntityProcessingSystem
+public class CollectableSystem : EntityUpdateSystem
 {
     private readonly GameState _gameState;
     private readonly EntityFactory _entityFactory;
-    
+    private readonly Tweener _tweener;
+
     private ComponentMapper<PlayerComponent> _playerMapper;
     private ComponentMapper<CollectableComponent> _collectableMapper;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<SpeedUpComponent> _speedUpMapper;
+    private ComponentMapper<TransformComponent> _transformMapper;
+    private ComponentMapper<SpriteComponent> _spriteMapper;
 
     public CollectableSystem(GameState gameState,
         EntityFactory entityFactory)
@@ -25,6 +29,7 @@ public class CollectableSystem : EntityProcessingSystem
     {
         _gameState = gameState;
         _entityFactory = entityFactory;
+        _tweener = new Tweener();
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -33,27 +38,72 @@ public class CollectableSystem : EntityProcessingSystem
         _collectableMapper = mapperService.GetMapper<CollectableComponent>();
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
         _speedUpMapper = mapperService.GetMapper<SpeedUpComponent>();
+        _transformMapper = mapperService.GetMapper<TransformComponent>();
+        _spriteMapper = mapperService.GetMapper<SpriteComponent>();
     }
 
-    public override void Process(GameTime gameTime, int entityId)
+    public override void Update(GameTime gameTime)
     {
-        if (_gameState.IsPaused) return;
+        var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
+        _tweener.Update(deltaTime);
+        
+        foreach (var entityId in ActiveEntities)
+            HandlePulseTween(entityId);
+        
+        if (_gameState.IsPaused) return;
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var collectable = _collectableMapper.Get(entityId);
+
+            if (collectable.CollectedByEntityId != null)
+            {
+                HandleCollectableBonus(collectable);
+
+                if (_playerMapper.Has(collectable.CollectedByEntityId.Value))
+                {
+                    GetEntity(entityId).Attach(new SoundEffectComponent
+                    {
+                        Type = SoundEffectTypes.Pickup
+                    });
+                }
+
+                DestroyEntity(entityId);
+            }
+        }
+    }
+
+    private void HandlePulseTween(int entityId)
+    {
         var collectable = _collectableMapper.Get(entityId);
 
-        if (collectable.CollectedByEntityId != null)
+        if (collectable.PulseTweens.Count == 0)
         {
-            HandleCollectableBonus(collectable);
+            var transform = _transformMapper.Get(entityId);
+            var sprite = _spriteMapper.Get(entityId);
 
-            if (_playerMapper.Has(collectable.CollectedByEntityId.Value))
-            {
-                GetEntity(entityId).Attach(new SoundEffectComponent
-                {
-                    Type = SoundEffectTypes.Pickup
-                });
-            }
+            transform.Scale = new Vector2(1.2f);
+            sprite.Sprite.Origin = new Vector2(2f, 2f);
+            
+            var pulseTween1 = _tweener.TweenTo(
+                    transform,
+                    c => c.Scale,
+                    new Vector2(1),
+                    .2f)
+                .RepeatForever(1f)
+                .Easing(EasingFunctions.BounceInOut);
 
-            DestroyEntity(entityId);
+            var pulseTween2 = _tweener.TweenTo(
+                    sprite.Sprite,
+                    c => c.Origin,
+                    new Vector2(0f),
+                    .2f)
+                .RepeatForever(1f)
+                .Easing(EasingFunctions.BounceInOut);
+            
+            collectable.PulseTweens.Add(pulseTween1);
+            collectable.PulseTweens.Add(pulseTween2);
         }
     }
 

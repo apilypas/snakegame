@@ -92,7 +92,7 @@ public class RenderSystem : EntityDrawSystem
             if (sprite != null)
             {
                 var transform = _transformMapper.Get(entityId);
-                _spriteBatch.Draw(sprite.Sprite, transform.Position);
+                _spriteBatch.Draw(sprite.Sprite, transform.Position, transform.Rotation, transform.Scale);
             }
         }
 
