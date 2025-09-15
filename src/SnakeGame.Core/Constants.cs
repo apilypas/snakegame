@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-
 namespace SnakeGame.Core;
 
 public static class Constants
@@ -34,6 +32,5 @@ public static class Constants
     public const int MaxScoreBoardEntries = 15;
     public const int MaxScoreMultiplier = 666;
     public const string ScoreFormat = "0000000000";
-    public readonly static Color[] InvincibleColors = [Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.White];
     public const float Zoom = 1f;
 }

@@ -47,23 +47,15 @@ public class SnakeColorSystem : EntityProcessingSystem
     
     private static Color GetColor(Color color, int index, bool isInvincible)
     {
-        return isInvincible 
-            ? GetInvincibleColor()
-            : GetNormalStateColor(color, index);
-    }
-
-    private static Color GetNormalStateColor(Color color, int index)
-    {
+        if (isInvincible)
+        {
+            index = Random.Shared.Next(0, 25);
+        }
+        
         var r = MathHelper.Clamp(color.R + 5*index, 0, 255);
         var g = MathHelper.Clamp(color.G + 5*index, 0, 255);
         var b = MathHelper.Clamp(color.B + 5*index, 0, 255);
 
         return new Color(r, g, b);
-    }
-
-    private static Color GetInvincibleColor()
-    {
-        var i = Random.Shared.Next(0, Constants.InvincibleColors.Length);
-        return Constants.InvincibleColors[i];
     }
 }
