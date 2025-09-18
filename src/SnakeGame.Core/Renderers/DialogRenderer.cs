@@ -3,18 +3,16 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
-using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
 using SnakeGame.Core.Utils;
 
-namespace SnakeGame.Core.ECS.Systems;
+namespace SnakeGame.Core.Renderers;
 
-public class DialogRenderSystem : EntityDrawSystem
+public class DialogRenderer
 {
-    private readonly GraphicsDevice _graphics;
-    private readonly SpriteBatch _spriteBatch;
     private readonly Texture2D _userInterfaceTexture;
     private readonly SpriteFont _mainFont;
     private List<int> _orderedEntityIds = [];
@@ -23,21 +21,13 @@ public class DialogRenderSystem : EntityDrawSystem
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<DialogLabelComponent> _dialogLabelMapper;
 
-    public DialogRenderSystem(
-        GraphicsDevice graphics,
-        ContentManager contents) 
-        : base(Aspect.One(
-            typeof(DialogComponent),
-            typeof(ButtonComponent),
-            typeof(DialogLabelComponent)))
+    public DialogRenderer(ContentManager contents)
     {
-        _graphics = graphics;
-        _spriteBatch = new SpriteBatch(graphics);
         _userInterfaceTexture = contents.UserInterfaceTexture;
         _mainFont = contents.MainFont;
     }
 
-    public override void Initialize(IComponentMapperService mapperService)
+    public void Initialize(IComponentMapperService mapperService)
     {
         _dialogMapper = mapperService.GetMapper<DialogComponent>();
         _buttonMapper = mapperService.GetMapper<ButtonComponent>();
@@ -45,33 +35,8 @@ public class DialogRenderSystem : EntityDrawSystem
         _dialogLabelMapper = mapperService.GetMapper<DialogLabelComponent>();
     }
 
-    protected override void OnEntityAdded(int entityId)
+    public void Render(SpriteBatch spriteBatch, Bag<int> activeEntities)
     {
-        if (_dialogMapper.Has(entityId))
-        {
-            _orderedEntityIds.Add(entityId);
-            _orderedEntityIds = _orderedEntityIds.OrderBy(x => _dialogMapper.Get(x).OrderId).ToList();
-        }
-    }
-
-    protected override void OnEntityRemoved(int entityId)
-    {
-        if (_dialogMapper.Has(entityId))
-            _orderedEntityIds.Remove(entityId);
-    }
-
-    public override void Draw(GameTime gameTime)
-    {
-        var scaleY = (float)_graphics.Viewport.Height / Constants.VirtualScreenHeight;
-
-        var transformMatrix = Matrix.CreateScale(scaleY * Constants.Zoom, scaleY * Constants.Zoom, 1f);
-        
-        _spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            transformMatrix: transformMatrix);
-
         foreach (var entityId in _orderedEntityIds)
         {
             var dialog = _dialogMapper.Get(entityId);
@@ -82,13 +47,13 @@ public class DialogRenderSystem : EntityDrawSystem
 
                 if (!dialog.IsTransparent)
                 {
-                    _spriteBatch.FillRectangle(
+                    spriteBatch.FillRectangle(
                         Vector2.Zero,
                         new SizeF(Constants.VirtualScreenWidth, Constants.VirtualScreenHeight),
                         new Color(Color.Black, .6f),
                         1f);
 
-                    _spriteBatch.DrawFromNinePatch(
+                    spriteBatch.DrawFromNinePatch(
                         transform.Position,
                         dialog.Size,
                         _userInterfaceTexture,
@@ -103,7 +68,7 @@ public class DialogRenderSystem : EntityDrawSystem
                         transform.Position.X + (dialog.Size.Width - textSize.X) / 2f,
                         transform.Position.Y + 4f);
                     
-                    _spriteBatch.DrawStringWithShadow(
+                    spriteBatch.DrawStringWithShadow(
                         _mainFont,
                         dialog.Title,
                         position,
@@ -112,7 +77,7 @@ public class DialogRenderSystem : EntityDrawSystem
 
                 if (!string.IsNullOrEmpty(dialog.Content))
                 {
-                    _spriteBatch.DrawStringWithShadow(_mainFont,
+                    spriteBatch.DrawStringWithShadow(_mainFont,
                         dialog.Content,
                         transform.Position + new Vector2(8f, 24f),
                         Colors.DefaultTextColor);
@@ -126,7 +91,7 @@ public class DialogRenderSystem : EntityDrawSystem
                     {
                         var labelTransform = _transformMapper.Get(childEntityId);
                 
-                        _spriteBatch.DrawStringWithShadow(
+                        spriteBatch.DrawStringWithShadow(
                             label.Font,
                             label.Text,
                             labelTransform.Position,
@@ -143,7 +108,7 @@ public class DialogRenderSystem : EntityDrawSystem
 
                         if (button.IsFocused)
                         {
-                            _spriteBatch.DrawFromNinePatch(
+                            spriteBatch.DrawFromNinePatch(
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
@@ -153,7 +118,7 @@ public class DialogRenderSystem : EntityDrawSystem
                         
                         if (button.IsPressed)
                         {
-                            _spriteBatch.DrawFromNinePatch(
+                            spriteBatch.DrawFromNinePatch(
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
@@ -162,7 +127,7 @@ public class DialogRenderSystem : EntityDrawSystem
                         }
                         else if (button.IsHovered)
                         {
-                            _spriteBatch.DrawFromNinePatch(
+                            spriteBatch.DrawFromNinePatch(
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
@@ -171,7 +136,7 @@ public class DialogRenderSystem : EntityDrawSystem
                         }
                         else
                         {
-                            _spriteBatch.DrawFromNinePatch(
+                            spriteBatch.DrawFromNinePatch(
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
@@ -186,7 +151,7 @@ public class DialogRenderSystem : EntityDrawSystem
                                 buttonTransform.Position.X + (button.Size.Width - textSize.X) / 2f,
                                 buttonTransform.Position.Y + (button.Size.Height - textSize.Y) / 2f);
 
-                            _spriteBatch.DrawStringWithShadow(
+                            spriteBatch.DrawStringWithShadow(
                                 _mainFont,
                                 button.Text,
                                 position,
@@ -196,7 +161,20 @@ public class DialogRenderSystem : EntityDrawSystem
                 }
             }
         }
+    }
 
-        _spriteBatch.End();
+    public void OnEntityAdded(int entityId)
+    {
+        if (_dialogMapper.Has(entityId))
+        {
+            _orderedEntityIds.Add(entityId);
+            _orderedEntityIds = _orderedEntityIds.OrderBy(x => _dialogMapper.Get(x).OrderId).ToList();
+        }
+    }
+
+    public void OnEntityRemoved(int entityId)
+    {
+        if (_dialogMapper.Has(entityId))
+            _orderedEntityIds.Remove(entityId);
     }
 }

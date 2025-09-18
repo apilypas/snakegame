@@ -1,19 +1,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
-using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Graphics;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
 using SnakeGame.Core.Utils;
 
-namespace SnakeGame.Core.ECS.Systems;
+namespace SnakeGame.Core.Renderers;
 
-public class HudRenderSystem : EntityDrawSystem
+public class HudRenderer
 {
-    private readonly GraphicsDevice _graphics;
-    private readonly SpriteBatch _spriteBatch;
     private readonly SpriteFont _mainFont;
     private readonly Texture2D _userInterfaceTexture;
     private ComponentMapper<HudLabelComponent> _hudLabelMapper;
@@ -21,16 +19,13 @@ public class HudRenderSystem : EntityDrawSystem
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<HudLevelDisplayComponent> _hudLevelDisplayMapper;
 
-    public HudRenderSystem(GraphicsDevice graphics, ContentManager contents) 
-        : base(Aspect.One(typeof(HudLabelComponent), typeof(HudSpriteComponent), typeof(HudLevelDisplayComponent)))
+    public HudRenderer(ContentManager contents)
     {
-        _graphics = graphics;
-        _spriteBatch = new SpriteBatch(graphics);
         _mainFont = contents.MainFont;
         _userInterfaceTexture = contents.UserInterfaceTexture;
     }
 
-    public override void Initialize(IComponentMapperService mapperService)
+    public void Initialize(IComponentMapperService mapperService)
     {
         _hudLabelMapper = mapperService.GetMapper<HudLabelComponent>();
         _hudSpriteMapper = mapperService.GetMapper<HudSpriteComponent>();
@@ -38,19 +33,9 @@ public class HudRenderSystem : EntityDrawSystem
         _hudLevelDisplayMapper = mapperService.GetMapper<HudLevelDisplayComponent>();
     }
 
-    public override void Draw(GameTime gameTime)
+    public void Render(SpriteBatch spriteBatch, Bag<int> activeEntities)
     {
-        var scaleY = (float)_graphics.Viewport.Height / Constants.VirtualScreenHeight;
-
-        var transformMatrix = Matrix.CreateScale(scaleY * Constants.Zoom, scaleY * Constants.Zoom, 1f);
-        
-        _spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            transformMatrix: transformMatrix);
-
-        foreach (var entityId in ActiveEntities)
+        foreach (var entityId in activeEntities)
         {
             var label = _hudLabelMapper.Get(entityId);
 
@@ -58,7 +43,7 @@ public class HudRenderSystem : EntityDrawSystem
             {
                 var transform = _transformMapper.Get(entityId);
                 
-                _spriteBatch.DrawStringWithShadow(
+                spriteBatch.DrawStringWithShadow(
                     label.Font,
                     label.Text,
                     transform.Position,
@@ -72,7 +57,7 @@ public class HudRenderSystem : EntityDrawSystem
             if (sprite != null)
             {
                 var transform = _transformMapper.Get(entityId);
-                _spriteBatch.Draw(sprite.Sprite, transform.Position);
+                spriteBatch.Draw(sprite.Sprite, transform.Position);
             }
             
             var hudLevelDisplay = _hudLevelDisplayMapper.Get(entityId);
@@ -81,13 +66,13 @@ public class HudRenderSystem : EntityDrawSystem
             {
                 var transform = _transformMapper.Get(entityId);
                 
-                _spriteBatch.DrawStringWithShadow(
+                spriteBatch.DrawStringWithShadow(
                     _mainFont,
                     hudLevelDisplay.Level,
                     transform.Position,
                     Colors.ScoreTimeColor);
                 
-                _spriteBatch.DrawFromNinePatch(
+                spriteBatch.DrawFromNinePatch(
                     transform.Position + new Vector2(0f, 22f),
                     new SizeF(160f, 26f),
                     _userInterfaceTexture,
@@ -96,7 +81,7 @@ public class HudRenderSystem : EntityDrawSystem
                     6,
                     6);
                 
-                _spriteBatch.DrawFromNinePatch(
+                spriteBatch.DrawFromNinePatch(
                     transform.Position + new Vector2(2f, 24f),
                     new SizeF(156f * hudLevelDisplay.Progress, 22f),
                     _userInterfaceTexture,
@@ -106,7 +91,5 @@ public class HudRenderSystem : EntityDrawSystem
                     6);
             }
         }
-        
-        _spriteBatch.End();
     }
 }

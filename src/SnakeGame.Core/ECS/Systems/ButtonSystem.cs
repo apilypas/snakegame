@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -6,23 +7,28 @@ using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
+using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Systems;
 
 public class ButtonSystem : EntityUpdateSystem
 {
     private readonly InputManager _inputManager;
-    private readonly GraphicsDevice _graphicsDevice;
+    private readonly GraphicsDevice _graphics;
     private ComponentMapper<ButtonComponent> _buttonMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
     private Vector2 _lastMousePosition = Vector2.Zero;
+    private float _renderTargetScale = 1f;
+    private Vector2 _renderTargetOffset = Vector2.Zero;
 
-    public ButtonSystem(GraphicsDevice graphicsDevice, InputManager inputManager) 
+    public ButtonSystem(GraphicsDevice graphics, InputManager inputManager, GameWindow window) 
         : base(Aspect.All(typeof(ButtonComponent)))
     {
-        _graphicsDevice = graphicsDevice;
+        _graphics = graphics;
         _inputManager = inputManager;
+
+        window.ClientSizeChanged += OnClientSizeChanged;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -30,6 +36,8 @@ public class ButtonSystem : EntityUpdateSystem
         _buttonMapper = mapperService.GetMapper<ButtonComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
+        
+        RebuildRenderTargetData();
     }
 
     public override void Update(GameTime gameTime)
@@ -53,6 +61,17 @@ public class ButtonSystem : EntityUpdateSystem
         {
             _lastMousePosition = Vector2.Zero;
         }
+    }
+    
+    private void OnClientSizeChanged(object sender, EventArgs e)
+    {
+         RebuildRenderTargetData();
+    }
+
+    private void RebuildRenderTargetData()
+    {
+        _renderTargetScale = _graphics.Viewport.GetRenderTargetScale();
+        _renderTargetOffset = _graphics.Viewport.GetRenderTargetRectangle(_renderTargetScale).Location.ToVector2();
     }
 
     private void HandleClicks()
@@ -101,9 +120,9 @@ public class ButtonSystem : EntityUpdateSystem
         _lastMousePosition = mousePosition;
         
         // Adjust to scaling
-        var scaleY = (float)_graphicsDevice.Viewport.Height / Constants.VirtualScreenHeight;
-        mousePosition -= new Vector2(_graphicsDevice.Viewport.X, _graphicsDevice.Viewport.Y);
-        mousePosition /= scaleY;
+        
+        mousePosition.X = (mousePosition.X - _renderTargetOffset.X) / _renderTargetScale;
+        mousePosition.Y = (mousePosition.Y - _renderTargetOffset.Y) / _renderTargetScale;
         
         foreach (var entityId in ActiveEntities)
         {

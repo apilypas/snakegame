@@ -1,9 +1,8 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
-using MonoGame.Extended.Graphics;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Renderers;
 using SnakeGame.Core.Services;
@@ -14,102 +13,114 @@ namespace SnakeGame.Core.ECS.Systems;
 public class RenderSystem : EntityDrawSystem
 {
     private readonly SpriteBatch _spriteBatch;
-    private readonly SnakeRenderer _snakeRenderer;
-    private readonly SpriteFont _smallFont;
-    private readonly CameraManager _cameraManager;
-    private ComponentMapper<SnakeComponent> _snakeMapper;
-    private ComponentMapper<SpriteComponent> _spriteMapper;
-    private ComponentMapper<TransformComponent> _transformMapper;
-    private ComponentMapper<FadingTextComponent> _fadingTextMapper;
-    private ComponentMapper<PlayFieldComponent> _playFieldMapper;
-    private ComponentMapper<PlayerComponent> _playerMapper;
+    private readonly GraphicsDevice _graphics;
+    private readonly WorldRenderer _worldRenderer;
+    private readonly HudRenderer _hudRenderer;
+    private readonly DialogRenderer _dialogRenderer;
+    private RenderTarget2D _renderTarget;
+    private Rectangle _renderRectangle;
 
-    public RenderSystem(GraphicsDevice graphics, ContentManager contents, CameraManager cameraManager)
+    public RenderSystem(GraphicsDevice graphics, ContentManager contents, GameWindow window)
         : base(Aspect.One(
             typeof(SnakeComponent),
             typeof(SpriteComponent),
             typeof(FadingTextComponent),
-            typeof(PlayFieldComponent)))
+            typeof(PlayFieldComponent),
+            typeof(HudLabelComponent),
+            typeof(HudSpriteComponent),
+            typeof(HudLevelDisplayComponent),
+            typeof(DialogComponent),
+            typeof(ButtonComponent),
+            typeof(DialogLabelComponent)))
     {
+        _graphics = graphics;
         _spriteBatch = new SpriteBatch(graphics);
-        _snakeRenderer = new SnakeRenderer(contents);
-        _smallFont = contents.SmallFont;
-        _cameraManager = cameraManager;
+        _worldRenderer = new WorldRenderer(contents);
+        _hudRenderer = new HudRenderer(contents);
+        _dialogRenderer = new DialogRenderer(contents);
+        
+        window.ClientSizeChanged += OnClientSizeChanged;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
     {
-        _snakeMapper = mapperService.GetMapper<SnakeComponent>();
-        _spriteMapper = mapperService.GetMapper<SpriteComponent>();
-        _transformMapper = mapperService.GetMapper<TransformComponent>();
-        _fadingTextMapper = mapperService.GetMapper<FadingTextComponent>();
-        _playFieldMapper = mapperService.GetMapper<PlayFieldComponent>();
-        _playerMapper = mapperService.GetMapper<PlayerComponent>();
+        _worldRenderer.Initialize(mapperService);
+        _hudRenderer.Initialize(mapperService);
+        _dialogRenderer.Initialize(mapperService);
+        
+        RebuildRenderTarget();
     }
 
     public override void Draw(GameTime gameTime)
     {
+        _graphics.SetRenderTarget(_renderTarget);
+        
+        _graphics.Clear(Colors.DefaultBackgroundColor);
+        
         _spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
             SamplerState.PointClamp,
-            transformMatrix: _cameraManager.GetViewMatrix());
+            transformMatrix: Globals.PlayFieldCenterViewTransform);
         
-        foreach (var entityId in ActiveEntities)
-        {
-            var playField = _playFieldMapper.Get(entityId);
-
-            if (playField != null)
-            {
-                foreach (var tile in playField.Tiles)
-                {
-                    _spriteBatch.Draw(playField.TilesTexture, tile.Position, new Rectangle(0, 0, 16, 16), Color.White);
-                    _spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.White);
-                }
-        
-                _spriteBatch.DrawRectangle(
-                    Vector2.Zero,
-                    Globals.PlayFieldRectangle.Size,
-                    Color.Black);
-            }
-        }
-
-        foreach (var entityId in ActiveEntities)
-        {
-            var snake = _snakeMapper.Get(entityId);
-
-            if (snake is { IsInitialized: true })
-            {
-                var isPlayer = _playerMapper.Has(entityId);
-                _snakeRenderer.Render(_spriteBatch, snake, isPlayer);
-            }
-        }
-
-        foreach (var entityId in ActiveEntities)
-        {
-            var sprite = _spriteMapper.Get(entityId);
-
-            if (sprite != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                _spriteBatch.Draw(sprite.Sprite, transform.Position, transform.Rotation, transform.Scale);
-            }
-        }
-
-        foreach (var entityId in ActiveEntities)
-        {
-            var fadingText = _fadingTextMapper.Get(entityId);
-
-            if (fadingText != null)
-            {
-                var transform = _transformMapper.Get(entityId);
-                _spriteBatch.DrawStringWithShadow(_smallFont,
-                    fadingText.Text,
-                    transform.Position,
-                    Colors.DefaultTextColor);
-            }
-        }
+        _worldRenderer.Render(_spriteBatch, ActiveEntities);
         
         _spriteBatch.End();
+        
+        _spriteBatch.Begin(
+            SpriteSortMode.Deferred,
+            BlendState.AlphaBlend,
+            SamplerState.PointClamp);
+
+        _hudRenderer.Render(_spriteBatch, ActiveEntities);
+        _dialogRenderer.Render(_spriteBatch, ActiveEntities);
+        
+        _spriteBatch.End();
+        
+        _graphics.SetRenderTarget(null);
+        
+        _graphics.Clear(Colors.DefaultBackgroundColor);
+        
+        _spriteBatch.Begin(
+            SpriteSortMode.Deferred,
+            BlendState.AlphaBlend,
+            SamplerState.PointClamp);
+        
+        _spriteBatch.Draw(_renderTarget, _renderRectangle, Color.White);
+        
+        _spriteBatch.End();
+    }
+    
+    protected override void OnEntityAdded(int entityId)
+    {
+        _dialogRenderer.OnEntityAdded(entityId);
+    }
+
+    protected override void OnEntityRemoved(int entityId)
+    {
+        _dialogRenderer.OnEntityRemoved(entityId);
+    }
+    
+    private void OnClientSizeChanged(object sender, EventArgs e)
+    {
+        RebuildRenderTarget();
+    }
+
+    private void RebuildRenderTarget()
+    {
+        _renderTarget?.Dispose();
+        
+        _renderTarget = new RenderTarget2D(
+            _graphics,
+            Constants.VirtualScreenWidth,
+            Constants.VirtualScreenHeight,
+            false,
+            SurfaceFormat.Color,
+            DepthFormat.None,
+            0,
+            RenderTargetUsage.DiscardContents);
+        
+        var scale = _graphics.Viewport.GetRenderTargetScale();
+        _renderRectangle =  _graphics.Viewport.GetRenderTargetRectangle(scale);
     }
 }

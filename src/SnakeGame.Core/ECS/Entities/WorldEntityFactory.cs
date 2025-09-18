@@ -83,15 +83,15 @@ public class WorldEntityFactory(World world, ContentManager contents)
             Sprite = type switch
             {
                 CollectableType.Diamond => new Sprite(
-                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 32, 16, 16))),
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 40, 20, 20))),
                 CollectableType.SnakePart => new Sprite(
-                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 16, 16, 16))),
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 20, 20, 20))),
                 CollectableType.SpeedBoost => new Sprite(
-                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 0, 16, 16))),
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(0, 0, 20, 20))),
                 CollectableType.Clock => new Sprite(
-                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(16, 0, 16, 16))),
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(20, 0, 20, 20))),
                 CollectableType.Crown => new Sprite(
-                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(16, 16, 16, 16))),
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(20, 20, 20, 20))),
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             }
         });

@@ -30,7 +30,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         var startButton = CreateButton(
             "Start",
-            new Vector2(740f, 150f),
+            new Vector2(
+                Constants.VirtualScreenWidth / 2f + 140f,
+                Constants.VirtualScreenHeight / 2f - 110f),
             new SizeF(120f, 52f),
             () =>
             {
@@ -46,7 +48,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         var scoreBoardButton = CreateButton(
             "Score Board",
-            new Vector2(740f, 210f),
+            new Vector2(
+                Constants.VirtualScreenWidth / 2f + 140f,
+                Constants.VirtualScreenHeight / 2f - 50f),
             new SizeF(120f, 52f),
             () =>
             {
@@ -62,7 +66,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         var creditsButton = CreateButton(
             "Credits",
-            new Vector2(740f, 270f),
+            new Vector2(
+                Constants.VirtualScreenWidth / 2f + 140f,
+                Constants.VirtualScreenHeight / 2f + 10f),
             new SizeF(120f, 52f),
             () =>
             {
@@ -78,7 +84,9 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
         var quitButton = CreateButton(
             "Quit",
-            new Vector2(740f, 330f),
+            new Vector2(
+                Constants.VirtualScreenWidth / 2f + 140f,
+                Constants.VirtualScreenHeight / 2f + 70f),
             new SizeF(120f, 52f),
             () =>
             {

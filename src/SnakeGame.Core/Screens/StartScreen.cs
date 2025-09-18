@@ -51,12 +51,12 @@ public class StartScreen : GameScreen
 
         _world = new WorldBuilder()
             .AddSystem(new InputSystem(_inputs, Game, entityFactory, null))
-            .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
+            .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs, Game.Window))
             .AddSystem(new StartMenuButtonEventSystem(this, Game, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
             .AddSystem(new DialogSystem())
             .AddSystem(new DialogButtonFocusSystem())
-            .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
+            .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, Game.Window))
             .Build();
         
         entityFactory.Initialize(_world, contents);

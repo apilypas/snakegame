@@ -23,13 +23,11 @@ public class SnakeRenderer
 
     public void Render(SpriteBatch spriteBatch, SnakeComponent snake, bool isPlayer)
     {
-        var textureOffset = isPlayer ? 0 : 16;
-        
-        _headRectangle = new Rectangle(48, textureOffset, 16, 16);
-        _faceRectangle = new Rectangle(32, textureOffset, 16, 16);
-        _tailRectangle = new Rectangle(48, textureOffset, 16, 16);
-        _segmentRectangle = new Rectangle(16, textureOffset, 16, 16);
-        _cornerRectangle = new Rectangle(0, textureOffset, 16, 16);
+        _headRectangle = new Rectangle(60, 0, 20, 20);
+        _faceRectangle = new Rectangle(40, 0, 20, 20);
+        _tailRectangle = new Rectangle(60, 0, 20, 20);
+        _segmentRectangle = new Rectangle(20, 0, 20, 20);
+        _cornerRectangle = new Rectangle(0, 0, 20, 20);
         
         DrawSnake(spriteBatch, snake);
     }
@@ -39,17 +37,17 @@ public class SnakeRenderer
         if (snake.Segments.Count == 0)
             return;
 
-        DrawSegment(spriteBatch, snake.Head, snake);
+        DrawSegment(spriteBatch, snake.Head);
 
         if (snake.Segments.Count > 1)
         {
             // Head & face drawing logic will cover this when length is equal to 1
-            DrawSegment(spriteBatch, snake.Tail, snake);
+            DrawSegment(spriteBatch, snake.Tail);
         }
         
         for (var i = 0; i < snake.Segments.Count - 1; i++)
         {
-            DrawBody(spriteBatch, snake.Segments[i], snake);
+            DrawBody(spriteBatch, snake.Segments[i]);
         }
         
         DrawHead(spriteBatch, snake);
@@ -114,15 +112,15 @@ public class SnakeRenderer
             1f);
     }
 
-    private void DrawBody(SpriteBatch spriteBatch, SnakeSegment segment, SnakeComponent snake)
+    private void DrawBody(SpriteBatch spriteBatch, SnakeSegment segment)
     {
         if (segment.IsCorner)
-            DrawCorner(spriteBatch, segment, snake);
+            DrawCorner(spriteBatch, segment);
         else
-            DrawSegment(spriteBatch, segment, snake);
+            DrawSegment(spriteBatch, segment);
     }
 
-    private void DrawSegment(SpriteBatch spriteBatch, SnakeSegment segment, SnakeComponent snake)
+    private void DrawSegment(SpriteBatch spriteBatch, SnakeSegment segment)
     {
         spriteBatch.Draw(_texture,
             segment.Position + Globals.SnakeSegmentOrigin,
@@ -135,7 +133,7 @@ public class SnakeRenderer
             1f);
     }
 
-    private void DrawCorner(SpriteBatch spriteBatch, SnakeSegment segment, SnakeComponent snake)
+    private void DrawCorner(SpriteBatch spriteBatch, SnakeSegment segment)
     {
         spriteBatch.Draw(_texture,
             segment.Position + Globals.SnakeSegmentOrigin,

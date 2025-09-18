@@ -52,15 +52,6 @@ public class PlayScreen : GameScreen
         
         _inputs = new InputManager(bindings);
         
-        var cameraManager = new CameraManager(
-            Game,
-            Constants.VirtualScreenWidth,
-            Constants.VirtualScreenHeight,
-            Constants.Zoom);
-        cameraManager.LookAt(new Vector2(
-            Constants.WallWidth * Constants.SegmentSize / 2f, 
-            Constants.WallHeight * Constants.SegmentSize / 2f));
-        
         var entityFactory = new EntityFactory();
 
         _world = new WorldBuilder()
@@ -83,14 +74,12 @@ public class PlayScreen : GameScreen
             .AddSystem(new ScoreDisplaySystem(gameState))
             .AddSystem(new DialogSystem())
             .AddSystem(new DialogButtonFocusSystem())
-            .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs))
+            .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs, Game.Window))
             .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
             .AddSystem(new LevelSystem(gameState, entityFactory))
             .AddSystem(new LevelBonusSystem(gameState))
-            .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, cameraManager))
-            .AddSystem(new HudRenderSystem(Game.GraphicsDevice, contents))
-            .AddSystem(new DialogRenderSystem(Game.GraphicsDevice, contents))
+            .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, Game.Window))
             .Build();
         
         entityFactory.Initialize(_world, contents);
@@ -120,8 +109,6 @@ public class PlayScreen : GameScreen
 
     public override void Draw(GameTime gameTime)
     {
-        Game.GraphicsDevice.Clear(Colors.DefaultBackgroundColor);
-        
         _world.Draw(gameTime);
     }
 }
