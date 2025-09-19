@@ -34,7 +34,7 @@ public class LevelSystem : EntityProcessingSystem
         {
             _gameState.Level++;
             _gameState.Experience -= _gameState.MaxExperience;
-            _gameState.MaxExperience += (int)MathF.Round((float)(_gameState.MaxExperience * .1));
+            _gameState.MaxExperience += (int)MathF.Round(_gameState.MaxExperience * Constants.ExperienceIncreasePerLevel);
 
             _gameState.IsPaused = true;
                     

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using SnakeGame.Core.ECS.Components;
 
 namespace SnakeGame.Core.Services;
 
 public class GameContentManager
 {
-    private Dictionary<SoundEffectTypes, SoundEffect> _soundEffects = [];
+    private readonly Dictionary<SoundEffectTypes, SoundEffect> _soundEffects = [];
     
     public Texture2D CollectableTexture { get; private set; }
     public Texture2D SnakeTexture { get; private set; }
@@ -19,6 +20,7 @@ public class GameContentManager
     public SpriteFont MainFont { get; private set; }
     public SpriteFont BigFont { get; private set; }
     public SpriteFont LogoFont { get; private set; }
+    public Song MainTrackSong { get; private set; }
     
     public void LoadContent(ContentManager content)
     {
@@ -30,6 +32,7 @@ public class GameContentManager
         MainFont = content.Load<SpriteFont>("MainFont");
         BigFont = content.Load<SpriteFont>("BigFont");
         LogoFont = content.Load<SpriteFont>("LogoFont");
+        MainTrackSong = content.Load<Song>("Tracks/Main");
 
         foreach (var effect in Enum.GetValues(typeof(SoundEffectTypes)))
         {

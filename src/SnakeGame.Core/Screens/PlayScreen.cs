@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core.Data;
@@ -14,11 +15,12 @@ public class PlayScreen : GameScreen
 {
     private readonly World _world;
     private readonly InputManager _inputs;
+    private readonly GameContentManager _contents;
 
     public PlayScreen(Game game) : base(game)
     {
-        var contents = new GameContentManager();
-        contents.LoadContent(Content);
+        _contents = new GameContentManager();
+        _contents.LoadContent(Content);
         
         var gameState = new GameState();
 
@@ -77,13 +79,13 @@ public class PlayScreen : GameScreen
             .AddSystem(new DialogButtonFocusSystem())
             .AddSystem(new ButtonSystem(Game.GraphicsDevice, _inputs, Game.Window))
             .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
-            .AddSystem(new SoundEffectSystem(contents))
+            .AddSystem(new SoundEffectSystem(_contents))
             .AddSystem(new LevelSystem(gameState, entityFactory))
             .AddSystem(new LevelBonusSystem(gameState, entityFactory))
-            .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, Game.Window))
+            .AddSystem(new RenderSystem(Game.GraphicsDevice, _contents, Game.Window))
             .Build();
         
-        entityFactory.Initialize(_world, contents);
+        entityFactory.Initialize(_world, _contents);
 
         entityFactory.World.CreatePlayField();
         
@@ -111,5 +113,21 @@ public class PlayScreen : GameScreen
     public override void Draw(GameTime gameTime)
     {
         _world.Draw(gameTime);
+    }
+
+    public override void LoadContent()
+    {
+        base.LoadContent();
+        
+        MediaPlayer.IsRepeating = true;
+        MediaPlayer.Volume = .3f;
+        MediaPlayer.Play(_contents.MainTrackSong);
+    }
+
+    public override void UnloadContent()
+    {
+        base.UnloadContent();
+        
+        MediaPlayer.Stop();
     }
 }

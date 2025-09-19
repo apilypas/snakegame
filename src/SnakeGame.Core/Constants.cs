@@ -8,7 +8,7 @@ public static class Constants
     public const float DiamondSpawnRate = 3f; // Seconds
     public const float SpeedBoostSpawnRate = 7f; // Seconds
     public const float CrownSpawnRate = 30f; // Seconds
-    public const float EnemySpawnRate = 5f;
+    public const float EnemySpawnRate = 4f;
     public const int MaxEnemies = 8;
     public const int MaxDiamondLimit = 5;
     public const int MaxSpeedBoostLimit = 2;
@@ -32,4 +32,5 @@ public static class Constants
     public const int MaxScoreBoardEntries = 15;
     public const int MaxScoreMultiplier = 666;
     public const string ScoreFormat = "00000000";
+    public const float ExperienceIncreasePerLevel = .2f;
 }

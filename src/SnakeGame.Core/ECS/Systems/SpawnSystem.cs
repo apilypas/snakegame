@@ -91,12 +91,9 @@ public class SpawnSystem : EntityUpdateSystem
         
         foreach (var entityId in ActiveEntities)
         {
-            if (_snakeMapper.Has(entityId))
+            if (_snakeMapper.Has(entityId) && !_playerMapper.Has(entityId))
             {
-                if (!_playerMapper.Has(entityId))
-                {
-                    enemyCount++;
-                }
+                enemyCount++;
             }
         }
 
@@ -108,7 +105,7 @@ public class SpawnSystem : EntityUpdateSystem
             {
                 // Find best location
                 var location = FindBestLocationForSnake();
-
+                
                 if (location != null)
                 {
                     var direction = location.Value.X < Constants.WallWidth * Constants.SegmentSize / 2f
@@ -256,31 +253,20 @@ public class SpawnSystem : EntityUpdateSystem
     
     private Vector2? FindEmptyLocation()
     {
-        var random = Random.Shared.Next() % (Constants.WallWidth * Constants.WallHeight);
+        var x = Random.Shared.Next(0, Constants.WallWidth);
+        var y = Random.Shared.Next(0, Constants.WallHeight);
 
-        while (random >= 0)
+        for (var i = 0; i < 10; i++)
         {
-            var foundFree = false;
+            var location = new Vector2(
+                x * Constants.SegmentSize,
+                y * Constants.SegmentSize);
+            
+            if (IsLocationEmpty(location))
+                return location;
 
-            for (var i = 0; i < Constants.WallHeight; i++)
-            {
-                for (var j = 0; j < Constants.WallWidth; j++)
-                {
-                    var location = new Vector2(j * Constants.SegmentSize, i * Constants.SegmentSize);
-
-                    if (IsLocationEmpty(location))
-                    {
-                        if (random <= 0)
-                            return location;
-
-                        random--;
-                        foundFree = true;
-                    }
-                }
-            }
-
-            if (!foundFree)
-                break;
+            x = Random.Shared.Next(0, Constants.WallWidth);
+            y = Random.Shared.Next(0, Constants.WallHeight);
         }
 
         return null;

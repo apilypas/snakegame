@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.ECS.Components;
@@ -55,6 +56,7 @@ public class DialogSystem : EntityProcessingSystem
         if (dialog != null)
         {
             _entityIds.Add(entityId);
+            MediaPlayer.Volume = .1f;
         }
     }
 
@@ -65,6 +67,9 @@ public class DialogSystem : EntityProcessingSystem
         if (dialog != null)
         {
             _entityIds.Remove(entityId);
+            
+            if (_entityIds.Count == 0)
+                MediaPlayer.Volume = .3f;
         }
     }
 }

@@ -138,6 +138,12 @@
 /processorParam:TextureFormat=Color
 /build:Tiles.png
 
+#begin Tracks/Main.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Tracks/Main.mp3
+
 #begin UserInterface.png
 /importer:TextureImporter
 /processor:TextureProcessor
