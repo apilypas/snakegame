@@ -62,7 +62,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new SnakeSpeedSystem(gameState))
             .AddSystem(new SnakeMovementSystem(gameState))
             .AddSystem(new CollisionSystem(gameState))
-            .AddSystem(new CollisionEventSystem(gameState))
+            .AddSystem(new CollisionEventSystem(gameState, entityFactory))
             .AddSystem(new SnakeColorSystem())
             .AddSystem(new SpawnSystem(gameState, entityFactory))
             .AddSystem(new SnakeDespawnSystem(gameState, entityFactory))
@@ -79,7 +79,7 @@ public class PlayScreen : GameScreen
             .AddSystem(new ButtonEventSystem(this, game, gameState, entityFactory))
             .AddSystem(new SoundEffectSystem(contents))
             .AddSystem(new LevelSystem(gameState, entityFactory))
-            .AddSystem(new LevelBonusSystem(gameState))
+            .AddSystem(new LevelBonusSystem(gameState, entityFactory))
             .AddSystem(new RenderSystem(Game.GraphicsDevice, contents, Game.Window))
             .Build();
         

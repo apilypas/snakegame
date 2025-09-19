@@ -154,6 +154,7 @@ public class CollectableSystem : EntityUpdateSystem
             {
                 var score = _gameState.ScoreMultiplicator * Constants.SpeedBoostCollectScore;
                 _gameState.Score += score;
+                _gameState.Experience++;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Speed)");
                 
                 _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
@@ -172,6 +173,7 @@ public class CollectableSystem : EntityUpdateSystem
                 });
                 var score = _gameState.ScoreMultiplicator * Constants.CrownCollectScore;
                 _gameState.Score += score;
+                _gameState.Experience++;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Invincible)");
                 
                 _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
@@ -190,6 +192,7 @@ public class CollectableSystem : EntityUpdateSystem
                 
                 var score = _gameState.ScoreMultiplicator * Constants.ClockCollectScore;
                 _gameState.Score += score;
+                
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Time)");
                 
                 _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent

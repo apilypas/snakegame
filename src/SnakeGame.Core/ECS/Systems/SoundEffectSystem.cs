@@ -28,7 +28,13 @@ public class SoundEffectSystem : EntityProcessingSystem
         var audioEffect = _soundEffectMapper.Get(entityId);
         
         var instance = _contents.GetSoundEffect(audioEffect.Type).CreateInstance();
-        instance.Pitch = Random.Shared.Next(-2, 2) / 10f;
+
+        if (audioEffect.Type != SoundEffectTypes.Timer
+            && audioEffect.Type != SoundEffectTypes.GameEnd)
+        {
+            instance.Pitch = Random.Shared.Next(-2, 2) / 10f;
+        }
+
         instance.Volume = .7f;
         instance.Play();
 

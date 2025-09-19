@@ -3,12 +3,14 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.ECS.Entities;
 
 namespace SnakeGame.Core.ECS.Systems;
 
 public class CollisionEventSystem : EntityProcessingSystem
 {
     private readonly GameState _gameState;
+    private readonly EntityFactory _entityFactory;
     private ComponentMapper<CollisionEventComponent> _collisionEventMapper;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<InvincibleComponent> _invincibleMapper;
@@ -17,10 +19,11 @@ public class CollisionEventSystem : EntityProcessingSystem
     private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
     private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
 
-    public CollisionEventSystem(GameState gameState) 
+    public CollisionEventSystem(GameState gameState, EntityFactory entityFactory) 
         : base(Aspect.All(typeof(CollisionEventComponent)))
     {
         _gameState = gameState;
+        _entityFactory = entityFactory;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -67,15 +70,26 @@ public class CollisionEventSystem : EntityProcessingSystem
         if (collisionEvent.EntityId != collisionEvent.CollidesWithEntityId && isInvincible)
         {
             var otherSnake = _snakeMapper.Get(collisionEvent.CollidesWithEntityId);
+            var snake = _snakeMapper.Get(collisionEvent.EntityId);
 
-            otherSnake.IsAlive = false;
-            
-            _soundEffectMapper.Put(entityId, new SoundEffectComponent
+            if (otherSnake.IsAlive)
             {
-                Type = SoundEffectTypes.EnemyHit
-            });
-            
-            _screenShakeMapper.Put(entityId, new ScreenShakeComponent());
+                _soundEffectMapper.Put(collisionEvent.EntityId,
+                    new SoundEffectComponent
+                    {
+                        Type = SoundEffectTypes.EnemyHit
+                    });
+
+                _screenShakeMapper.Put(collisionEvent.EntityId, new ScreenShakeComponent());
+
+                var score = _gameState.ScoreMultiplicator * otherSnake.Segments.Count;
+                _gameState.Score += score;
+
+                var fadingTextEntity = _entityFactory.World.CreateFadingText($"+{score}");
+                fadingTextEntity.Get<TransformComponent>().Position = snake.Head.Position;
+
+                otherSnake.IsAlive = false;
+            }
         }
         else
         {

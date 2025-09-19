@@ -5,12 +5,14 @@ using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.ECS.Entities;
 
 namespace SnakeGame.Core.ECS.Systems;
 
 public class LevelBonusSystem : EntityUpdateSystem
 {
     private readonly GameState _gameState;
+    private readonly EntityFactory _entityFactory;
     private ComponentMapper<LevelBonusComponent> _levelBonusMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
     private ComponentMapper<InvincibleComponent> _invincibleMapper;
@@ -19,10 +21,11 @@ public class LevelBonusSystem : EntityUpdateSystem
     private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
     private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
 
-    public LevelBonusSystem(GameState gameState) 
+    public LevelBonusSystem(GameState gameState, EntityFactory entityFactory) 
         : base(Aspect.One(typeof(LevelBonusComponent), typeof(PlayerComponent), typeof(SnakeComponent)))
     {
         _gameState = gameState;
+        _entityFactory = entityFactory;
     }
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -74,17 +77,19 @@ public class LevelBonusSystem : EntityUpdateSystem
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.DestroyEnemies)
                 {
                     var enemyEntityIds = ActiveEntities.Where(x => _enemyMapper.Has(x)).ToList();
-                    var isEnemiesDestroyed = false;
+                    var totalScore = 0;
 
                     foreach (var enemyEntityId in enemyEntityIds)
                     {
-                        _snakeMapper.Get(enemyEntityId).IsAlive = false;
-                        isEnemiesDestroyed = true;
+                        var enemySnake = _snakeMapper.Get(enemyEntityId);
+                        enemySnake.IsAlive = false;
+                        totalScore += enemySnake.Segments.Count * _gameState.ScoreMultiplicator;
                     }
 
-                    if (isEnemiesDestroyed)
+                    if (totalScore > 0)
                     {
                         var playerEntityId = ActiveEntities.Single(x => _playerMapper.Has(x));
+                        var playerSnake = _snakeMapper.Get(playerEntityId);
                         
                         _soundEffectMapper.Put(playerEntityId, new SoundEffectComponent
                         {
@@ -92,6 +97,11 @@ public class LevelBonusSystem : EntityUpdateSystem
                         });
             
                         _screenShakeMapper.Put(playerEntityId, new ScreenShakeComponent());
+                        
+                        _gameState.Score += totalScore;
+
+                        var fadingTextEntity = _entityFactory.World.CreateFadingText($"+{totalScore}");
+                        fadingTextEntity.Get<TransformComponent>().Position = playerSnake.Head.Position;
                     }
                 }
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddDiamondSpawnRate)
