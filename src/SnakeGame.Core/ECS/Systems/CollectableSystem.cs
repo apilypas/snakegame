@@ -158,7 +158,7 @@ public class CollectableSystem : EntityUpdateSystem
                 
                 _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
                 {
-                    Type = SoundEffectTypes.Pickup
+                    Type = SoundEffectTypes.SpeedUp
                 });
             }
         }
