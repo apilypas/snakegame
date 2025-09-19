@@ -6,28 +6,69 @@ using SnakeGame.Core.ECS.Components;
 
 namespace SnakeGame.Core.ECS.Systems;
 
-public class PlayFieldSystem : EntityProcessingSystem
+public class PlayFieldSystem : EntityUpdateSystem
 {
     private ComponentMapper<PlayFieldComponent> _playFieldMapper;
+    private ComponentMapper<PlayerComponent> _playerMapper;
+    private ComponentMapper<SnakeComponent> _snakeMapper;
 
     public PlayFieldSystem() 
-        : base(Aspect.All(typeof(PlayFieldComponent)))
+        : base(Aspect.One(typeof(PlayFieldComponent), typeof(PlayerComponent)))
     {
     }
 
     public override void Initialize(IComponentMapperService mapperService)
     {
         _playFieldMapper = mapperService.GetMapper<PlayFieldComponent>();
+        _playerMapper = mapperService.GetMapper<PlayerComponent>();
+        _snakeMapper = mapperService.GetMapper<SnakeComponent>();
     }
 
-    public override void Process(GameTime gameTime, int entityId)
+    public override void Update(GameTime gameTime)
     {
-        var playField = _playFieldMapper.Get(entityId);
+        SnakeComponent snake = null;
 
-        if (!playField.IsInitialized)
+        foreach (var entityId in ActiveEntities)
         {
-            RandomizeTiles(playField);
-            playField.IsInitialized = true;
+            if (_playerMapper.Has(entityId))
+            {
+                snake = _snakeMapper.Get(entityId);
+            }
+        }
+        
+        foreach (var entityId in ActiveEntities)
+        {
+            var playField = _playFieldMapper.Get(entityId);
+
+            if (playField is { IsInitialized: false })
+            {
+                RandomizeTiles(playField);
+                playField.IsInitialized = true;
+            }
+        }
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var playField = _playFieldMapper.Get(entityId);
+
+            if (playField != null)
+            {
+                foreach (var tile in playField.Tiles)
+                {
+                    tile.IsVisible = true;
+                    if (snake != null)
+                    {
+                        foreach (var segment in snake.Segments)
+                        {
+                            if (Vector2.Distance(tile.Position, segment.Position) < 30f)
+                            {
+                                tile.IsVisible = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     

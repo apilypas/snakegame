@@ -4,10 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnakeGame.Core.ECS.Components;
 
-public record struct PlayFieldTile
+public class PlayFieldTile
 {
-    public Vector2 Position;
-    public Rectangle TileRectangle;
+    public Vector2 Position { get; set; }
+    public Rectangle TileRectangle { get; set; }
+    public bool IsVisible { get; set; }
 }
 
 public class PlayFieldComponent

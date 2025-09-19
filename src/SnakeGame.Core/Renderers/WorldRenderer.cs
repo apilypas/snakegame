@@ -19,8 +19,7 @@ public class WorldRenderer
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<FadingTextComponent> _fadingTextMapper;
     private ComponentMapper<PlayFieldComponent> _playFieldMapper;
-    private ComponentMapper<PlayerComponent> _playerMapper;
-
+    
     public WorldRenderer(GameContentManager contents)
     {
         _snakeRenderer = new SnakeRenderer(contents);
@@ -34,7 +33,6 @@ public class WorldRenderer
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _fadingTextMapper = mapperService.GetMapper<FadingTextComponent>();
         _playFieldMapper = mapperService.GetMapper<PlayFieldComponent>();
-        _playerMapper = mapperService.GetMapper<PlayerComponent>();
     }
     
     public void Render(SpriteBatch spriteBatch, Bag<int> activeEntities)
@@ -48,7 +46,15 @@ public class WorldRenderer
                 foreach (var tile in playField.Tiles)
                 {
                     spriteBatch.Draw(playField.TilesTexture, tile.Position, new Rectangle(0, 0, 16, 16), Color.White);
-                    spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.White);
+
+                    if (tile.IsVisible)
+                    {
+                        spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.LightYellow);
+                    }
                 }
         
                 spriteBatch.DrawRectangle(
@@ -64,7 +70,6 @@ public class WorldRenderer
 
             if (snake is { IsInitialized: true })
             {
-                var isPlayer = _playerMapper.Has(entityId);
                 _snakeRenderer.Render(spriteBatch, snake);
             }
         }
