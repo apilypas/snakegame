@@ -14,6 +14,8 @@ public class CollisionEventSystem : EntityProcessingSystem
     private ComponentMapper<InvincibleComponent> _invincibleMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
     private ComponentMapper<CollectableComponent> _collectableMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
+    private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
 
     public CollisionEventSystem(GameState gameState) 
         : base(Aspect.All(typeof(CollisionEventComponent)))
@@ -28,6 +30,8 @@ public class CollisionEventSystem : EntityProcessingSystem
         _invincibleMapper = mapperService.GetMapper<InvincibleComponent>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
         _collectableMapper = mapperService.GetMapper<CollectableComponent>();
+        _soundEffectMapper  = mapperService.GetMapper<SoundEffectComponent>();
+        _screenShakeMapper = mapperService.GetMapper<ScreenShakeComponent>();
     }
 
     public override void Process(GameTime gameTime, int entityId)
@@ -38,7 +42,7 @@ public class CollisionEventSystem : EntityProcessingSystem
 
         if (_snakeMapper.Has(collisionEvent.CollidesWithEntityId))
         {
-            HandleSnakeCollision(collisionEvent);
+            HandleSnakeCollision(entityId, collisionEvent);
         }
 
         if (_collectableMapper.Has(collisionEvent.CollidesWithEntityId))
@@ -56,7 +60,7 @@ public class CollisionEventSystem : EntityProcessingSystem
         collectable.CollectedByEntityId = collisionEvent.EntityId;
     }
 
-    private void HandleSnakeCollision(CollisionEventComponent collisionEvent)
+    private void HandleSnakeCollision(int entityId, CollisionEventComponent collisionEvent)
     {
         var snake = _snakeMapper.Get(collisionEvent.EntityId);
         var isInvincible = _invincibleMapper.Has(collisionEvent.EntityId);
@@ -75,11 +79,13 @@ public class CollisionEventSystem : EntityProcessingSystem
             if (isPlayer)
             {
                 _gameState.Deaths++;
-
-                GetEntity(collisionEvent.EntityId).Attach(new SoundEffectComponent
+                
+                _soundEffectMapper.Put(entityId, new SoundEffectComponent
                 {
                     Type = SoundEffectTypes.PlayerDied
                 });
+                
+                _screenShakeMapper.Put(entityId, new ScreenShakeComponent());
             }
         }
     }

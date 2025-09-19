@@ -17,6 +17,8 @@ public class RenderSystem : EntityDrawSystem
     private readonly WorldRenderer _worldRenderer;
     private readonly HudRenderer _hudRenderer;
     private readonly DialogRenderer _dialogRenderer;
+    private readonly Vector2 _worldLookAt;
+    private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
     private RenderTarget2D _renderTarget;
     private Rectangle _renderRectangle;
 
@@ -31,13 +33,18 @@ public class RenderSystem : EntityDrawSystem
             typeof(HudLevelDisplayComponent),
             typeof(DialogComponent),
             typeof(ButtonComponent),
-            typeof(DialogLabelComponent)))
+            typeof(DialogLabelComponent),
+            typeof(ScreenShakeComponent)))
     {
         _graphics = graphics;
         _spriteBatch = new SpriteBatch(graphics);
         _worldRenderer = new WorldRenderer(contents);
         _hudRenderer = new HudRenderer(contents);
         _dialogRenderer = new DialogRenderer(contents);
+
+        _worldLookAt = new Vector2(
+            Constants.VirtualScreenWidth / 2f - Constants.WallWidth * Constants.SegmentSize / 2f - 44f,
+            Constants.VirtualScreenHeight / 2f - Constants.WallHeight * Constants.SegmentSize / 2f);
         
         window.ClientSizeChanged += OnClientSizeChanged;
     }
@@ -48,9 +55,11 @@ public class RenderSystem : EntityDrawSystem
         _hudRenderer.Initialize(mapperService);
         _dialogRenderer.Initialize(mapperService);
         
+        _screenShakeMapper = mapperService.GetMapper<ScreenShakeComponent>();
+        
         RebuildRenderTarget();
     }
-
+    
     public override void Draw(GameTime gameTime)
     {
         _graphics.SetRenderTarget(_renderTarget);
@@ -61,7 +70,7 @@ public class RenderSystem : EntityDrawSystem
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
             SamplerState.PointClamp,
-            transformMatrix: Globals.PlayFieldCenterViewTransform);
+            transformMatrix: GetWorldTransform());
         
         _worldRenderer.Render(_spriteBatch, ActiveEntities);
         
@@ -122,5 +131,19 @@ public class RenderSystem : EntityDrawSystem
         
         var scale = _graphics.Viewport.GetRenderTargetScale();
         _renderRectangle =  _graphics.Viewport.GetRenderTargetRectangle(scale);
+    }
+    
+    private Matrix GetWorldTransform()
+    {
+        var cameraOffset = Vector2.Zero;
+        
+        foreach (var entityId in ActiveEntities)
+        {
+            var screenShake = _screenShakeMapper.Get(entityId);
+            if (screenShake != null)
+                cameraOffset = screenShake.CameraOffset;
+        }
+
+        return Matrix.CreateTranslation(new Vector3(_worldLookAt + cameraOffset, 0.0f));
     }
 }
