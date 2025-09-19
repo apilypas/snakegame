@@ -56,8 +56,8 @@ public static class SpriteBatchExtensions
         Texture2D texture,
         Rectangle textureRectangle,
         Color color,
-        int patchSizeX = 16,
-        int patchSizeY = 16)
+        int patchSizeX = 6,
+        int patchSizeY = 6)
     {
         var patchSize = new Point(patchSizeX, patchSizeY);
         

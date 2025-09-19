@@ -2,9 +2,9 @@ namespace SnakeGame.Core;
 
 public static class Constants
 {
-    public const int SegmentSize = 20; // Pixels
+    public const int SegmentSize = 16; // Pixels
     public const int WallWidth = 32; // Segments
-    public const int WallHeight = 32; // Segments
+    public const int WallHeight = 20; // Segments
     public const float DiamondSpawnRate = 3f; // Seconds
     public const float SpeedBoostSpawnRate = 7f; // Seconds
     public const float CrownSpawnRate = 30f; // Seconds
@@ -24,13 +24,12 @@ public static class Constants
     public const float InvincibleTimer = 8f; // Seconds
     public const float InitialTimer = 60f; // Seconds
     public const float MaxTimer = 300f; // Seconds
-    public const int VirtualScreenWidth = 1280;
-    public const int VirtualScreenHeight = 720;
+    public const int VirtualScreenWidth = 640;
+    public const int VirtualScreenHeight = 360;
     public const int InitialSnakeSize = 3;
     public const float ClockBonus = 30f; // Seconds
     public const float ScoreMultiplicatorTimer = 10f; // Seconds
     public const int MaxScoreBoardEntries = 15;
     public const int MaxScoreMultiplier = 666;
-    public const string ScoreFormat = "0000000000";
-    public const float Zoom = 1f;
+    public const string ScoreFormat = "00000000";
 }

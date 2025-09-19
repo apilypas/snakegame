@@ -14,25 +14,25 @@ public class HudEntityFactory(World world, ContentManager contents)
     {
         const float x = Constants.VirtualScreenWidth / 2f 
                         + Constants.WallWidth * Constants.SegmentSize / 2f
-                        + 20f;
+                        - 36f;
 
         const float y = Constants.VirtualScreenHeight / 2f
                         - Constants.WallHeight * Constants.SegmentSize / 2f
-                        + 20f;
+                        + 10f;
         
         var entity = world.CreateEntity();
         
         var scoreLabelId = CreateLabel(contents.BigFont, string.Empty, Colors.DefaultTextColor);
-        world.GetEntity(scoreLabelId).Get<TransformComponent>().Position = new Vector2(x, y + 9f);
+        world.GetEntity(scoreLabelId).Get<TransformComponent>().Position = new Vector2(x, y + 14f);
         
         var multiplicatorLabelId = CreateLabel(contents.MainFont, string.Empty, Colors.ScoreMultiplicatorColor);
-        world.GetEntity(multiplicatorLabelId).Get<TransformComponent>().Position = new Vector2(x + 156f, y + 35f);
+        world.GetEntity(multiplicatorLabelId).Get<TransformComponent>().Position = new Vector2(x + 66f, y + 32f);
         
         var timeLabelId = CreateLabel(contents.MainFont, string.Empty, Colors.ScoreTimeColor);
-        world.GetEntity(timeLabelId).Get<TransformComponent>().Position = new Vector2(x + 26f, y - 2f);
+        world.GetEntity(timeLabelId).Get<TransformComponent>().Position = new Vector2(x + 20f, y - 2f);
         
-        var clockSpriteId = CreateSprite(contents.CollectableTexture, new Rectangle(20, 0, 20, 20));
-        world.GetEntity(clockSpriteId).Get<TransformComponent>().Position = new Vector2(x + 2f, y - 2f);
+        var clockSpriteId = CreateSprite(contents.CollectableTexture, new Rectangle(16, 0, 16, 16));
+        world.GetEntity(clockSpriteId).Get<TransformComponent>().Position = new Vector2(x, y - 2f);
 
         entity.Attach(new ScoreDisplayComponent
         {
@@ -45,19 +45,19 @@ public class HudEntityFactory(World world, ContentManager contents)
     public void CreateKeybindsDisplay()
     {
         const float x = Constants.VirtualScreenWidth / 2f 
-                        - Constants.WallWidth * Constants.SegmentSize / 2f
-                        - 160f;
+                        + Constants.WallWidth * Constants.SegmentSize / 2f
+                        - 42f;
 
         const float y = Constants.VirtualScreenHeight / 2f
                         - Constants.WallHeight * Constants.SegmentSize / 2f
-                        + 20f;
+                        + 120f;
         
         List<KeyValuePair<string, string>> inputBindings = [
-            new("Pause", "Esc"),
-            new("Move up", "W"),
-            new("Move down", "S"),
-            new("Move left", "A"),
-            new("Move right", "D"),
+            new("Pause", "ESC"),
+            new("Up", "W"),
+            new("Down", "S"),
+            new("Left", "A"),
+            new("Right", "D"),
             new("Faster", "J")
         ];
 
@@ -66,29 +66,28 @@ public class HudEntityFactory(World world, ContentManager contents)
         {
             // Binding full name
             var namePosSize = contents.MainFont.MeasureString(inputBinding.Key);
-            var namePosX = 100f - namePosSize.X;
             var namePosY = (36f - namePosSize.Y) / 2f - 2;
             var id1 = CreateLabel(contents.MainFont, inputBinding.Key,  Colors.DefaultTextColor);
             world.GetEntity(id1).Get<TransformComponent>().Position = new Vector2(
-                x + namePosX,
+                x + 36f,
                 offsetY + namePosY);
 
             // Binding button sprite
-            var id2 = CreateSprite(contents.CollectableTexture, new Rectangle(40, 0, 40, 40));
+            var id2 = CreateSprite(contents.CollectableTexture, new Rectangle(32, 0, 32, 32));
             world.GetEntity(id2).Get<TransformComponent>().Position = new Vector2(
-                x + 104f, 
+                x, 
                 offsetY);
 
             // Binding key value
             var valuePosSize = contents.MainFont.MeasureString(inputBinding.Value);
-            var valuePosX = (40f - valuePosSize.X) / 2f;
-            var valuePosY = (36f - valuePosSize.Y) / 2f - 2;
+            var valuePosX = (40f - valuePosSize.X) / 2f - 4f;
+            var valuePosY = (36f - valuePosSize.Y) / 2f - 4f;
             var id3 = CreateLabel(contents.MainFont, inputBinding.Value, Colors.DefaultTextColor);
             world.GetEntity(id3).Get<TransformComponent>().Position = new Vector2(
-                x + 104f + valuePosX, 
+                x + valuePosX, 
                 offsetY + valuePosY);
 
-            offsetY += 40f;
+            offsetY += 32f;
         }
     }
 
@@ -96,11 +95,11 @@ public class HudEntityFactory(World world, ContentManager contents)
     {
         const float x = Constants.VirtualScreenWidth / 2f 
                         + Constants.WallWidth * Constants.SegmentSize / 2f
-                        + 20f;
+                        - 36f;
 
         const float y = Constants.VirtualScreenHeight / 2f
                         - Constants.WallHeight * Constants.SegmentSize / 2f
-                        + 90f;
+                        + 64f;
         
         var entity = world.CreateEntity();
 

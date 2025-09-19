@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended.Screens;
 using SnakeGame.Core;
 using SnakeGame.Core.Screens;
@@ -8,21 +9,23 @@ namespace SnakeGame.DesktopGL;
 
 public class SnakeGame : Game
 {
+    private readonly GraphicsDeviceManager _graphics;
     private ScreenManager _screenManager;
 
     public SnakeGame()
     {
-        var graphics = new GraphicsDeviceManager(this);
-        graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
-        graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
+        _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
+        _graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
         
         Window.Title = $"Yet another Snake Game (v{VersionUtils.GetVersion()})";
         Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += OnClientSizeChanged;
         
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         
-        Services.AddService(graphics);
+        Services.AddService(_graphics);
     }
 
     protected override void LoadContent()
@@ -46,5 +49,31 @@ public class SnakeGame : Game
         base.Draw(gameTime);
         
         _screenManager.Draw(gameTime);
+    }
+    
+    private void OnClientSizeChanged(object sender, EventArgs e)
+    {
+        var isChanged = false;
+        var width = Window.ClientBounds.Width;
+        var height = Window.ClientBounds.Height;
+
+        if (width < Constants.VirtualScreenWidth)
+        {
+            width = Constants.VirtualScreenWidth;
+            isChanged = true;
+        }
+        
+        if (height < Constants.VirtualScreenHeight)
+        {
+            height = Constants.VirtualScreenHeight;
+            isChanged = true;
+        }
+
+        if (isChanged)
+        {
+            _graphics.PreferredBackBufferWidth = width;
+            _graphics.PreferredBackBufferHeight = height;
+            _graphics.ApplyChanges();
+        }
     }
 }

@@ -73,8 +73,8 @@ public class HudRenderer
                     Colors.ScoreTimeColor);
                 
                 spriteBatch.DrawFromNinePatch(
-                    transform.Position + new Vector2(0f, 22f),
-                    new SizeF(160f, 26f),
+                    transform.Position + new Vector2(-2f, 16f),
+                    new SizeF(96f, 22f),
                     _userInterfaceTexture,
                     new Rectangle(32, 96, 18, 18),
                     Color.White,
@@ -82,8 +82,8 @@ public class HudRenderer
                     6);
                 
                 spriteBatch.DrawFromNinePatch(
-                    transform.Position + new Vector2(2f, 24f),
-                    new SizeF(156f * hudLevelDisplay.Progress, 22f),
+                    transform.Position + new Vector2(0f, 18f),
+                    new SizeF(92f * hudLevelDisplay.Progress, 18f),
                     _userInterfaceTexture,
                     new Rectangle(0, 96, 18, 18),
                     Color.White,

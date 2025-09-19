@@ -57,7 +57,7 @@ public class DialogRenderer
                         transform.Position,
                         dialog.Size,
                         _userInterfaceTexture,
-                        new Rectangle(0, 0, 48, 48),
+                        new Rectangle(0, 0, 18, 18),
                         Color.White);
                 }
 
@@ -112,7 +112,7 @@ public class DialogRenderer
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
-                                new Rectangle(144, 48, 48, 48),
+                                new Rectangle(144, 48, 18, 18),
                                 Color.White);
                         }
                         
@@ -122,7 +122,7 @@ public class DialogRenderer
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
-                                new Rectangle(96, 48, 48, 48),
+                                new Rectangle(96, 48, 18, 18),
                                 Color.White);
                         }
                         else if (button.IsHovered)
@@ -131,7 +131,7 @@ public class DialogRenderer
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
-                                new Rectangle(48, 48, 48, 48),
+                                new Rectangle(48, 48, 18, 18),
                                 Color.White);
                         }
                         else
@@ -140,7 +140,7 @@ public class DialogRenderer
                                 buttonTransform.Position,
                                 button.Size,
                                 _userInterfaceTexture,
-                                new Rectangle(0, 48, 48, 48),
+                                new Rectangle(0, 48, 18, 18),
                                 Color.White);
                         }
 

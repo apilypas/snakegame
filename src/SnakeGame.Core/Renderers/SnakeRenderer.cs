@@ -21,13 +21,13 @@ public class SnakeRenderer
         _texture = contents.SnakeTexture;
     }
 
-    public void Render(SpriteBatch spriteBatch, SnakeComponent snake, bool isPlayer)
+    public void Render(SpriteBatch spriteBatch, SnakeComponent snake)
     {
-        _headRectangle = new Rectangle(60, 0, 20, 20);
-        _faceRectangle = new Rectangle(40, 0, 20, 20);
-        _tailRectangle = new Rectangle(60, 0, 20, 20);
-        _segmentRectangle = new Rectangle(20, 0, 20, 20);
-        _cornerRectangle = new Rectangle(0, 0, 20, 20);
+        _headRectangle = new Rectangle(48, 0, 16, 16);
+        _faceRectangle = new Rectangle(32, 0, 16, 16);
+        _tailRectangle = new Rectangle(48, 0, 16, 16);
+        _segmentRectangle = new Rectangle(16, 0, 16, 16);
+        _cornerRectangle = new Rectangle(0, 0, 16, 16);
         
         DrawSnake(spriteBatch, snake);
     }

@@ -35,10 +35,10 @@ public class PlayFieldSystem : EntityProcessingSystem
     {
         Rectangle[] tilesRectangles =
         [
-            new(20, 0, 20, 20),
-            new(40, 0, 20, 20),
-            new(60, 0, 20, 20),
-            new(80, 0, 20, 20)
+            new(16, 0, 16, 16),
+            new(32, 0, 16, 16),
+            new(48, 0, 16, 16),
+            new(64, 0, 16, 16)
         ];
         
         for (var x = 0; x < Constants.WallWidth; x++)

@@ -20,7 +20,7 @@ public static class Globals
 
         PlayFieldCenterViewTransform = Matrix.CreateTranslation(new Vector3(
             new Vector2(
-                Constants.VirtualScreenWidth / 2f - Constants.WallWidth * Constants.SegmentSize / 2f,
+                Constants.VirtualScreenWidth / 2f - Constants.WallWidth * Constants.SegmentSize / 2f - 44f,
                 Constants.VirtualScreenHeight / 2f - Constants.WallHeight * Constants.SegmentSize / 2f),
             0.0f));
     }

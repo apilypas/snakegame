@@ -86,11 +86,11 @@ public class PlayScreen : GameScreen
 
         entityFactory.World.CreatePlayField();
         
-        var playerAt = new Vector2(7f * Constants.SegmentSize, 20f * Constants.SegmentSize);
+        var playerAt = new Vector2(7f * Constants.SegmentSize, 10f * Constants.SegmentSize);
         
         entityFactory.World.CreatePlayerSnake(playerAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         
-        var enemyAt = new Vector2(23f * Constants.SegmentSize, 20f * Constants.SegmentSize);
+        var enemyAt = new Vector2(23f * Constants.SegmentSize, 10f * Constants.SegmentSize);
         
         entityFactory.World.CreateEnemySnake(enemyAt, Constants.InitialSnakeSize, SnakeDirection.Up);
         

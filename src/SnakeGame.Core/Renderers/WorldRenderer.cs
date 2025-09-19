@@ -47,7 +47,7 @@ public class WorldRenderer
             {
                 foreach (var tile in playField.Tiles)
                 {
-                    spriteBatch.Draw(playField.TilesTexture, tile.Position, new Rectangle(0, 0, 20, 20), Color.White);
+                    spriteBatch.Draw(playField.TilesTexture, tile.Position, new Rectangle(0, 0, 16, 16), Color.White);
                     spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.White);
                 }
         
@@ -65,7 +65,7 @@ public class WorldRenderer
             if (snake is { IsInitialized: true })
             {
                 var isPlayer = _playerMapper.Has(entityId);
-                _snakeRenderer.Render(spriteBatch, snake, isPlayer);
+                _snakeRenderer.Render(spriteBatch, snake);
             }
         }
 

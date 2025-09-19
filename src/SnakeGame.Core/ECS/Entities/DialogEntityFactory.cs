@@ -32,8 +32,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
             "Start",
             new Vector2(
                 Constants.VirtualScreenWidth / 2f + 140f,
-                Constants.VirtualScreenHeight / 2f - 110f),
-            new SizeF(120f, 52f),
+                Constants.VirtualScreenHeight / 2f - 100f),
+            new SizeF(100f, 42f),
             () =>
             {
                 dialogEntity.Attach(new ButtonEventComponent
@@ -51,7 +51,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             new Vector2(
                 Constants.VirtualScreenWidth / 2f + 140f,
                 Constants.VirtualScreenHeight / 2f - 50f),
-            new SizeF(120f, 52f),
+            new SizeF(100f, 42f),
             () =>
             {
                 dialogEntity.Attach(new ButtonEventComponent
@@ -68,8 +68,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
             "Credits",
             new Vector2(
                 Constants.VirtualScreenWidth / 2f + 140f,
-                Constants.VirtualScreenHeight / 2f + 10f),
-            new SizeF(120f, 52f),
+                Constants.VirtualScreenHeight / 2f - 0f),
+            new SizeF(100f, 42f),
             () =>
             {
                 dialogEntity.Attach(new ButtonEventComponent
@@ -86,8 +86,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
             "Quit",
             new Vector2(
                 Constants.VirtualScreenWidth / 2f + 140f,
-                Constants.VirtualScreenHeight / 2f + 70f),
-            new SizeF(120f, 52f),
+                Constants.VirtualScreenHeight / 2f + 50f),
+            new SizeF(100f, 42f),
             () =>
             {
                 dialogEntity.Attach(new ButtonEventComponent
@@ -110,7 +110,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         label1.Attach(new TransformComponent
         {
             Position = new Vector2(
-                Constants.VirtualScreenWidth / 2f - 120f,
+                Constants.VirtualScreenWidth / 2f - 80f,
                 Constants.VirtualScreenHeight / 2f - 100f)
         });
 
@@ -126,7 +126,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         {
             Position = new Vector2(
                 Constants.VirtualScreenWidth / 2f - 160f,
-                Constants.VirtualScreenHeight / 2f - 70f)
+                Constants.VirtualScreenHeight / 2f - 80f)
         });
         
         dialog.ChildrenEntities.Add(label2.Id);
@@ -162,7 +162,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         CreateDialog(
             "Credits",
             content,
-            new SizeF(310f, 260f),
+            new SizeF(270f, 220f),
             ("Back", ButtonEvents.Close));
     }
 
@@ -189,7 +189,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         CreateDialog(
             "Score Board",
             resultBuilder.ToString(),
-            new SizeF(300f, 400f),
+            new SizeF(260f, 340f),
             ("Back", ButtonEvents.Close));
     }
 
@@ -198,7 +198,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         CreateDialog(
             "Paused",
             "Your game is paused",
-            new SizeF(220, 140),
+            new SizeF(180, 110),
             ("Resume", ButtonEvents.Resume),
             ("Exit", ButtonEvents.ShowStartScreen));
     }
@@ -216,8 +216,8 @@ public class DialogEntityFactory(World world, ContentManager contents)
         CreateDialog(
             "Game is over",
             results,
-            new SizeF(250f, 300f),
-            ("Score Board", ButtonEvents.ShowScoreBoard),
+            new SizeF(220f, 180f),
+            ("Scores", ButtonEvents.ShowScoreBoard),
             ("Exit", ButtonEvents.ShowStartScreen));
     }
 
@@ -237,7 +237,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
         var dialog = new DialogComponent
         {
             Title = "Select bonus",
-            Size = new SizeF(250f, 180f),
+            Size = new SizeF(210f, 140f),
             OrderId = GetOrderId()
         };
         
@@ -270,7 +270,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             var buttonEntity = CreateButton(
                 button.Text,
                 new Vector2(transform.Position.X + 10f, transform.Position.Y + buttonPositionY),
-                new SizeF(dialog.Size.Width - 20f, 40f),
+                new SizeF(dialog.Size.Width - 16f, 30f),
                 () =>
                 {
                     dialogEntity.Attach(new ButtonEventComponent
@@ -284,7 +284,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
 
             dialog.ChildrenEntities.Add(buttonEntity.Id);
 
-            buttonPositionY += 50f;
+            buttonPositionY += 36f;
             focusOrderId++;
         }
     }
@@ -327,10 +327,10 @@ public class DialogEntityFactory(World world, ContentManager contents)
         };
         dialogEntity.Attach(transform);
         
-        var totalButtonWidth = buttons.Length * 100f + (buttons.Length - 1) * 4f;
+        var totalButtonWidth = buttons.Length * 80f + (buttons.Length - 1) * 4f;
             
         var buttonPositionX = (dialog.Size.Width - totalButtonWidth) / 2f;
-        var buttonPositionY = dialog.Size.Height - 46f;
+        var buttonPositionY = dialog.Size.Height - 42f;
         var buttonFocusOrderId = 1;
 
         foreach (var button in buttons)
@@ -340,7 +340,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
             buttonEntity.Attach(new ButtonComponent
             {
                 Text = button.Item1,
-                Size = new SizeF(100f, 40f),
+                Size = new SizeF(80f, 32f),
                 FocusOrderId = buttonFocusOrderId,
                 Action = () =>
                 {
@@ -357,7 +357,7 @@ public class DialogEntityFactory(World world, ContentManager contents)
                 Position = transform.Position + new Vector2(buttonPositionX, buttonPositionY)
             });
 
-            buttonPositionX += 100f;
+            buttonPositionX += 80f;
             buttonPositionX += 4f;
             buttonFocusOrderId++;
             

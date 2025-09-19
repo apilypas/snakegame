@@ -11,8 +11,11 @@ public static class ViewportExtensions
         var scaleX = (float)viewport.Width / Constants.VirtualScreenWidth;
         var scaleY = (float)viewport.Height / Constants.VirtualScreenHeight;
         
-        var scale = Math.Min(scaleX, scaleY);
-        return scale;
+        var scale = MathF.Max(1f, MathF.Min(scaleX, scaleY));
+        
+        return scale - MathF.Floor(scale) >= .75f 
+            ? MathF.Ceiling(scale) 
+            : MathF.Floor(scale);
     }
 
     public static Rectangle GetRenderTargetRectangle(this Viewport viewport, float scale)
