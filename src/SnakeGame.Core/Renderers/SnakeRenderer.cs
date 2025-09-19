@@ -16,7 +16,7 @@ public class SnakeRenderer
     private Rectangle _segmentRectangle;
     private Rectangle _cornerRectangle;
 
-    public SnakeRenderer(ContentManager contents)
+    public SnakeRenderer(GameContentManager contents)
     {
         _texture = contents.SnakeTexture;
     }

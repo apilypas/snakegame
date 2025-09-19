@@ -8,7 +8,7 @@ using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Entities;
 
-public class HudEntityFactory(World world, ContentManager contents)
+public class HudEntityFactory(World world, GameContentManager contents)
 {
     public void CreateScoreDisplay()
     {

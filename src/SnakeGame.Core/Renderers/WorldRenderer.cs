@@ -21,7 +21,7 @@ public class WorldRenderer
     private ComponentMapper<PlayFieldComponent> _playFieldMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
 
-    public WorldRenderer(ContentManager contents)
+    public WorldRenderer(GameContentManager contents)
     {
         _snakeRenderer = new SnakeRenderer(contents);
         _smallFont = contents.SmallFont;

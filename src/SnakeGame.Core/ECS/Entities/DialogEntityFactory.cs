@@ -11,7 +11,7 @@ using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Entities;
 
-public class DialogEntityFactory(World world, ContentManager contents)
+public class DialogEntityFactory(World world, GameContentManager contents)
 {
     private int _lastOrderId;
     

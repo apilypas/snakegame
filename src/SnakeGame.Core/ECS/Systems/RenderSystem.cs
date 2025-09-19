@@ -22,7 +22,7 @@ public class RenderSystem : EntityDrawSystem
     private RenderTarget2D _renderTarget;
     private Rectangle _renderRectangle;
 
-    public RenderSystem(GraphicsDevice graphics, ContentManager contents, GameWindow window)
+    public RenderSystem(GraphicsDevice graphics, GameContentManager contents, GameWindow window)
         : base(Aspect.One(
             typeof(SnakeComponent),
             typeof(SpriteComponent),

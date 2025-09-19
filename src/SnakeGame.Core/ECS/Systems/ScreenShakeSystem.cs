@@ -9,7 +9,7 @@ namespace SnakeGame.Core.ECS.Systems;
 
 public class ScreenShakeSystem : EntityUpdateSystem
 {
-    private const float ShakeTime = .5f;
+    private const float ShakeTime = .3f;
     
     private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
     

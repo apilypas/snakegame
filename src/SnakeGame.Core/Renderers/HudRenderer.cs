@@ -19,7 +19,7 @@ public class HudRenderer
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<HudLevelDisplayComponent> _hudLevelDisplayMapper;
 
-    public HudRenderer(ContentManager contents)
+    public HudRenderer(GameContentManager contents)
     {
         _mainFont = contents.MainFont;
         _userInterfaceTexture = contents.UserInterfaceTexture;

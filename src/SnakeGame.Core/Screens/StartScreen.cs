@@ -16,7 +16,7 @@ public class StartScreen : GameScreen
 
     public StartScreen(Game game) : base(game)
     {
-        var contents = new ContentManager();
+        var contents = new GameContentManager();
         contents.LoadContent(Content);
 
         var bindings = new[]

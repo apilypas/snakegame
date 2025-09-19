@@ -21,7 +21,7 @@ public class DialogRenderer
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<DialogLabelComponent> _dialogLabelMapper;
 
-    public DialogRenderer(ContentManager contents)
+    public DialogRenderer(GameContentManager contents)
     {
         _userInterfaceTexture = contents.UserInterfaceTexture;
         _mainFont = contents.MainFont;

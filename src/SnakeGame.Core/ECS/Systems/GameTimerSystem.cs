@@ -45,7 +45,7 @@ public class GameTimerSystem : EntityProcessingSystem
                 {
                     _soundEffectMapper.Put(entityId, new SoundEffectComponent
                     {
-                        Type = SoundEffectTypes.TimerChanged
+                        Type = SoundEffectTypes.Timer
                     });
                 }
             }
@@ -57,7 +57,7 @@ public class GameTimerSystem : EntityProcessingSystem
             
             _soundEffectMapper.Put(entityId, new SoundEffectComponent
             {
-                Type = SoundEffectTypes.GameEnded
+                Type = SoundEffectTypes.GameEnd
             });
 
             _entityFactory.Dialog.CreateGameOverDialog(_gameState);

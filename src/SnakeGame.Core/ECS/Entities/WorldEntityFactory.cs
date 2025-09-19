@@ -9,7 +9,7 @@ using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Entities;
 
-public class WorldEntityFactory(World world, ContentManager contents)
+public class WorldEntityFactory(World world, GameContentManager contents)
 {
     public void CreatePlayField()
     {

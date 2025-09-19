@@ -62,18 +62,26 @@ public class CollisionEventSystem : EntityProcessingSystem
 
     private void HandleSnakeCollision(int entityId, CollisionEventComponent collisionEvent)
     {
-        var snake = _snakeMapper.Get(collisionEvent.EntityId);
         var isInvincible = _invincibleMapper.Has(collisionEvent.EntityId);
-        var isPlayer = _playerMapper.Has(collisionEvent.EntityId);
 
         if (collisionEvent.EntityId != collisionEvent.CollidesWithEntityId && isInvincible)
         {
             var otherSnake = _snakeMapper.Get(collisionEvent.CollidesWithEntityId);
 
             otherSnake.IsAlive = false;
+            
+            _soundEffectMapper.Put(entityId, new SoundEffectComponent
+            {
+                Type = SoundEffectTypes.EnemyHit
+            });
+            
+            _screenShakeMapper.Put(entityId, new ScreenShakeComponent());
         }
         else
         {
+            var snake = _snakeMapper.Get(collisionEvent.EntityId);
+            var isPlayer = _playerMapper.Has(collisionEvent.EntityId);
+            
             snake.IsAlive = false;
 
             if (isPlayer)
@@ -82,7 +90,7 @@ public class CollisionEventSystem : EntityProcessingSystem
                 
                 _soundEffectMapper.Put(entityId, new SoundEffectComponent
                 {
-                    Type = SoundEffectTypes.PlayerDied
+                    Type = SoundEffectTypes.Hit
                 });
                 
                 _screenShakeMapper.Put(entityId, new ScreenShakeComponent());

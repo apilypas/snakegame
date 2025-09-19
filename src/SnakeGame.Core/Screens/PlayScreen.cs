@@ -17,7 +17,7 @@ public class PlayScreen : GameScreen
 
     public PlayScreen(Game game) : base(game)
     {
-        var contents = new ContentManager();
+        var contents = new GameContentManager();
         contents.LoadContent(Content);
         
         var gameState = new GameState();

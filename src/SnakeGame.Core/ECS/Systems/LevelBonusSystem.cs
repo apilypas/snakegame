@@ -16,6 +16,8 @@ public class LevelBonusSystem : EntityUpdateSystem
     private ComponentMapper<InvincibleComponent> _invincibleMapper;
     private ComponentMapper<SnakeComponent> _snakeMapper;
     private ComponentMapper<EnemyComponent> _enemyMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
+    private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
 
     public LevelBonusSystem(GameState gameState) 
         : base(Aspect.One(typeof(LevelBonusComponent), typeof(PlayerComponent), typeof(SnakeComponent)))
@@ -30,6 +32,8 @@ public class LevelBonusSystem : EntityUpdateSystem
         _invincibleMapper = mapperService.GetMapper<InvincibleComponent>();
         _snakeMapper = mapperService.GetMapper<SnakeComponent>();
         _enemyMapper = mapperService.GetMapper<EnemyComponent>();
+        _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
+        _screenShakeMapper = mapperService.GetMapper<ScreenShakeComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -42,9 +46,17 @@ public class LevelBonusSystem : EntityUpdateSystem
             {
                 if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddTime)
                 {
+                    var playerEntityId = ActiveEntities.Single(x => _playerMapper.Has(x));
+                    
                     _gameState.Timer += 30f;
+                    
                     if (_gameState.Timer > Constants.MaxTimer)
                         _gameState.Timer = Constants.MaxTimer;
+                    
+                    _soundEffectMapper.Put(playerEntityId, new SoundEffectComponent
+                    {
+                        Type = SoundEffectTypes.AddTime
+                    });
                 }
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddInvincibility)
                 {
@@ -53,14 +65,33 @@ public class LevelBonusSystem : EntityUpdateSystem
                     {
                         Timer = Constants.InvincibleTimer
                     });
+                    
+                    _soundEffectMapper.Put(playerEntityId, new SoundEffectComponent
+                    {
+                        Type = SoundEffectTypes.PowerUp
+                    });
                 }
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.DestroyEnemies)
                 {
                     var enemyEntityIds = ActiveEntities.Where(x => _enemyMapper.Has(x)).ToList();
+                    var isEnemiesDestroyed = false;
 
                     foreach (var enemyEntityId in enemyEntityIds)
                     {
                         _snakeMapper.Get(enemyEntityId).IsAlive = false;
+                        isEnemiesDestroyed = true;
+                    }
+
+                    if (isEnemiesDestroyed)
+                    {
+                        var playerEntityId = ActiveEntities.Single(x => _playerMapper.Has(x));
+                        
+                        _soundEffectMapper.Put(playerEntityId, new SoundEffectComponent
+                        {
+                            Type = SoundEffectTypes.EnemyHit
+                        });
+            
+                        _screenShakeMapper.Put(playerEntityId, new ScreenShakeComponent());
                     }
                 }
                 else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddDiamondSpawnRate)

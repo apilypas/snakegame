@@ -22,6 +22,7 @@ public class CollectableSystem : EntityUpdateSystem
     private ComponentMapper<SpeedUpComponent> _speedUpMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<SpriteComponent> _spriteMapper;
+    private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
 
     public CollectableSystem(GameState gameState,
         EntityFactory entityFactory)
@@ -40,6 +41,7 @@ public class CollectableSystem : EntityUpdateSystem
         _speedUpMapper = mapperService.GetMapper<SpeedUpComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _spriteMapper = mapperService.GetMapper<SpriteComponent>();
+        _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -60,14 +62,6 @@ public class CollectableSystem : EntityUpdateSystem
             if (collectable.CollectedByEntityId != null)
             {
                 HandleCollectableBonus(collectable);
-
-                if (_playerMapper.Has(collectable.CollectedByEntityId.Value))
-                {
-                    GetEntity(entityId).Attach(new SoundEffectComponent
-                    {
-                        Type = SoundEffectTypes.Pickup
-                    });
-                }
 
                 DestroyEntity(entityId);
             }
@@ -128,6 +122,11 @@ public class CollectableSystem : EntityUpdateSystem
                 _gameState.Score += score;
                 _gameState.Experience++;
                 SpawnFadingText(snake.Head.Position, $"+{score}");
+                
+                _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.Pickup
+                });
             }
         }
         else if (collectable.CollectableType == CollectableType.SnakePart)
@@ -138,6 +137,11 @@ public class CollectableSystem : EntityUpdateSystem
                 var score = _gameState.ScoreMultiplicator * Constants.SnakePartCollectScore;
                 _gameState.Score += score;
                 SpawnFadingText(snake.Head.Position, $"+{score}");
+                
+                _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.Pickup
+                });
             }
         }
         else if (collectable.CollectableType == CollectableType.SpeedBoost)
@@ -151,6 +155,11 @@ public class CollectableSystem : EntityUpdateSystem
                 var score = _gameState.ScoreMultiplicator * Constants.SpeedBoostCollectScore;
                 _gameState.Score += score;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Speed)");
+                
+                _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.Pickup
+                });
             }
         }
         else if (collectable.CollectableType == CollectableType.Crown)
@@ -164,6 +173,11 @@ public class CollectableSystem : EntityUpdateSystem
                 var score = _gameState.ScoreMultiplicator * Constants.CrownCollectScore;
                 _gameState.Score += score;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Invincible)");
+                
+                _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.PowerUp
+                });
             }
         }
         else if (collectable.CollectableType == CollectableType.Clock)
@@ -177,6 +191,11 @@ public class CollectableSystem : EntityUpdateSystem
                 var score = _gameState.ScoreMultiplicator * Constants.ClockCollectScore;
                 _gameState.Score += score;
                 SpawnFadingText(snake.Head.Position, $"+{score} (+Time)");
+                
+                _soundEffectMapper.Put(collectable.CollectedByEntityId.Value, new SoundEffectComponent
+                {
+                    Type = SoundEffectTypes.AddTime
+                });
             }
         }
     }
