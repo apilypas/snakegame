@@ -13,11 +13,13 @@ Game is published at [itch.io](https://g1ngercat.itch.io/yetanothersnakegame).
 * Leveling + leveling bonuses
 * Collectables
 * Scores
+* Screen shaking effects
 * Speedups and power ups
 * Score multipliers
 * Multiple enemy with simple AI
 * Gamepad support
 * Sound effects
+* Background music
 * Score board
 * Fluent snake movements
 
@@ -41,4 +43,7 @@ Game is published at [itch.io](https://g1ngercat.itch.io/yetanothersnakegame).
 
 ## Screenshots
 
-![Screenshot](/images/screenshot3.png)
+![Screenshot](/images/screenshot4.png)
+
+![Screenshot](/images/screenshot5.png)
+
