@@ -126,7 +126,7 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         {
             Position = new Vector2(
                 Constants.VirtualScreenWidth / 2f - 160f,
-                Constants.VirtualScreenHeight / 2f - 80f)
+                Constants.VirtualScreenHeight / 2f - 100f)
         });
         
         dialog.ChildrenEntities.Add(label2.Id);
@@ -141,10 +141,24 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         {
             Position = new Vector2(
                 Constants.VirtualScreenWidth / 2f - 130f,
-                Constants.VirtualScreenHeight / 2f - 0f)
+                Constants.VirtualScreenHeight / 2f - 30f)
         });
         
         dialog.ChildrenEntities.Add(label3.Id);
+
+        var label4 = world.CreateEntity();
+        label4.Attach(new DialogLabelComponent
+        {
+            Text = "Press Alt+Enter for fullscreen",
+            Font = contents.MainFont
+        });
+        label4.Attach(new TransformComponent
+        {
+            Position = new Vector2(
+                Constants.VirtualScreenWidth / 2f - 130f,
+                Constants.VirtualScreenHeight / 2f + 70f) 
+        });
+        dialog.ChildrenEntities.Add(label4.Id);
     }
 
     public void CreateCreditsDialog()
