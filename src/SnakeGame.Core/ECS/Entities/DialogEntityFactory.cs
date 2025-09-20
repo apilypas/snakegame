@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using SnakeGame.Core.Data;
@@ -264,15 +265,40 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         dialogEntity.Attach(transform);
 
         var buttons = new [] {
-            new { Text = "+Time", Event = ButtonEvents.AddTime },
-            new { Text = "+Invincibility", Event = ButtonEvents.AddInvincibility },
-            new { Text = "-Enemies", Event = ButtonEvents.DestroyEnemies },
-            new { Text = "+Diamond Spawn Rate", Event = ButtonEvents.AddDiamondSpawnRate },
-            new { Text = "+Score Multiplicator", Event = ButtonEvents.AddScoreMultiplicator }
+            new 
+            { 
+                Title = "Live Longer", 
+                Subtitle = "Adds more time to the timer",
+                Event = ButtonEvents.AddTime 
+            },
+            new
+            {
+                Title = "Invincible!", 
+                Subtitle = "Gives super powers",
+                Event = ButtonEvents.AddInvincibility
+            },
+            new
+            {
+                Title = "King of the hill", 
+                Subtitle = "Destroy all enemies",
+                Event = ButtonEvents.DestroyEnemies
+            },
+            new
+            {
+                Title = "Diamond fever", 
+                Subtitle = "Spawns diamonds more often",
+                Event = ButtonEvents.AddDiamondSpawnRate
+            },
+            new
+            {
+                Title = "Score master", 
+                Subtitle = "Increases score multiplier",
+                Event = ButtonEvents.AddScoreMultiplicator
+            }
         };
         
         var randomButtons = buttons
-            .OrderBy(x => Random.Shared.Next()) // Shuffle randomly
+            .OrderBy(_ => Random.Shared.Next()) // Shuffle randomly
             .Take(3)
             .ToArray();
 
@@ -282,9 +308,9 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         foreach (var button in randomButtons)
         {
             var buttonEntity = CreateButton(
-                button.Text,
+                string.Empty,
                 new Vector2(transform.Position.X + 10f, transform.Position.Y + buttonPositionY),
-                new SizeF(dialog.Size.Width - 16f, 30f),
+                new SizeF(dialog.Size.Width - 20f, 30f),
                 () =>
                 {
                     dialogEntity.Attach(new ButtonEventComponent
@@ -293,10 +319,23 @@ public class DialogEntityFactory(World world, GameContentManager contents)
                         Event = button.Event
                     });
                 });
-
+            
             buttonEntity.Get<ButtonComponent>().FocusOrderId = focusOrderId;
 
             dialog.ChildrenEntities.Add(buttonEntity.Id);
+            
+            var titleLabelEntity = CreateLabel(button.Title, contents.MainFont);
+            titleLabelEntity.Get<TransformComponent>().Position =
+                new Vector2(transform.Position.X + 20f, transform.Position.Y + buttonPositionY);
+            titleLabelEntity.Get<DialogLabelComponent>().Color = Colors.ScoreTimeColor;
+            
+            dialog.ChildrenEntities.Add(titleLabelEntity.Id);
+            
+            var subTitleLabelEntity = CreateLabel(button.Subtitle, contents.SmallFont);
+            subTitleLabelEntity.Get<TransformComponent>().Position =
+                new Vector2(transform.Position.X + 20f, transform.Position.Y + buttonPositionY + 13f);
+            
+            dialog.ChildrenEntities.Add(subTitleLabelEntity.Id);
 
             buttonPositionY += 36f;
             focusOrderId++;
@@ -319,6 +358,18 @@ public class DialogEntityFactory(World world, GameContentManager contents)
             Position = position
         });
         
+        return entity;
+    }
+
+    private Entity CreateLabel(string text, SpriteFont font)
+    {
+        var entity = world.CreateEntity();
+        entity.Attach(new DialogLabelComponent
+        {
+            Text = text,
+            Font = font
+        });
+        entity.Attach(new TransformComponent());
         return entity;
     }
 
