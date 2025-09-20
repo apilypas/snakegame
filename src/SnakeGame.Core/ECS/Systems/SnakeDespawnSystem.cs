@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -91,10 +90,10 @@ public class SnakeDespawnSystem : EntityProcessingSystem
             var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SnakePart);
             collectableEntity.Get<TransformComponent>().Position = snake.Segments[0].Position;
         }
-        else if (!_playerMapper.Has(entityId)) // Only enemies can spawn clocks
+        else if (!_playerMapper.Has(entityId) && _gameState.Timer < 180) // Only enemies can spawn clocks
         {
             // Calculate chances according to how much time is left
-            var spawnChance = 6 + (int)(_gameState.Timer / Constants.MaxTimer * 10f);
+            var spawnChance = 6 + (int)(20f * _gameState.Timer / Constants.MaxTimer);
             
             var isSpawningClock = Random.Shared.Next() % spawnChance == 0;
 
