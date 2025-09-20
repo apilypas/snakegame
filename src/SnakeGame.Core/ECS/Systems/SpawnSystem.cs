@@ -104,7 +104,10 @@ public class SpawnSystem : EntityUpdateSystem
             if (enemyCount < Constants.MaxEnemies)
             {
                 // Find best location
-                var location = FindBestLocationForSnake();
+                Vector2? location = null;
+                
+                for (var i = 0; i < 10 && location == null; i++)
+                    location = FindBestLocationForSnake();
                 
                 if (location != null)
                 {
