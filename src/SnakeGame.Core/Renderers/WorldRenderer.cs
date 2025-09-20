@@ -47,13 +47,13 @@ public class WorldRenderer
                 {
                     spriteBatch.Draw(playField.TilesTexture, tile.Position, new Rectangle(0, 0, 16, 16), Color.White);
 
-                    if (tile.IsVisible)
+                    if (tile.IsPlayerFar)
                     {
                         spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.White);
                     }
                     else
                     {
-                        spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Color.LightYellow);
+                        spriteBatch.Draw(playField.TilesTexture, tile.Position, tile.TileRectangle, Colors.PlayerCloseTintColor);
                     }
                 }
         

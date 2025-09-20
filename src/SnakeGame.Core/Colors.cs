@@ -19,4 +19,5 @@ public static class Colors
     public static Color DefaultTextShadowColor = Color.Black;
     public static Color ScoreTimeColor = Color.FromNonPremultiplied(0xFF, 0xB7, 0x03, 255);
     public static Color ScoreMultiplicatorColor = Color.FromNonPremultiplied(0xFF, 0xB7, 0x03, 255);
+    public static Color PlayerCloseTintColor = new Color(255, 255, 255, 245);
 }

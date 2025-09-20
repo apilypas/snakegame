@@ -8,7 +8,7 @@ public class PlayFieldTile
 {
     public Vector2 Position { get; set; }
     public Rectangle TileRectangle { get; set; }
-    public bool IsVisible { get; set; }
+    public bool IsPlayerFar { get; set; }
 }
 
 public class PlayFieldComponent

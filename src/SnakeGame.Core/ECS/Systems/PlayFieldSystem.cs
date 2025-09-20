@@ -55,14 +55,14 @@ public class PlayFieldSystem : EntityUpdateSystem
             {
                 foreach (var tile in playField.Tiles)
                 {
-                    tile.IsVisible = true;
+                    tile.IsPlayerFar = true;
                     if (snake != null)
                     {
                         foreach (var segment in snake.Segments)
                         {
                             if (Vector2.Distance(tile.Position, segment.Position) < 30f)
                             {
-                                tile.IsVisible = false;
+                                tile.IsPlayerFar = false;
                                 break;
                             }
                         }
