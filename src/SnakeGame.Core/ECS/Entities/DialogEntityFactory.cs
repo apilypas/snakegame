@@ -167,9 +167,11 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         var content = new StringBuilder()
             .AppendLine($"Yet another Snake Game ({VersionUtils.GetVersion()})")
             .AppendLine()
-            .AppendLine("Developed by: g1ngercat.itch.io")
-            .AppendLine("Audio effects: sfxr")
+            .AppendLine("Developed by: Andrius Pilypas")
+            .AppendLine("  (g1ngercat.itch.io)")
+            .AppendLine("  (github.com/apilypas)")
             .AppendLine()
+            .AppendLine("Audio effects: sfxr")
             .AppendLine("Font: Pixel Operator")
             .AppendLine("Game engine based on MonoGame")
             .ToString();
@@ -177,7 +179,7 @@ public class DialogEntityFactory(World world, GameContentManager contents)
         CreateDialog(
             "Credits",
             content,
-            new SizeF(270f, 220f),
+            new SizeF(250f, 240f),
             ("Back", ButtonEvents.Close));
     }
 
