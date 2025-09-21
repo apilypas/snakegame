@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
@@ -57,7 +58,24 @@ public class InputSystem : EntityUpdateSystem
     
         if (_inputs.WasActionPressed(InputActions.Fullscreen))
         {
-            _graphicsDeviceManager?.ToggleFullScreen();
+            if (_graphicsDeviceManager != null)
+            {
+                if (_graphicsDeviceManager.IsFullScreen)
+                {
+                    _graphicsDeviceManager.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
+                    _graphicsDeviceManager.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
+                    _graphicsDeviceManager.IsFullScreen = false;
+                    _graphicsDeviceManager.ApplyChanges();
+                }
+                else
+                {
+                    var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+                    _graphicsDeviceManager.PreferredBackBufferWidth = displayMode.Width;
+                    _graphicsDeviceManager.PreferredBackBufferHeight = displayMode.Height;
+                    _graphicsDeviceManager.IsFullScreen = true;
+                    _graphicsDeviceManager.ApplyChanges();
+                }
+            }
         }
 
         if (_inputs.WasActionPressed(InputActions.Down) || _inputs.WasActionPressed(InputActions.Right))
