@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input;
@@ -11,7 +12,7 @@ public struct InputBinding
     public Keys[] Keys;
     public Buttons Button;
     
-    public static InputBinding Create(string actionName, params Keys[] keys)
+    public static InputBinding FromKeys(string actionName, params Keys[] keys)
     {
         return new InputBinding
         {
@@ -20,7 +21,7 @@ public struct InputBinding
         };
     }
 
-    public static InputBinding Create(string actionName, Buttons button)
+    public static InputBinding FromButton(string actionName, Buttons button)
     {
         return new InputBinding
         {
@@ -32,7 +33,7 @@ public struct InputBinding
 
 public class InputManager
 {
-    private readonly List<InputBinding> _bindings = [];
+    private readonly List<InputBinding> _bindings;
 
     public KeyboardInputHandler KeyboardInput { get; } = new();
     public MouseInputHandler MouseInput { get; } = new();
@@ -40,8 +41,7 @@ public class InputManager
 
     public InputManager(IEnumerable<InputBinding> bindings)
     {
-        foreach (var binding in bindings)
-            _bindings.Add(binding);
+        _bindings = bindings.ToList();
         
         SortBindings();
     }
@@ -55,35 +55,17 @@ public class InputManager
 
     public bool IsActionDown(string actionName)
     {
-        foreach (var binding in _bindings)
-        {
-            if (binding.ActionName == actionName && IsActionDown(binding))
-                return true;
-        }
-
-        return false;
+        return _bindings.Any(binding => binding.ActionName == actionName && IsBindingDown(binding));
     }
 
     public bool WasActionPressed(string actionName)
     {
-        foreach (var binding in _bindings)
-        {
-            if (binding.ActionName == actionName && WasActionPressed(binding))
-                return true;
-        }
-
-        return false;
+        return _bindings.Any(binding => binding.ActionName == actionName && WasBindingPressed(binding));
     }
 
     public bool WasActionReleased(string actionName)
     {
-        foreach (var binding in _bindings)
-        {
-            if (binding.ActionName == actionName && WasActionReleased(binding))
-                return true;
-        }
-
-        return false;
+        return _bindings.Any(binding => binding.ActionName == actionName && WasBindingReleased(binding));
     }
 
     private void SortBindings()
@@ -95,7 +77,7 @@ public class InputManager
                 : int.MaxValue);
     }
 
-    private bool IsActionDown(InputBinding binding)
+    private bool IsBindingDown(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
             && KeyboardInput.IsKeyDown(binding.Keys[0]))
@@ -116,7 +98,7 @@ public class InputManager
         return false;
     }
     
-    private bool WasActionPressed(InputBinding binding)
+    private bool WasBindingPressed(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
             && KeyboardInput.WasKeyPressed(binding.Keys[0]))
@@ -137,7 +119,7 @@ public class InputManager
         return false;
     }
     
-    private bool WasActionReleased(InputBinding binding)
+    private bool WasBindingReleased(InputBinding binding)
     {
         if (binding.Keys is { Length: 1 }
             && KeyboardInput.WasKeyReleased(binding.Keys[0]))
