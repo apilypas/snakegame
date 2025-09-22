@@ -5,8 +5,8 @@ using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 using MonoGame.Extended.Input;
-using ShareGameLib.Services;
 using SnakeGame.Core.ECS.Components;
+using SnakeGame.Core.Services;
 using SnakeGame.Core.Utils;
 
 namespace SnakeGame.Core.ECS.Systems;
