@@ -43,6 +43,9 @@
     <ItemGroup>
       <Compile Remove="pipeline-references\**" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\ShareGameLib\ShareGameLib\ShareGameLib.csproj" />
+    </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
       <Message Text="Restoring dotnet tools" Importance="High" />
       <Exec Command="dotnet tool restore" />

@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
+using ShareGameLib.Services;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Enums;
-using SnakeGame.Core.Services;
 
 namespace SnakeGame.Core.ECS.Systems;
 
