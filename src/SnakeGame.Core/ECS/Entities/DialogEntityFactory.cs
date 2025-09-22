@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
-using ShareGameLib.Utils;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.Services;
@@ -186,7 +185,7 @@ public class DialogEntityFactory(World world, GameContentManager contents)
 
     public void CreateScoreBoardDialog()
     {
-        var dataManager = new UserDataSource();
+        var dataManager = new DataManager();
         var scoreBoard = dataManager.LoadScoreBoard();
 
         var resultBuilder = new StringBuilder()

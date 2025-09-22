@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Screens;
-using ShareGameLib.Utils;
 using SnakeGame.Core;
 using SnakeGame.Core.Screens;
 using SnakeGame.Core.Utils;
