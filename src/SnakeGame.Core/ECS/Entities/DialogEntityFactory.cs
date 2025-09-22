@@ -185,8 +185,8 @@ public class DialogEntityFactory(World world, GameContentManager contents)
 
     public void CreateScoreBoardDialog()
     {
-        var dataManager = new DataManager();
-        var scoreBoard = dataManager.LoadScoreBoard();
+        var dataSource = new DataSource();
+        var scoreBoard = dataSource.LoadScoreBoard();
 
         var resultBuilder = new StringBuilder()
             .Append($"{"Date",14}")

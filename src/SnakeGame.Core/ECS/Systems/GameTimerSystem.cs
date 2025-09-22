@@ -62,8 +62,8 @@ public class GameTimerSystem : EntityProcessingSystem
 
             _entityFactory.Dialog.CreateGameOverDialog(_gameState);
                 
-            var dataManager = new DataManager();
-            dataManager.SaveScore(_gameState.Score, (int)_gameState.TotalTime);
+            var dataSource = new DataSource();
+            dataSource.SaveScore(_gameState.Score, (int)_gameState.TotalTime);
         }
     }
 }
