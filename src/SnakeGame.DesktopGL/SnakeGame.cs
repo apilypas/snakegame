@@ -15,8 +15,8 @@ public class SnakeGame : Game
     public SnakeGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth;
-        _graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight;
+        _graphics.PreferredBackBufferWidth = Constants.VirtualScreenWidth * 2;
+        _graphics.PreferredBackBufferHeight = Constants.VirtualScreenHeight * 2;
         
         Window.Title = $"Yet another Snake Game (v{VersionUtils.GetVersion()})";
         Window.AllowUserResizing = true;
