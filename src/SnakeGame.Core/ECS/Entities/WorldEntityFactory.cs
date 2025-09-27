@@ -92,6 +92,8 @@ public class WorldEntityFactory(World world, GameContentManager contents)
                     new Texture2DRegion(contents.CollectableTexture, new Rectangle(16, 0, 16, 16))),
                 CollectableType.Crown => new Sprite(
                     new Texture2DRegion(contents.CollectableTexture, new Rectangle(16, 16, 16, 16))),
+                CollectableType.SnackCake => new Sprite(
+                    new Texture2DRegion(contents.CollectableTexture, new Rectangle(16, 32, 16, 16))),
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             }
         });

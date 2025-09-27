@@ -6,6 +6,7 @@ using MonoGame.Extended.ECS.Systems;
 using SnakeGame.Core.Data;
 using SnakeGame.Core.ECS.Components;
 using SnakeGame.Core.ECS.Entities;
+using SnakeGame.Core.Enums;
 
 namespace SnakeGame.Core.ECS.Systems;
 
@@ -20,6 +21,7 @@ public class LevelBonusSystem : EntityUpdateSystem
     private ComponentMapper<EnemyComponent> _enemyMapper;
     private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
     private ComponentMapper<ScreenShakeComponent> _screenShakeMapper;
+    private ComponentMapper<CollectableSpawnerComponent> _collectableSpawnerMapper;
 
     public LevelBonusSystem(GameState gameState, EntityFactory entityFactory) 
         : base(Aspect.One(typeof(LevelBonusComponent), typeof(PlayerComponent), typeof(SnakeComponent)))
@@ -37,6 +39,7 @@ public class LevelBonusSystem : EntityUpdateSystem
         _enemyMapper = mapperService.GetMapper<EnemyComponent>();
         _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
         _screenShakeMapper = mapperService.GetMapper<ScreenShakeComponent>();
+        _collectableSpawnerMapper = mapperService.GetMapper<CollectableSpawnerComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -114,6 +117,17 @@ public class LevelBonusSystem : EntityUpdateSystem
                 {
                     _gameState.ScoreMultiplicator *= 2;
                     _gameState.ScoreMultiplicatorTimer = 0f;
+                }
+                else if (levelBonus.Type == LevelBonusComponent.LevelBonusType.AddDiamonds)
+                {
+                    var playerEntityId = ActiveEntities.Single(x => _playerMapper.Has(x));
+                    _collectableSpawnerMapper.Put(
+                        playerEntityId,
+                        new CollectableSpawnerComponent
+                        {
+                            CollectableType = CollectableType.Diamond,
+                            Count = 5
+                        });
                 }
                 
                 DestroyEntity(entityId);

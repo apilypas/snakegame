@@ -18,14 +18,16 @@ public class SpawnSystem : EntityUpdateSystem
     private ComponentMapper<CollectableComponent> _collectableMapper;
     private ComponentMapper<PlayerComponent> _playerMapper;
     private ComponentMapper<TransformComponent> _transformMapper;
+    private ComponentMapper<CollectableSpawnerComponent> _collectableSpawnerMapper;
 
     private float _enemySpawnTimer;
     private float _diamondSpawnTimer;
     private float _speedBoostSpawnTimer;
     private float _crownSpawnTimer;
+    private float _snackCakeSpawnTimer;
 
     public SpawnSystem(GameState gameState, EntityFactory entityFactory) 
-        : base(Aspect.One(typeof(SnakeComponent), typeof(CollectableComponent)))
+        : base(Aspect.One(typeof(SnakeComponent), typeof(CollectableComponent), typeof(CollectableSpawnerComponent)))
     {
         _gameState = gameState;
         _entityFactory  = entityFactory;
@@ -37,6 +39,7 @@ public class SpawnSystem : EntityUpdateSystem
         _collectableMapper = mapperService.GetMapper<CollectableComponent>();
         _playerMapper = mapperService.GetMapper<PlayerComponent>();
         _transformMapper = mapperService.GetMapper<TransformComponent>();
+        _collectableSpawnerMapper = mapperService.GetMapper<CollectableSpawnerComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -50,6 +53,32 @@ public class SpawnSystem : EntityUpdateSystem
         HandleDiamondSpawning(deltaTime);
         HandleSpeedBoostSpawning(deltaTime);
         HandleCrownSpawning(deltaTime);
+        HandleSnackCakeSpawning(deltaTime);
+        HandleSpawner();
+    }
+
+    private void HandleSpawner()
+    {
+        foreach (var entityId in ActiveEntities)
+        {
+            var collectableSpawner = _collectableSpawnerMapper.Get(entityId);
+
+            if (collectableSpawner != null)
+            {
+                for (var i = 0; i < collectableSpawner.Count; i++)
+                {
+                    var location = FindEmptyLocation();
+
+                    if (location != null)
+                    {
+                        var collectableEntity = _entityFactory.World.CreateCollectable(collectableSpawner.CollectableType);
+                        _transformMapper.Get(collectableEntity.Id).Position = location.Value;
+                    }
+                }
+
+                _collectableSpawnerMapper.Delete(entityId);
+            }
+        }
     }
 
     private void HandlePlayerSpawning()
@@ -216,6 +245,39 @@ public class SpawnSystem : EntityUpdateSystem
         }
         
         _crownSpawnTimer -= Constants.CrownSpawnRate;
+    }
+    
+    private void HandleSnackCakeSpawning(float deltaTime)
+    {
+        _snackCakeSpawnTimer += deltaTime;
+
+        if (_snackCakeSpawnTimer < Constants.SnackCakeSpawnRate)
+            return;
+        
+        var snackCake = 0;
+
+        foreach (var entityId in ActiveEntities)
+        {
+            var collectable = _collectableMapper.Get(entityId);
+            
+            if (collectable is { CollectableType: CollectableType.SnackCake })
+            {
+                snackCake++;
+            }
+        }
+        
+        if (snackCake >= Constants.MaxSnackCakeLimit)
+            return;
+
+        var location = FindEmptyLocation();
+
+        if (location != null)
+        {
+            var collectableEntity = _entityFactory.World.CreateCollectable(CollectableType.SnackCake);
+            collectableEntity.Get<TransformComponent>().Position = location.Value;
+        }
+        
+        _snackCakeSpawnTimer -= Constants.SnackCakeSpawnRate;
     }
     
     private Vector2? FindBestLocationForSnake()

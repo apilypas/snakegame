@@ -23,6 +23,7 @@ public class CollectableSystem : EntityUpdateSystem
     private ComponentMapper<TransformComponent> _transformMapper;
     private ComponentMapper<SpriteComponent> _spriteMapper;
     private ComponentMapper<SoundEffectComponent> _soundEffectMapper;
+    private ComponentMapper<CollectableSpawnerComponent> _collectableSpawnerMapper;
 
     public CollectableSystem(GameState gameState,
         EntityFactory entityFactory)
@@ -42,6 +43,7 @@ public class CollectableSystem : EntityUpdateSystem
         _transformMapper = mapperService.GetMapper<TransformComponent>();
         _spriteMapper = mapperService.GetMapper<SpriteComponent>();
         _soundEffectMapper = mapperService.GetMapper<SoundEffectComponent>();
+        _collectableSpawnerMapper = mapperService.GetMapper<CollectableSpawnerComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -199,6 +201,32 @@ public class CollectableSystem : EntityUpdateSystem
                 {
                     Type = SoundEffectTypes.AddTime
                 });
+            }
+        }
+        else if (collectable.CollectableType == CollectableType.SnackCake)
+        {
+            snake.SegmentsToGrow++;
+            if (_playerMapper.Has(collectable.CollectedByEntityId.Value))
+            {
+                var score = _gameState.ScoreMultiplicator * Constants.SnackCakeCollectScore;
+                _gameState.Score += score;
+                
+                SpawnFadingText(snake.Head.Position, $"+{score} (+Diamonds)");
+                
+                _collectableSpawnerMapper.Put(
+                    collectable.CollectedByEntityId.Value,
+                    new CollectableSpawnerComponent
+                    {
+                        CollectableType = CollectableType.Diamond,
+                        Count = 5
+                    });
+
+                _soundEffectMapper.Put(
+                    collectable.CollectedByEntityId.Value,
+                    new SoundEffectComponent
+                    {
+                        Type = SoundEffectTypes.PowerUp
+                    });
             }
         }
     }

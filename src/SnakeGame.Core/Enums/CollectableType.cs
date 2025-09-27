@@ -6,5 +6,6 @@ public enum CollectableType
     SnakePart,
     SpeedBoost,
     Clock,
-    Crown
+    Crown,
+    SnackCake
 }

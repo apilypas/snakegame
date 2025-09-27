@@ -105,6 +105,16 @@ public class ButtonEventSystem : EntityProcessingSystem
                 Type = LevelBonusComponent.LevelBonusType.AddScoreMultiplicator
             });
         }
+        else if (buttonEvent.Event == ButtonEvents.AddDiamonds)
+        {
+            _gameState.IsPaused = false;
+            _dialogMapper.Get(buttonEvent.DialogEntityId).IsDestroyed = true;
+            
+            CreateEntity().Attach(new LevelBonusComponent
+            {
+                Type = LevelBonusComponent.LevelBonusType.AddDiamonds
+            });
+        }
         
         _buttonEventMapper.Delete(entityId);
     }

@@ -296,6 +296,12 @@ public class DialogEntityFactory(World world, GameContentManager contents)
                 Title = "Score master", 
                 Subtitle = "Increases score multiplier",
                 Event = ButtonEvents.AddScoreMultiplicator
+            },
+            new
+            {
+                Title = "Snack Cake",
+                Subtitle = "Is it snake, snack or cake?",
+                Event = ButtonEvents.AddDiamonds
             }
         };
         
